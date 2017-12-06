@@ -7,6 +7,7 @@ const cx = classnames.bind(styles);
 
 class TurtleApp extends React.Component {
   static propTypes = {
+    children: PropTypes.node
   }
 
   constructor(props) {
@@ -15,8 +16,11 @@ class TurtleApp extends React.Component {
   }
 
   render() {
+    const { children } = this.props;
+    
     return (
       <div className={cx('turtle-app')}>
+        {children}
       </div>
     );
   }
