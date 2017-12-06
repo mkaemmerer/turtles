@@ -1,26 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Turtle } from '../shapes';
+import Controls from '../controls';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 class TurtleApp extends React.Component {
-  static propTypes = {
-    children: PropTypes.node
-  }
-
   constructor(props) {
     super(props);
     this.state = {};
   }
 
   render() {
-    const { children } = this.props;
-    
     return (
       <div className={cx('turtle-app')}>
-        {children}
+        <svg className={cx('turtle-app_canvas')}>
+          <g transform="translate(100, 100)">
+            <Turtle/>
+            <Controls/>
+          </g>
+        </svg>
       </div>
     );
   }

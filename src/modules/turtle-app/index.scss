@@ -2,4 +2,11 @@
 
 .turtle-app {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.turtle-app_canvas {
+  flex: 1;
 }

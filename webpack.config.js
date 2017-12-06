@@ -3,7 +3,7 @@ const path = require('path');
 
 function getEntrySources(sources) {
 	if (process.env.NODE_ENV !== 'production') {
-		sources.push('webpack-dev-server/client?http://localhost:8080');
+		sources.push('webpack-dev-server/client?http://localhost:9000');
 		sources.push('webpack/hot/only-dev-server');
 	}
 
@@ -24,7 +24,7 @@ module.exports = {
 		}
 	},
 	output: {
-		publicPath: 'http://localhost:8080/',
+		publicPath: 'http://localhost:9000/',
 		filename: 'public/[name].js'
 	},
 	module: {
@@ -40,6 +40,7 @@ module.exports = {
 			},
 			{
 				test: /\.svg$/,
+				exclude:/\.sprite\.svg$/,
 				loaders: ['babel-loader', 'react-svg-loader?jsx=true']
 			}
 		]
