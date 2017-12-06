@@ -7,22 +7,46 @@ import Placement from './placement';
 
 const toVector = ({x,y}) => new V2(x,y);
 
-const spec = {
-  onDragStart(props, monitor, component) {
-    component.onDragStart();
+//Movement
+const moveSpec = {
+  onDragStart(props) {
+    props.onMoveDragStart();
   },
-  onDrag(props, monitor, component) {
+  onDrag(props, monitor) {
     const offset = monitor.getDragOffset();
-    component.onDrag(toVector(offset));
-  },
-  onDragEnd(props, monitor, component) {
-    component.onDragEnd();
+    props.onMoveDrag(toVector(offset));
   }
 };
-class DraggableTurtle extends React.Component {
+const moveAdapter = (monitor) => ({
+  isMoveDragging:  monitor.isDragging(),
+  onMoveDragStart: monitor.onDragStart
+});
+const Movable = MakeDraggable(moveSpec, moveAdapter);
+
+//Rotation
+const rotateSpec = {
+  onDragStart(props) {
+    props.onRotateDragStart();
+  },
+  onDrag(props, monitor) {
+    const offset = monitor.getDragOffset();
+    props.onRotateDrag(toVector(offset));
+  }
+};
+const rotateAdapter = (monitor) => ({
+  isRotateDragging:  monitor.isDragging(),
+  onRotateDragStart: monitor.onDragStart
+});
+const Rotatable = MakeDraggable(rotateSpec, rotateAdapter);
+
+
+//Component
+const DraggableTurtle = Movable(Rotatable(Turtle));
+class ManagedTurtle extends React.Component {
   static propTypes = {
-    onMouseDown: PropTypes.func,
-    dragPosition: PropTypes.object
+    onMoveDragStart:   PropTypes.func,
+    onRotateDragStart: PropTypes.func,
+    dragPosition:      PropTypes.object
   }
   constructor(props) {
     super(props);
@@ -34,24 +58,32 @@ class DraggableTurtle extends React.Component {
     };
   }
 
-  onDragStart() {
+  onMoveDragStart = () => {
     this.placement = this.state.placement;
   }
-  onDrag(direction) {
+  onRotateDragStart = () => {
+    this.placement = this.state.placement;
+  }
+  onMoveDrag = (direction) => {
     const placement = this.placement.moveDir(direction);
     this.setState({ placement });
   }
-  onDragEnd() {
+  onRotateDrag = () => {
   }
 
   render() {
-    const { onMouseDown } = this.props;
     const { placement } = this.state;
 
     return (
-      <Turtle placement={placement} onMouseDown={onMouseDown}/>
+      <DraggableTurtle
+        placement={placement}
+        onMoveDragStart={this.onMoveDragStart}
+        onMoveDrag={this.onMoveDrag}
+        onRotateDragStart={this.onRotateDragStart}
+        onRotateDrag={this.onRotateDrag}
+      />
     );
   }
 }
 
-export default MakeDraggable(spec)(DraggableTurtle);
+export default ManagedTurtle;

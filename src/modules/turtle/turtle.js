@@ -13,19 +13,25 @@ const toTransform = ({position, heading}) => {
   return `translate(${position.x}, ${position.y})rotate(${rotation})`;
 }
 
-const Turtle = ({ onMouseDown, placement }) => (
-  <g
-    className={cx('turtle')}
-    transform={toTransform(placement)}
-    onMouseDown={onMouseDown}
-  >
-    <ShapeTurtle/>
-    <Controls/>
-  </g>
-);
-Turtle.propTypes = {
-  onMouseDown: PropTypes.func,
-  placement:    PropTypes.object
+class Turtle extends React.Component {
+  static propTypes = {
+    onMoveDragStart:   PropTypes.func,
+    onRotateDragStart: PropTypes.func,
+    placement: PropTypes.object
+  }
+
+  render() {
+    const { onMoveDragStart, onRotateDragStart, placement } = this.props;
+    return (
+      <g className={cx('turtle')} transform={toTransform(placement)}>
+        <ShapeTurtle/>
+        <Controls
+          onMoveDragStart={onMoveDragStart}
+          onRotateDragStart={onRotateDragStart}
+        />
+      </g>
+    );
+  }
 }
 
 export default Turtle;
