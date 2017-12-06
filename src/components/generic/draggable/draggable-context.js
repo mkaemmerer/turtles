@@ -45,7 +45,7 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
         getDragOffset:        whenActive(() => this.state.dragOffset,        null),
         getDragStartPosition: whenActive(() => this.state.dragStartPosition, null),
         getDragPosition:      whenActive(() => this.state.dragPosition,      null),
-        startDrag: (e) => { this.onDragStart(e, id); }
+        onDragStart:          (e) => { this.onDragStart(e, id); }
       };
     }
 
@@ -55,8 +55,8 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
 
       this.setState({
         isDragging: true,
-        dragStartPosition: {x: e.screenX, y: e.screenY},
-        dragPosition:      {x: e.screenX, y: e.screenY},
+        dragStartPosition: {x: e.clientX, y: e.clientY},
+        dragPosition:      {x: e.clientX, y: e.clientY},
         dragOffset:        {x: 0, y: 0}
       });
     }
@@ -65,8 +65,8 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
 
       const { dragStartPosition } = this.state;
       const dragPosition = {
-        x: e.screenX,
-        y: e.screenY
+        x: e.clientX,
+        y: e.clientY
       };
       const dragOffset = {
         x: dragPosition.x - dragStartPosition.x,
