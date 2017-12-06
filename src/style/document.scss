@@ -1,0 +1,16 @@
+@import "../../node_modules/normalize-scss/sass/normalize.scss";
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i');
+
+@import "./text";
+@import "./color";
+
+@include normalize();
+
+body {
+  font-family: $font-family-standard;
+  color: $color-black;
+}
+
+* {
+  box-sizing: border-box;
+}
