@@ -7,10 +7,10 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const Turtle = ({ onMouseDown, position }) => (
+const Turtle = ({ onMouseDown, placement }) => (
   <g
     className={cx('turtle')}
-    transform={`translate(${position.x}, ${position.y})`}
+    transform={`translate(${placement.position.x}, ${placement.position.y})`}
     onMouseDown={onMouseDown}
   >
     <ShapeTurtle/>
@@ -19,7 +19,7 @@ const Turtle = ({ onMouseDown, position }) => (
 );
 Turtle.propTypes = {
   onMouseDown: PropTypes.func,
-  position:    PropTypes.object
+  placement:    PropTypes.object
 }
 
 export default Turtle;
