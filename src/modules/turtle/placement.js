@@ -5,7 +5,7 @@ class Placement {
     this.position = position;
     this.heading = heading;
   }
-  static defaultPlacement = new Placement(new P2(100, 100), V2.unitX);
+  static defaultPlacement = new Placement(P2.origin, V2.unitX);
 
   rotate(r) {
     return new Placement(this.position, V2.rotate(this.heading, r));

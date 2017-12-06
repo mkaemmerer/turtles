@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { MakeDraggable } from 'components/generic/draggable';
-import { V2 } from 'utils/vectors';
+import { P2, V2 } from 'utils/vectors';
 import Turtle from './turtle';
 import Placement from './placement';
 
@@ -27,7 +27,10 @@ class DraggableTurtle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      placement: Placement.defaultPlacement
+      placement: new Placement(
+        new P2(100, 100),
+        V2.fromRotation(Math.PI/6)
+      )
     };
   }
 

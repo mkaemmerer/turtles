@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { V2 } from 'utils/vectors';
 import { ShapeTurtle } from 'components/shapes';
 import Controls from '../controls';
 
@@ -7,10 +8,15 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
+const toTransform = ({position, heading}) => {
+  const rotation = V2.toRotation(heading) * 180 / Math.PI;
+  return `translate(${position.x}, ${position.y})rotate(${rotation})`;
+}
+
 const Turtle = ({ onMouseDown, placement }) => (
   <g
     className={cx('turtle')}
-    transform={`translate(${placement.position.x}, ${placement.position.y})`}
+    transform={toTransform(placement)}
     onMouseDown={onMouseDown}
   >
     <ShapeTurtle/>

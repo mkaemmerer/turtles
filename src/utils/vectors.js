@@ -79,6 +79,9 @@ class Vector2 {
     const det = v1.dx * v2.dy - v1.dy * v2.dx;
     return Math.atan2(det, dot);
   }
+  static toRotation(v) {
+    return Vector2.angleBetween(Vector2.unitX, v);
+  }
 
   clone()     { return Vector2.clone(this);      }
   equals(v2)  { return Vector2.equals(this, v2); }
