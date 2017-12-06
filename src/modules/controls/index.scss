@@ -1,0 +1,13 @@
+@import '../../style/index';
+
+$color--controls:        $color-gray-6;
+$color--controls-active: $color-gray-5;
+
+.controls {
+  fill: $color--controls;
+}
+
+.controls_handle:hover {
+  cursor: pointer;
+  fill: $color--controls-active;
+}

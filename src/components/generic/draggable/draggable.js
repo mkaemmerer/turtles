@@ -12,14 +12,24 @@ const defaultAdapter = ({ onDragStart, ...props }) => ({
 const MakeDraggable = (adapter = defaultAdapter) => (Component) => {
   class Draggable extends React.Component {
     static contextTypes = {
-      dragState:  PropTypes.object,
-      startDrag:  PropTypes.func
+      makeDragMonitor: PropTypes.func
+    }
+
+    constructor(props, context) {
+      super(props, context);
+      this.monitor = context.makeDragMonitor();
+    }
+    componentWillReceiveProps() {
+      this.forceUpdate();
     }
 
     render() {
       const adaptedProps = adapter({
-        ...this.context.dragState,
-        onDragStart: this.context.startDrag
+        isDragging:        this.monitor.isDragging(),
+        dragOffset:        this.monitor.getDragOffset(),
+        dragStartPosition: this.monitor.getDragStartPosition(),
+        dragPosition:      this.monitor.getDragPosition(),
+        onDragStart: this.monitor.startDrag
       });
 
       return (
