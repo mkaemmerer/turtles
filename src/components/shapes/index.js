@@ -1,10 +1,10 @@
 import React from 'react';
 
-export const Turtle = () => (
+export const ShapeTurtle = () => (
   <polygon points="-8,-20, 16,0, -8,20"/>
 
 );
-export const ArrowStraight = () => (
+export const ShapeArrowStraight = () => (
   <path d="
     M -10   5
     L  10   5
@@ -16,7 +16,7 @@ export const ArrowStraight = () => (
     Z
     "/>
 );
-export const ArrowCurved = () => (
+export const ShapeArrowCurved = () => (
   <path d="
     M  40   0
     A  40  40, 0 0 0, 0 -40

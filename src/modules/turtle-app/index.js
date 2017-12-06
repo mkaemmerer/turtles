@@ -1,12 +1,17 @@
 import React from 'react';
-import { Turtle } from '../shapes';
-import Controls from '../controls';
+import PropTypes from 'prop-types';
+import { MakeDraggableContext } from 'components/generic/draggable';
+import Turtle from '../turtle';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 class TurtleApp extends React.Component {
+  static propTypes = {
+    onMouseUp:   PropTypes.func,
+    onMouseMove: PropTypes.func
+  }
   constructor(props) {
     super(props);
     this.state = {};
@@ -14,16 +19,13 @@ class TurtleApp extends React.Component {
 
   render() {
     return (
-      <div className={cx('turtle-app')}>
+      <div className={cx('turtle-app')} {...this.props}>
         <svg className={cx('turtle-app_canvas')}>
-          <g transform="translate(100, 100)">
-            <Turtle/>
-            <Controls/>
-          </g>
+          <Turtle/>
         </svg>
       </div>
     );
   }
 }
 
-export default TurtleApp;
+export default MakeDraggableContext()(TurtleApp);

@@ -1,0 +1,7 @@
+@import '../../style/index';
+
+$color--turtle: $color-gray-3;
+
+.turtle {
+  fill: $color--turtle;
+}

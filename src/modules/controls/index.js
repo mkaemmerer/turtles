@@ -1,12 +1,12 @@
 import React from 'react';
-import { ArrowStraight, ArrowCurved } from '../shapes';
+import { ShapeArrowStraight, ShapeArrowCurved } from 'components/shapes';
 
 const Controls = () => (
   <g>
-    <g transform="translate(40,0)rotate(90)">   <ArrowStraight/> </g>
-    <g transform="translate(-40,0)rotate(-90)"> <ArrowStraight/> </g>
-    <g transform="rotate(135)">                 <ArrowCurved/>   </g>
-    <g transform="rotate(-45)">                 <ArrowCurved/>   </g>
+    <g transform="translate(40,0)rotate(90)">   <ShapeArrowStraight/> </g>
+    <g transform="translate(-40,0)rotate(-90)"> <ShapeArrowStraight/> </g>
+    <g transform="rotate(135)">                 <ShapeArrowCurved/>   </g>
+    <g transform="rotate(-45)">                 <ShapeArrowCurved/>   </g>
   </g>
 );
 
