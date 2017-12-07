@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
+import { propertyLens, composeLens } from 'utils/lenses';
 import Turtle from '../turtle';
 import Drawing from '../drawing';
 import Program from '../program';
 import run from './run';
 
+const commandsLens = propertyLens('commands');
 const RADIANS_TO_DEGREES = 180 / Math.PI;
 
 import styles from './index.scss';
@@ -36,6 +38,10 @@ class TurtleApp extends React.Component {
     this.setState({ commands: newCommands });
   }
 
+  onCommandChange = (commandLens, newCommand) => {
+    const lens = composeLens(commandsLens, commandLens);
+    this.setState((state) => lens.set(state, newCommand));
+  }
   onTurtleMove = (movement) => {
     this.addCommand({ type: 'move', amount: movement });
   }
@@ -61,7 +67,10 @@ class TurtleApp extends React.Component {
           />
         </svg>
         <div className={cx('turtle-app_sidebar')}>
-          <Program commands={commands}/>
+          <Program
+            commands={commands}
+            onCommandChange={this.onCommandChange}
+          />
         </div>
       </div>
     );

@@ -67,6 +67,11 @@ class ManagedTurtle extends React.Component {
       rotation: 0
     };
   }
+  componentWillReceiveProps(newProps) {
+    if(newProps.placement !== this.props.placement) {
+      this.setState({ placement: newProps.placement });
+    }
+  }
 
   onMoveDragStart = () => {
   }
