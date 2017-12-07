@@ -85,11 +85,13 @@ class ManagedTurtle extends React.Component {
   }
 
   render() {
-    const { placement } = this.state;
+    const { placement, movement, rotation } = this.state;
 
     return (
       <DraggableTurtle
         placement={placement}
+        movement={movement}
+        rotation={rotation}
         onMoveDragStart={this.onMoveDragStart}
         onMoveDrag={this.onMoveDrag}
         onRotateDragStart={this.onRotateDragStart}
