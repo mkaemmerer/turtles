@@ -14,7 +14,7 @@ const moveSpec = {
   },
   onDrag(props, monitor) {
     const offset = monitor.getDragOffset();
-    props.onMoveDrag(toVector(offset));
+    props.onMoveDrag(offset);
   }
 };
 const moveAdapter = (monitor) => ({
@@ -29,8 +29,9 @@ const rotateSpec = {
     props.onRotateDragStart();
   },
   onDrag(props, monitor) {
-    const offset = monitor.getDragOffset();
-    props.onRotateDrag(toVector(offset));
+    const start = monitor.getDragPosition();
+    const current = monitor.getDragStartPosition();
+    props.onRotateDrag(start, current);
   }
 };
 const rotateAdapter = (monitor) => ({
@@ -64,11 +65,14 @@ class ManagedTurtle extends React.Component {
   onRotateDragStart = () => {
     this.placement = this.state.placement;
   }
-  onMoveDrag = (direction) => {
-    const placement = this.placement.moveDir(direction);
+  onMoveDrag = (offset) => {
+    const placement = this.placement.moveDir(toVector(offset));
     this.setState({ placement });
   }
-  onRotateDrag = () => {
+  onRotateDrag = (start, current) => {
+    const angle = P2.angleBetween(current, this.placement.position, start);
+    const placement = this.placement.rotate(angle);
+    this.setState({ placement });
   }
 
   render() {
