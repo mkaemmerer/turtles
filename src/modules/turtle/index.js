@@ -55,7 +55,9 @@ class ManagedTurtle extends React.Component {
       placement: new Placement(
         new P2(100, 100),
         V2.fromRotation(Math.PI/6)
-      )
+      ),
+      movement: 0,
+      rotation: 0
     };
   }
 
@@ -66,13 +68,20 @@ class ManagedTurtle extends React.Component {
     this.placement = this.state.placement;
   }
   onMoveDrag = (offset) => {
-    const placement = this.placement.moveDir(toVector(offset));
-    this.setState({ placement });
+    const movement = V2.dot(this.placement.heading, toVector(offset));
+    const placement = this.placement.move(movement);
+    this.setState({
+      placement,
+      movement
+    });
   }
   onRotateDrag = (start, current) => {
-    const angle = P2.angleBetween(current, this.placement.position, start);
-    const placement = this.placement.rotate(angle);
-    this.setState({ placement });
+    const rotation = P2.angleBetween(current, this.placement.position, start);
+    const placement = this.placement.rotate(rotation);
+    this.setState({
+      placement,
+      rotation
+    });
   }
 
   render() {

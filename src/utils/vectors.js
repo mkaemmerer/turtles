@@ -3,7 +3,7 @@ class Position2 {
     this.x = x;
     this.y = y;
   }
-  static origin = new Position2(0,0)
+  static origin = new Position2(0,0);
 
   static clone(p) {
     return new Position2(p.x, p.y);
@@ -31,9 +31,9 @@ class Vector2 {
     this.dx = dx;
     this.dy = dy;
   }
-  static zero = new Vector2(0,0)
-  static unitX = new Vector2(1,0)
-  static unitY = new Vector2(0,1)
+  static zero = new Vector2(0,0);
+  static unitX = new Vector2(1,0);
+  static unitY = new Vector2(0,1);
 
   static clone(v) {
     return new Vector2(v.dx, v.dy);

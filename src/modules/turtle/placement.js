@@ -15,10 +15,6 @@ class Placement {
     const newPosition = P2.offset(this.position, direction);
     return new Placement(newPosition, this.heading);
   }
-  moveDir(v) {
-    const amount = V2.dot(this.heading, v);
-    return this.move(amount);
-  }
 }
 
 export default Placement;

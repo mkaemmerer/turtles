@@ -1,43 +1,46 @@
 import React from 'react';
-import { ShapeArrowStraight, ShapeArrowCurved } from 'components/shapes';
+import {
+  ShapeMoveForward,
+  ShapeMoveBackward,
+  ShapeRotateLeft,
+  ShapeRotateRight
+} from './shapes';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const Controls = ({ onMoveDragStart, onRotateDragStart }) => (
-  <g className={cx('controls')}>
-    <g
-      className={cx('controls_handle')}
-      transform="translate(40,0)rotate(90)"
-      onMouseDown={onMoveDragStart}
-    >
-      <ShapeArrowStraight/>
-    </g>
-    <g
-      className={cx('controls_handle')}
-      transform="translate(-40,0)rotate(-90)"
-      onMouseDown={onMoveDragStart}
-    >
-      <ShapeArrowStraight/>
-    </g>
+const Controls = ({ onMoveDragStart, onRotateDragStart, showMovement, showRotation }) => {
+  const moveHandleClasses = cx(
+    'controls_handle',
+    {
+      'controls_handle--visible': showMovement
+    }
+  );
+  const rotateHandleClasses = cx(
+    'controls_handle',
+    {
+      'controls_handle--visible': showRotation
+    }
+  );
 
+  return (
+    <g className={cx('controls')}>
+      <g className={moveHandleClasses} onMouseDown={onMoveDragStart}>
+        <ShapeMoveForward/>
+      </g>
+      <g className={moveHandleClasses} onMouseDown={onMoveDragStart}>
+        <ShapeMoveBackward/>
+      </g>
 
-    <g
-      className={cx('controls_handle')}
-      transform="rotate(135)"
-      onMouseDown={onRotateDragStart}
-    >
-      <ShapeArrowCurved/>
+      <g className={rotateHandleClasses} onMouseDown={onRotateDragStart}>
+        <ShapeRotateLeft/>
+      </g>
+      <g className={rotateHandleClasses} onMouseDown={onRotateDragStart}>
+        <ShapeRotateRight/>
+      </g>
     </g>
-    <g
-      className={cx('controls_handle')}
-      transform="rotate(-45)"
-      onMouseDown={onRotateDragStart}
-    >
-      <ShapeArrowCurved/>
-    </g>
-  </g>
-);
+  )
+};
 
 export default Controls;

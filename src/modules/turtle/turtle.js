@@ -17,17 +17,27 @@ class Turtle extends React.Component {
   static propTypes = {
     onMoveDragStart:   PropTypes.func,
     onRotateDragStart: PropTypes.func,
+    isMoveDragging:    PropTypes.bool,
+    isRotateDragging:  PropTypes.bool,
     placement: PropTypes.object
   }
 
   render() {
-    const { onMoveDragStart, onRotateDragStart, placement } = this.props;
+    const {
+      onMoveDragStart,
+      isMoveDragging,
+      onRotateDragStart,
+      isRotateDragging,
+      placement
+    } = this.props;
     return (
       <g className={cx('turtle')} transform={toTransform(placement)}>
         <ShapeTurtle/>
         <Controls
           onMoveDragStart={onMoveDragStart}
           onRotateDragStart={onRotateDragStart}
+          showRotation={!isMoveDragging}
+          showMovement={!isRotateDragging}
         />
       </g>
     );
