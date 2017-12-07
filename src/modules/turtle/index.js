@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { MakeDraggable } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
-import Placement from 'utils/placement';
 import Turtle from './turtle';
 
 const toVector = ({x,y}) => new V2(x,y);
@@ -51,29 +50,27 @@ const Rotatable = MakeDraggable(rotateSpec, rotateAdapter);
 const DraggableTurtle = Movable(Rotatable(Turtle));
 class ManagedTurtle extends React.Component {
   static propTypes = {
+    placement:      PropTypes.object.isRequired,
     onTurtleMove:   PropTypes.func.isRequired,
     onTurtleRotate: PropTypes.func.isRequired
   }
   constructor(props) {
     super(props);
     this.state = {
-      placement: new Placement(
-        new P2(100, 100),
-        V2.fromRotation(Math.PI/6)
-      ),
+      placement: props.placement,
       movement: 0,
       rotation: 0
     };
   }
 
   onMoveDragStart = () => {
-    this.placement = this.state.placement;
   }
   onMoveDrag = (offset) => {
-    const movement = V2.dot(this.placement.heading, toVector(offset));
-    const placement = this.placement.move(movement);
+    const { placement } = this.props;
+    const movement     = V2.dot(placement.heading, toVector(offset));
+    const newPlacement = placement.move(movement);
     this.setState({
-      placement,
+      placement: newPlacement,
       movement
     });
   }
@@ -83,13 +80,13 @@ class ManagedTurtle extends React.Component {
   }
 
   onRotateDragStart = () => {
-    this.placement = this.state.placement;
   }
   onRotateDrag = (start, current) => {
-    const rotation = P2.angleBetween(current, this.placement.position, start);
-    const placement = this.placement.rotate(rotation);
+    const { placement } = this.props;
+    const rotation     = P2.angleBetween(current, placement.position, start);
+    const newPlacement = placement.rotate(rotation);
     this.setState({
-      placement,
+      placement: newPlacement,
       rotation
     });
   }
