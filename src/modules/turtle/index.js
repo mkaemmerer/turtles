@@ -4,7 +4,12 @@ import { MakeDraggable } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Turtle from './turtle';
 
+const RADIANS_TO_DEGREES = 180 / Math.PI;
+const DEGREES_TO_RADIANS = Math.PI / 180;
+
 const toVector = ({x,y}) => new V2(x,y);
+const roundDistance = (dist) => Math.round(dist);
+const roundDegrees  = (rads) => Math.round(rads * RADIANS_TO_DEGREES) * DEGREES_TO_RADIANS;
 
 //Movement
 const moveSpec = {
@@ -67,7 +72,7 @@ class ManagedTurtle extends React.Component {
   }
   onMoveDrag = (offset) => {
     const { placement } = this.props;
-    const movement     = V2.dot(placement.heading, toVector(offset));
+    const movement     = roundDistance(V2.dot(placement.heading, toVector(offset)));
     const newPlacement = placement.move(movement);
     this.setState({
       placement: newPlacement,
@@ -83,7 +88,7 @@ class ManagedTurtle extends React.Component {
   }
   onRotateDrag = (start, current) => {
     const { placement } = this.props;
-    const rotation     = P2.angleBetween(current, placement.position, start);
+    const rotation     = roundDegrees(P2.angleBetween(current, placement.position, start));
     const newPlacement = placement.rotate(rotation);
     this.setState({
       placement: newPlacement,

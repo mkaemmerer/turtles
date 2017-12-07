@@ -8,6 +8,8 @@ import Drawing from '../drawing';
 import Program from '../program';
 import run from './run';
 
+const RADIANS_TO_DEGREES = 180 / Math.PI;
+
 import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
@@ -38,7 +40,7 @@ class TurtleApp extends React.Component {
     this.addCommand({ type: 'move', amount: movement });
   }
   onTurtleRotate = (rotation) => {
-    this.addCommand({ type: 'turn', amount: rotation });
+    this.addCommand({ type: 'turn', amount: rotation * RADIANS_TO_DEGREES });
   }
 
   render() {
