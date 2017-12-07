@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { propertyLens, indexLens } from 'utils/lenses';
+import Number from 'components/number';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -20,18 +21,20 @@ Command.propTypes = {
 };
 
 const MoveCommand = ({command, onChange}) => {
-  const onValueChange = (e) => onChange(amountLens.set(command, e.target.value));
+  const onValueChange = (e) => onChange(amountLens.set(command, +e.target.value));
   return (
     <span>
-      move <input value={command.amount} onChange={onValueChange}/>
+      move <input type="number" value={command.amount} onChange={onValueChange}/>
+      <Number value={command.amount}/>
     </span>
   );
 };
 const TurnCommand = ({command, onChange}) => {
-  const onValueChange = (e) => onChange(amountLens.set(command, e.target.value));
+  const onValueChange = (e) => onChange(amountLens.set(command, +e.target.value));
   return (
     <span>
-      turn <input value={command.amount} onChange={onValueChange}/>
+      turn <input type="number" value={command.amount} onChange={onValueChange}/>
+      <Number value={command.amount}/>
     </span>
   );
 };
