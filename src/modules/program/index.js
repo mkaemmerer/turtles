@@ -21,20 +21,20 @@ Command.propTypes = {
 };
 
 const MoveCommand = ({command, onChange}) => {
-  const onValueChange = (e) => onChange(amountLens.set(command, +e.target.value));
+  const onNumberChange = (value) => onChange(amountLens.set(command, value));
   return (
     <span>
-      move <input type="number" value={command.amount} onChange={onValueChange}/>
-      <Number value={command.amount}/>
+      move
+      <Number value={command.amount} onChange={onNumberChange}/>
     </span>
   );
 };
 const TurnCommand = ({command, onChange}) => {
-  const onValueChange = (e) => onChange(amountLens.set(command, +e.target.value));
+  const onNumberChange = (value) => onChange(amountLens.set(command, value));
   return (
     <span>
-      turn <input type="number" value={command.amount} onChange={onValueChange}/>
-      <Number value={command.amount}/>
+      turn
+      <Number value={command.amount} onChange={onNumberChange}/>
     </span>
   );
 };

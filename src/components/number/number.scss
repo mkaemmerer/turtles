@@ -11,6 +11,8 @@
   line-height: 1;
   font-size: $font-size-s;
   font-family: $font-family-monospace;
+
+  cursor: col-resize;
 }
 .number_hidden-input {
   display: none;
