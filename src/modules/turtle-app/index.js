@@ -46,7 +46,8 @@ class TurtleApp extends React.Component {
     this.addCommand({ type: 'move', amount: movement });
   }
   onTurtleRotate = (rotation) => {
-    this.addCommand({ type: 'turn', amount: rotation * RADIANS_TO_DEGREES });
+    const degrees = (rotation * RADIANS_TO_DEGREES).toFixed();
+    this.addCommand({ type: 'turn', amount: degrees });
   }
 
   render() {
