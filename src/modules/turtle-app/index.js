@@ -5,6 +5,7 @@ import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
 import Turtle from '../turtle';
 import Drawing from '../drawing';
+import Program from '../program';
 import run from './run';
 
 import styles from './index.scss';
@@ -37,7 +38,7 @@ class TurtleApp extends React.Component {
     this.addCommand({ type: 'move', amount: movement });
   }
   onTurtleRotate = (rotation) => {
-    this.addCommand({ type: 'rotate', amount: rotation });
+    this.addCommand({ type: 'turn', amount: rotation });
   }
 
   render() {
@@ -57,6 +58,9 @@ class TurtleApp extends React.Component {
             onTurtleRotate={this.onTurtleRotate}
           />
         </svg>
+        <div className={cx('turtle-app_sidebar')}>
+          <Program commands={commands}/>
+        </div>
       </div>
     );
   }

@@ -1,0 +1,10 @@
+@import '../../style/index';
+
+.program {
+  display: flex;
+  flex-direction: column;
+}
+
+.program_line {
+  margin: $space-inset-stretch-s;
+}

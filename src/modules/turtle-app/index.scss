@@ -3,15 +3,25 @@
 .turtle-app {
   position: relative;
   display: flex;
-  flex-direction: column;
   height: 100vh;
+
+  background-color: $color-gray-7;
 }
 
 .turtle-app_canvas {
+  margin: $space-s;
   flex: 1;
+  background-color: $color-white;
+  border: $border-style-standard;
 }
 
 .turtle-app_drawing {
   fill: none;
   stroke: $color-black;
+}
+
+.turtle-app_sidebar {
+  width: $space-xl * 8;
+  background-color: $color-white;
+  box-shadow: $shadow-m;
 }
