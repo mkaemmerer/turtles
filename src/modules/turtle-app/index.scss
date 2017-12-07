@@ -10,3 +10,8 @@
 .turtle-app_canvas {
   flex: 1;
 }
+
+.turtle-app_drawing {
+  fill: none;
+  stroke: $color-black;
+}
