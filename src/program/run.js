@@ -8,8 +8,9 @@ const step = (placement, command) =>
     turn({degrees})  { return placement.rotate(degrees * DEGREES_TO_RADIANS); }
   });
 
-const run = (placement, commands) =>
-  fromIterable(commands)
+const run = (placement, program) =>
+  fromIterable(program.lines)
+    .map((line) => line.command)
     .scan(step, placement)
     .toArray();
 

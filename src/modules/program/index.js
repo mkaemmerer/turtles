@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { propertyLens, indexLens } from 'utils/lenses';
+import { propertyLens } from 'utils/lenses';
 import Number from 'components/number';
 
 import styles from './index.scss';
@@ -42,12 +42,11 @@ const TurnCommand = ({command, onChange}) => {
 
 const Program = (props) => {
   const {
-    commands,
+    program,
     onCommandChange
   } = props;
 
-  const children = commands.map((command, i) => {
-    const lens = indexLens(i);
+  const children = program.lines.map(({command, lens}, i) => {
     const onChange = (newValue) => { onCommandChange(lens, newValue); };
 
     return (
@@ -64,7 +63,7 @@ const Program = (props) => {
   );
 };
 Program.propTypes = {
-  commands: PropTypes.array.isRequired,
+  program: PropTypes.object.isRequired,
   onCommandChange: PropTypes.func.isRequired
 };
 

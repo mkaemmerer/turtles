@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
-import { propertyLens, composeLens } from 'utils/lenses';
+import makeProgram from 'program/program';
 import { Turn, Move } from 'program/command';
 import run from 'program/run';
 
@@ -11,7 +11,6 @@ import Turtle from '../turtle';
 import Drawing from '../drawing';
 import Program from '../program';
 
-const commandsLens = propertyLens('commands');
 const RADIANS_TO_DEGREES = 180 / Math.PI;
 
 import styles from './index.scss';
@@ -26,7 +25,7 @@ class TurtleApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      commands: []
+      program: makeProgram()
     };
     this.initialPlacement = new Placement(
       new P2(100, 100),
@@ -35,14 +34,15 @@ class TurtleApp extends React.Component {
   }
 
   addCommand(command) {
-    const { commands } = this.state;
-    const newCommands = commands.concat(command);
-    this.setState({ commands: newCommands });
+    const { program } = this.state;
+    const newProgram = program.append(command);
+    this.setState({ program: newProgram });
   }
 
   onCommandChange = (commandLens, newCommand) => {
-    const lens = composeLens(commandsLens, commandLens);
-    this.setState((state) => lens.set(state, newCommand));
+    const { program } = this.state;
+    const newProgram = program.set(commandLens, newCommand);
+    this.setState({ program: newProgram });
   }
   onTurtleMove = (movement) => {
     this.addCommand(Move(movement));
@@ -53,8 +53,8 @@ class TurtleApp extends React.Component {
   }
 
   render() {
-    const { commands } = this.state;
-    const placements = run(this.initialPlacement, commands);
+    const { program } = this.state;
+    const placements = run(this.initialPlacement, program);
     const currentPlacement = placements[placements.length-1];
 
     return (
@@ -71,7 +71,7 @@ class TurtleApp extends React.Component {
         </svg>
         <div className={cx('turtle-app_sidebar')}>
           <Program
-            commands={commands}
+            program={program}
             onCommandChange={this.onCommandChange}
           />
         </div>
