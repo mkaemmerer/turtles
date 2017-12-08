@@ -1,3 +1,5 @@
+import { last } from 'utils/generators';
+
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
 const step = (placement, line) =>
@@ -13,17 +15,5 @@ const step = (placement, line) =>
     }
   });
 
-const interpret = (state, step, program) => {
-  let results = [];
-
-  for(const line of program.lines) {
-    const [newState, newResults] = step(state, line);
-    results = results.concat(newResults);
-    state   = newState;
-  }
-
-  return [state, results];
-};
-
-const run = (placement, program) => interpret(placement, step, program);
+const run = (placement, program) => last(program.interpret(placement, step));
 export default run;

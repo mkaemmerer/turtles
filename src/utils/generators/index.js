@@ -30,3 +30,9 @@ export function toArray(generator) {
   for(const x of generator) { arr.push(x); }
   return arr;
 }
+
+export function last(generator) {
+  let last;
+  for(const x of generator) { last = x; }
+  return last;
+}

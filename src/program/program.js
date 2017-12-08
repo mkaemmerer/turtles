@@ -16,6 +16,19 @@ class Program {
     const lines = lens.set(this.lines, newCommand);
     return new Program(lines);
   }
+
+  * interpret(state, step){
+    let results = [];
+    yield [state, results];
+
+    for(const line of this.lines) {
+      const [newState, newResults] = step(state, line);
+      results = results.concat(newResults);
+      state   = newState;
+
+      yield [state, results];
+    }
+  }
 }
 
 const program = () => new Program([]);

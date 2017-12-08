@@ -19,6 +19,9 @@ class FluentGenerator {
   toArray() {
     return gen.toArray(this.generator);
   }
+  last() {
+    return gen.last(this.generator);
+  }
 }
 
 export const range = (start, end) =>
