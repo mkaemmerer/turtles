@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { propertyLens } from 'utils/lenses';
+import { propertyLens, safeLens } from 'utils/lenses';
 import Number from 'components/number';
 
 import styles from './index.scss';
@@ -40,14 +40,17 @@ const TurnCommand = ({command, onCommandChange}) => {
 };
 
 
-const Program = ({ program, onProgramChange }) => {
-  const children = program.lines.map(({command, lens}, i) => {
+const Program = ({program, onProgramChange, highlightedCommands}) => {
+  const children = program.lines.map((entry, i) => {
+    const { command, lens } = entry;
     const onCommandChange = (newCommand) => {
       onProgramChange(program.set(lens, newCommand));
     };
+    const isHighlighted = safeLens(lens, false).get(highlightedCommands);
+    const className = cx('program_line', { 'program_line--highlighted': isHighlighted });
 
     return (
-      <div key={i} className={cx('program_line')}>
+      <div key={i} className={className}>
         <Command command={command} onCommandChange={onCommandChange}/>
       </div>
     );
@@ -61,7 +64,8 @@ const Program = ({ program, onProgramChange }) => {
 };
 Program.propTypes = {
   program: PropTypes.object.isRequired,
-  onProgramChange: PropTypes.func.isRequired
+  onProgramChange: PropTypes.func.isRequired,
+  highlightedCommands: PropTypes.array.isRequired
 };
 
 export default Program;

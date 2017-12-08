@@ -24,25 +24,36 @@ class TurtleApp extends React.Component {
   }
   constructor(props) {
     super(props);
-    this.state = {
-      program: makeProgram(),
-      highlightedMarks: [],
-      highlightedCommands: []
-    };
+
     this.initialPlacement = new Placement(
       new P2(100, 100),
       V2.fromRotation(Math.PI/6)
     );
+    const program = makeProgram();
+    const { placement, output, trace } = run(this.initialPlacement, program);
+
+    this.state = {
+      program,
+      placement,
+      output,
+      trace,
+      highlightedMarks: [],
+      highlightedCommands: []
+    }
   }
 
   addCommand(command) {
     const { program } = this.state;
     const newProgram = program.append(command)[1];
-    this.setState({ program: newProgram });
+    this.runProgram(newProgram);
+  }
+  runProgram(program) {
+    const { placement, output, trace } = run(this.initialPlacement, program);
+    this.setState({ program, placement, output, trace });
   }
 
   onProgramChange = (program) => {
-    this.setState({ program });
+    this.runProgram(program);
   }
   onTurtleMove = (movement) => {
     this.addCommand(Move(movement));
@@ -52,13 +63,31 @@ class TurtleApp extends React.Component {
     this.addCommand(Turn(degrees));
   }
 
-  onHoveredMarkChange = (mark, lens) => {
-    this.setState({ highlightedMarks: lens.set([], true) });
+  onHoveredMarkChange = (entry) => {
+    if(entry) {
+      const { trace } = this.state;
+      const source    = trace.getSource(entry);
+
+      this.setState({
+        highlightedMarks:    entry.lens.set([], true),
+        highlightedCommands: source.lens.set([], true)
+      });
+    } else {
+      this.setState({
+        highlightedMarks: [],
+        highlightedCommands: []
+      });
+    }
   }
 
   render() {
-    const { program, highlightedMarks } = this.state;
-    const {placement, output} = run(this.initialPlacement, program);
+    const {
+      program,
+      placement,
+      output,
+      highlightedMarks,
+      highlightedCommands
+    } = this.state;
 
     return (
       <div className={cx('turtle-app')} {...this.props}>
@@ -78,6 +107,7 @@ class TurtleApp extends React.Component {
           <Program
             program={program}
             onProgramChange={this.onProgramChange}
+            highlightedCommands={highlightedCommands}
           />
         </div>
       </div>

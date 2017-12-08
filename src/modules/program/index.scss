@@ -7,5 +7,8 @@
 
 .program_line {
   font-family: $font-family-monospace;
-  margin: $space-inset-stretch-s;
+  padding: $space-inset-stretch-s;
+}
+.program_line--highlighted {
+  background: $color-blue-3;
 }
