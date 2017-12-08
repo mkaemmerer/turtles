@@ -5,18 +5,19 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const toPathString = (path) =>
-  'M' + path.map((p) => `${p.position.x}, ${p.position.y}`).join(' L ');
-
-const Drawing = ({placements}) => {
-  const pathString = toPathString(placements);
+const Drawing = ({lines}) => {
+  const children = lines.map((line, i) => (
+    <line key={i} x1={line.from.x} y1={line.from.y} x2={line.to.x} y2={line.to.y}/>
+  ));
 
   return (
-    <path className={cx('drawing')} d={pathString}/>
+    <g className={cx('drawing')}>
+      {children}
+    </g>
   );
 }
 Drawing.propTypes = {
-  placements: PropTypes.array,
+  lines: PropTypes.array,
 };
 
 export default Drawing;

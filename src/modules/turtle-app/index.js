@@ -52,17 +52,16 @@ class TurtleApp extends React.Component {
 
   render() {
     const { program } = this.state;
-    const placements = run(this.initialPlacement, program);
-    const currentPlacement = placements[placements.length-1];
+    const [placement, lines] = run(this.initialPlacement, program);
 
     return (
       <div className={cx('turtle-app')} {...this.props}>
         <svg className={cx('turtle-app_canvas')}>
           <Drawing
-            placements={placements}
+            lines={lines}
           />
           <Turtle
-            placement={currentPlacement}
+            placement={placement}
             onTurtleMove={this.onTurtleMove}
             onTurtleRotate={this.onTurtleRotate}
           />
