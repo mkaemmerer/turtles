@@ -6,30 +6,31 @@ class Program {
   constructor(lines) {
     this.lines = lines;
   }
+  static empty() {
+    return new Program([]);
+  }
+
   append(command) {
     const i = this.lines.length;
-    const lens = composeLens(indexLens(i), commandLens);
+    const lens = indexLens(i);
     const line = { command, lens };
-    return new Program(this.lines.concat(line));
+    const program = new Program(this.lines.concat(line));
+
+    return [line, program];
   }
   set(lens, newCommand) {
-    const lines = lens.set(this.lines, newCommand);
+    const lines = composeLens(lens, commandLens).set(this.lines, newCommand);
     return new Program(lines);
   }
 
   * interpret(state, step){
-    let results = [];
-    yield [state, results];
+    yield state;
 
     for(const line of this.lines) {
-      const [newState, newResults] = step(state, line);
-      results = results.concat(newResults);
-      state   = newState;
-
-      yield [state, results];
+      state = step(state, line);
+      yield state;
     }
   }
 }
 
-const program = () => new Program([]);
-export default program;
+export default Program.empty;

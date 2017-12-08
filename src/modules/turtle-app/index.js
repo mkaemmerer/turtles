@@ -37,7 +37,7 @@ class TurtleApp extends React.Component {
 
   addCommand(command) {
     const { program } = this.state;
-    const newProgram = program.append(command);
+    const newProgram = program.append(command)[1];
     this.setState({ program: newProgram });
   }
 
@@ -58,7 +58,7 @@ class TurtleApp extends React.Component {
 
   render() {
     const { program, highlightedMarks } = this.state;
-    const [placement, output] = run(this.initialPlacement, program);
+    const {placement, output} = run(this.initialPlacement, program);
 
     return (
       <div className={cx('turtle-app')} {...this.props}>

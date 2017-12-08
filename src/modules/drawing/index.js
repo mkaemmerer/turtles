@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { indexLens, safeLens, emptyLens } from 'utils/lenses';
+import { safeLens, emptyLens } from 'utils/lenses';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -30,8 +30,7 @@ const LineMark = ({ isHighlighted, data, ...props }) => {
 
 
 const Drawing = ({output, onHoverChange, highlightedMarks}) => {
-  const children = output.map((mark, i) => {
-    const lens = indexLens(i);
+  const children = output.entries.map(({mark, lens}, i) => {
     const isHighlighted = safeLens(lens, false).get(highlightedMarks);
     const onMouseEnter  = () => { onHoverChange(mark, lens);      };
     const onMouseLeave  = () => { onHoverChange(null, emptyLens); };
@@ -54,7 +53,7 @@ const Drawing = ({output, onHoverChange, highlightedMarks}) => {
   );
 }
 Drawing.propTypes = {
-  output: PropTypes.array,
+  output: PropTypes.object.isRequired,
   onHoverChange: PropTypes.func.isRequired,
   highlightedMarks: PropTypes.array.isRequired
 };

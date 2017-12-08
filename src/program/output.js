@@ -1,16 +1,21 @@
+import { indexLens } from 'utils/lenses';
+
 class Output {
-  constructor(type, data, lens) {
-    this.type = type;
-    this.data = data;
-    this.lens = lens;
+  constructor(entries) {
+    this.entries = entries;
   }
-  match(handlers) {
-    const handle = handlers[this.type];
-    return handle(this.data, this.lens);
+  static empty() {
+    return new Output([]);
+  }
+
+  append(mark) {
+    const i = this.entries.length;
+    const lens = indexLens(i);
+    const entry = { mark, lens };
+    const output = new Output(this.entries.concat(entry));
+
+    return [entry, output];
   }
 }
 
-
-const Line = ({from, to}, lens)  => new Output('line', {from, to}, lens);
-
-export { Line };
+export default Output.empty;
