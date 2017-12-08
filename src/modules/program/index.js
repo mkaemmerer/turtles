@@ -21,10 +21,10 @@ Command.propTypes = {
 };
 
 const MoveCommand = ({command, onCommandChange}) => {
-  const onNumberChange = (value) => onCommandChange(command.set(distanceLens, value))
+  const onNumberChange = (value) => onCommandChange(command.set(distanceLens, value));
   return (
     <span>
-      move&nbsp;
+      move &nbsp;
       <Number value={command.data.distance} onChange={onNumberChange}/>
     </span>
   );
@@ -33,7 +33,7 @@ const TurnCommand = ({command, onCommandChange}) => {
   const onNumberChange = (value) => onCommandChange(command.set(degreesLens, value));
   return (
     <span>
-      turn&nbsp;
+      turn &nbsp;
       <Number value={command.data.degrees} onChange={onNumberChange}/>
     </span>
   );
@@ -49,7 +49,7 @@ const Program = ({program, onProgramChange, onHoverChange, highlightedCommands})
     const isHighlighted = safeLens(lens, false).get(highlightedCommands);
     const className     = cx('program_line', { 'program_line--highlighted': isHighlighted });
     const onMouseEnter  = () => { onHoverChange(line); };
-    const onMouseLeave  = () => { onHoverChange(null);  };
+    const onMouseLeave  = () => { onHoverChange(null); };
 
     return (
       <div key={i} className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -71,4 +71,10 @@ Program.propTypes = {
   highlightedCommands: PropTypes.array.isRequired
 };
 
-export default Program;
+
+class OptimizedProgram extends React.PureComponent {
+  render() {
+    return (<Program {...this.props}/>);
+  }
+}
+export default OptimizedProgram;

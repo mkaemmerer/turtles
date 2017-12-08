@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   ShapeMoveForward,
   ShapeMoveBackward,
@@ -42,5 +43,17 @@ const Controls = ({ onMoveDragStart, onRotateDragStart, showMovement, showRotati
     </g>
   )
 };
+Controls.PropTypes = {
+  onMoveDragStart:   PropTypes.func,
+  onRotateDragStart: PropTypes.func,
+  showMovement:      PropTypes.bool,
+  showRotation:      PropTypes.bool
+};
 
-export default Controls;
+
+class OptimizedControls extends React.PureComponent {
+  render() {
+    return (<Controls {...this.props}/>);
+  }
+}
+export default OptimizedControls;
