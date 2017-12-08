@@ -10,6 +10,9 @@ class FluentGenerator {
   forEach(f) {
     gen.forEach(f, this.generator);
   }
+  scan(step, seed) {
+    return new FluentGenerator(gen.scan(step, seed, this.generator));
+  }
   reduce(f, acc) {
     return gen.reduce(f, acc, this.generator);
   }
@@ -20,3 +23,6 @@ class FluentGenerator {
 
 export const range = (start, end) =>
   new FluentGenerator(gen.range(start, end));
+
+export const fromIterable = (iterable) =>
+  new FluentGenerator(iterable);

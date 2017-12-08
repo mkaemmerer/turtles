@@ -4,10 +4,12 @@ import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
 import { propertyLens, composeLens } from 'utils/lenses';
+import { Turn, Move } from 'program/command';
+import run from 'program/run';
+
 import Turtle from '../turtle';
 import Drawing from '../drawing';
 import Program from '../program';
-import run from './run';
 
 const commandsLens = propertyLens('commands');
 const RADIANS_TO_DEGREES = 180 / Math.PI;
@@ -43,11 +45,11 @@ class TurtleApp extends React.Component {
     this.setState((state) => lens.set(state, newCommand));
   }
   onTurtleMove = (movement) => {
-    this.addCommand({ type: 'move', amount: movement });
+    this.addCommand(Move(movement));
   }
   onTurtleRotate = (rotation) => {
-    const degrees = (rotation * RADIANS_TO_DEGREES).toFixed();
-    this.addCommand({ type: 'turn', amount: degrees });
+    const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
+    this.addCommand(Turn(degrees));
   }
 
   render() {

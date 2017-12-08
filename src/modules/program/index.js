@@ -7,34 +7,34 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const amountLens = propertyLens('amount');
+const distanceLens = propertyLens('distance');
+const degreesLens  = propertyLens('degrees');
 
-const Command = (props) => {
-  switch(props.command.type) {
-    case 'move': return (<MoveCommand {...props}/>);
-    case 'turn': return (<TurnCommand {...props}/>);
-  }
-};
+const Command = (props) =>
+  props.command.match({
+    move(){ return (<MoveCommand {...props}/>); },
+    turn(){ return (<TurnCommand {...props}/>); }
+  });
 Command.propTypes = {
   command: PropTypes.object.isRequired,
   onChange: PropTypes.func
 };
 
 const MoveCommand = ({command, onChange}) => {
-  const onNumberChange = (value) => onChange(amountLens.set(command, value));
+  const onNumberChange = (value) => onChange(command.set(distanceLens, value))
   return (
     <span>
-      move
-      <Number value={command.amount} onChange={onNumberChange}/>
+      move&nbsp;
+      <Number value={command.data.distance} onChange={onNumberChange}/>
     </span>
   );
 };
 const TurnCommand = ({command, onChange}) => {
-  const onNumberChange = (value) => onChange(amountLens.set(command, value));
+  const onNumberChange = (value) => onChange(command.set(degreesLens, value));
   return (
     <span>
-      turn
-      <Number value={command.amount} onChange={onNumberChange}/>
+      turn&nbsp;
+      <Number value={command.data.degrees} onChange={onNumberChange}/>
     </span>
   );
 };
