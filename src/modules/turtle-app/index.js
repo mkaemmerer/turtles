@@ -30,9 +30,10 @@ class TurtleApp extends React.Component {
     super(props);
 
     this.initialPlacement = initialPlacement;
+    this.currentCommand = null;
+
     const program = makeProgram();
     const { placement, output, trace } = run(this.initialPlacement, program);
-
     this.state = {
       program,
       placement,
@@ -45,7 +46,8 @@ class TurtleApp extends React.Component {
 
   addCommand(command) {
     const { program } = this.state;
-    const newProgram = program.append(command)[1];
+    const [newCommand, newProgram] = program.append(command);
+    this.currentCommand = newCommand.lens;
     this.runProgram(newProgram);
   }
   runProgram(program) {
@@ -56,12 +58,30 @@ class TurtleApp extends React.Component {
   onProgramChange = (program) => {
     this.runProgram(program);
   }
+  onTurtleMoveStart = () => {
+    this.addCommand(Move(0));
+  }
   onTurtleMove = (movement) => {
-    this.addCommand(Move(movement));
+    //TODO: this is getting run before the previous state has had a chance to update, so the program doesn't contain the new command yet
+    const { program } = this.state;
+    const newProgram = program.set(this.currentCommand, Move(movement));
+    this.runProgram(newProgram);
+  }
+  onTurtleMoveEnd = () => {
+    this.currentCommand = null;
+  }
+  onTurtleRotateStart = () => {
+    this.addCommand(Turn(0));
   }
   onTurtleRotate = (rotation) => {
+    //TODO: this is getting run before the previous state has had a chance to update, so the program doesn't contain the new command yet
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    this.addCommand(Turn(degrees));
+    const { program } = this.state;
+    const newProgram = program.set(this.currentCommand, Turn(degrees));
+    this.runProgram(newProgram);
+  }
+  onTurtleRotateEnd = () => {
+    this.currentCommand = null;
   }
 
   onHoveredMarkChange = (outputEntry) => {
@@ -116,8 +136,12 @@ class TurtleApp extends React.Component {
           />
           <Turtle
             placement={placement}
-            onTurtleMove={this.onTurtleMove}
-            onTurtleRotate={this.onTurtleRotate}
+            onTurtleMoveStart = {this.onTurtleMoveStart}
+            onTurtleMove      = {this.onTurtleMove}
+            onTurtleMoveEnd   = {this.onTurtleMoveEnd}
+            onTurtleRotateStart = {this.onTurtleRotateStart}
+            onTurtleRotate      = {this.onTurtleRotate}
+            onTurtleRotateEnd   = {this.onTurtleRotateEnd}
           />
         </svg>
         <div className={cx('turtle-app_sidebar')}>

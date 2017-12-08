@@ -55,9 +55,13 @@ const Rotatable = MakeDraggable(rotateSpec, rotateAdapter);
 const DraggableTurtle = Movable(Rotatable(Turtle));
 class ManagedTurtle extends React.Component {
   static propTypes = {
-    placement:      PropTypes.object.isRequired,
-    onTurtleMove:   PropTypes.func.isRequired,
-    onTurtleRotate: PropTypes.func.isRequired
+    placement:           PropTypes.object.isRequired,
+    onTurtleMoveStart:   PropTypes.func.isRequired,
+    onTurtleMove:        PropTypes.func.isRequired,
+    onTurtleMoveEnd:     PropTypes.func.isRequired,
+    onTurtleRotateStart: PropTypes.func.isRequired,
+    onTurtleRotate:      PropTypes.func.isRequired,
+    onTurtleRotateEnd:   PropTypes.func.isRequired
   }
   constructor(props) {
     super(props);
@@ -74,6 +78,7 @@ class ManagedTurtle extends React.Component {
   }
 
   onMoveDragStart = () => {
+    this.props.onTurtleMoveStart();
   }
   onMoveDrag = (offset) => {
     const { placement } = this.props;
@@ -83,13 +88,15 @@ class ManagedTurtle extends React.Component {
       placement: newPlacement,
       movement
     });
+    this.props.onTurtleMove(movement);
   }
   onMoveDragEnd = () => {
     const { movement } = this.state;
-    this.props.onTurtleMove(movement);
+    this.props.onTurtleMoveEnd(movement);
   }
 
   onRotateDragStart = () => {
+    this.props.onTurtleRotateStart();
   }
   onRotateDrag = (start, current) => {
     const { placement } = this.props;
@@ -99,10 +106,11 @@ class ManagedTurtle extends React.Component {
       placement: newPlacement,
       rotation
     });
+    this.props.onTurtleRotate(rotation);
   }
   onRotateDragEnd = () => {
     const { rotation } = this.state;
-    this.props.onTurtleRotate(rotation);
+    this.props.onTurtleRotateEnd(rotation);
   }
 
   render() {
