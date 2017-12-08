@@ -71,10 +71,4 @@ Program.propTypes = {
   highlightedCommands: PropTypes.array.isRequired
 };
 
-
-class OptimizedProgram extends React.PureComponent {
-  render() {
-    return (<Program {...this.props}/>);
-  }
-}
-export default OptimizedProgram;
+export default Program;
