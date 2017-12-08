@@ -1,4 +1,5 @@
 import { last } from 'utils/generators';
+import { V2 } from 'utils/vectors';
 import { Line, Turn } from './mark';
 import Output from './output';
 import Trace from './trace';
@@ -22,8 +23,8 @@ const step = (placement, programLine) =>
       const newMarks = [
         Turn({
           position: placement.position,
-          from:     placement.heading.toRotation(),
-          to:       newPlacement.heading.toRotation()
+          from:     V2.toRotation(placement.heading),
+          to:       V2.toRotation(newPlacement.heading)
         })
       ];
       return [ newPlacement, newMarks ];

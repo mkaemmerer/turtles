@@ -17,7 +17,4 @@ class Command {
 const Turn = (degrees)  => new Command('turn', {degrees});
 const Move = (distance) => new Command('move', {distance});
 
-export {
-  Turn,
-  Move
-};
+export { Turn, Move };

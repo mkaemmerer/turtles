@@ -7,7 +7,7 @@ import Turtle from './turtle';
 const RADIANS_TO_DEGREES = 180 / Math.PI;
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
-const toVector = ({x,y}) => new V2(x,y);
+const toVector = ({x,y}) => V2(x,y);
 const roundDistance = (dist) => Math.round(dist);
 const roundDegrees  = (rads) => Math.round(rads * RADIANS_TO_DEGREES) * DEGREES_TO_RADIANS;
 
