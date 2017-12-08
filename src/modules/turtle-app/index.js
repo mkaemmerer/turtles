@@ -12,6 +12,10 @@ import Drawing from '../drawing';
 import Program from '../program';
 
 const RADIANS_TO_DEGREES = 180 / Math.PI;
+const initialPlacement = new Placement(
+  new P2(480, 380),
+  new V2(0, -1)
+);
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -25,10 +29,7 @@ class TurtleApp extends React.Component {
   constructor(props) {
     super(props);
 
-    this.initialPlacement = new Placement(
-      new P2(100, 100),
-      V2.fromRotation(Math.PI/6)
-    );
+    this.initialPlacement = initialPlacement;
     const program = makeProgram();
     const { placement, output, trace } = run(this.initialPlacement, program);
 
