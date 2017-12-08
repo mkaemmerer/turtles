@@ -25,7 +25,9 @@ class TurtleApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      program: makeProgram()
+      program: makeProgram(),
+      highlightedMarks: [],
+      highlightedCommands: []
     };
     this.initialPlacement = new Placement(
       new P2(100, 100),
@@ -50,8 +52,12 @@ class TurtleApp extends React.Component {
     this.addCommand(Turn(degrees));
   }
 
+  onHoveredMarkChange = (mark, lens) => {
+    this.setState({ highlightedMarks: lens.set([], true) });
+  }
+
   render() {
-    const { program } = this.state;
+    const { program, highlightedMarks } = this.state;
     const [placement, output] = run(this.initialPlacement, program);
 
     return (
@@ -59,6 +65,8 @@ class TurtleApp extends React.Component {
         <svg className={cx('turtle-app_canvas')}>
           <Drawing
             output={output}
+            onHoverChange={this.onHoveredMarkChange}
+            highlightedMarks={highlightedMarks}
           />
           <Turtle
             placement={placement}

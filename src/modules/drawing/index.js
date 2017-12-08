@@ -1,39 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { indexLens, safeLens, emptyLens } from 'utils/lenses';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const Mark = ({output, ...props}) =>
-  output.match({
+const Mark = ({mark, ...props}) =>
+  mark.match({
     line(data){ return (<LineMark {...props} data={data}/>); },
   });
 Mark.propTypes = {
-  output: PropTypes.object.isRequired,
+  mark: PropTypes.object.isRequired,
+  isHighlighted: PropTypes.bool.isRequired,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func
 };
 
-const LineMark = ({ data, ...props }) => {
+const LineMark = ({ isHighlighted, data, ...props }) => {
   const { from, to } = data;
-  return (<line {...props} x1={from.x} y1={from.y} x2={to.x} y2={to.y}/>);
+  const className = cx('mark', { 'mark--highlighted': isHighlighted });
+  return (
+    <g className={className} {...props}>
+      <line className={cx('mark_hitbox')} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />
+      <line className={cx('mark_line')}   x1={from.x} y1={from.y} x2={to.x} y2={to.y} />
+    </g>
+  );
 };
 
 
-const Drawing = ({output}) => {
-  const children = output.map((out, i) => {
-    const onMouseEnter = () => {
-      console.log(out.lens); //eslint-disable-line
-    };
-    const onMouseLeave = () => {
-      console.log(out.lens); //eslint-disable-line
-    };
+const Drawing = ({output, onHoverChange, highlightedMarks}) => {
+  const children = output.map((mark, i) => {
+    const lens = indexLens(i);
+    const isHighlighted = safeLens(lens, false).get(highlightedMarks);
+    const onMouseEnter  = () => { onHoverChange(mark, lens);      };
+    const onMouseLeave  = () => { onHoverChange(null, emptyLens); };
 
     return (
       <Mark
         key={i}
-        output={out}
+        mark={mark}
+        isHighlighted={isHighlighted}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       />
@@ -47,7 +54,9 @@ const Drawing = ({output}) => {
   );
 }
 Drawing.propTypes = {
-  output: PropTypes.array
+  output: PropTypes.array,
+  onHoverChange: PropTypes.func.isRequired,
+  highlightedMarks: PropTypes.array.isRequired
 };
 
 export default Drawing;
