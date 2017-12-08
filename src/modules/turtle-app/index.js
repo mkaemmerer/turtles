@@ -39,10 +39,8 @@ class TurtleApp extends React.Component {
     this.setState({ program: newProgram });
   }
 
-  onCommandChange = (commandLens, newCommand) => {
-    const { program } = this.state;
-    const newProgram = program.set(commandLens, newCommand);
-    this.setState({ program: newProgram });
+  onProgramChange = (program) => {
+    this.setState({ program });
   }
   onTurtleMove = (movement) => {
     this.addCommand(Move(movement));
@@ -72,7 +70,7 @@ class TurtleApp extends React.Component {
         <div className={cx('turtle-app_sidebar')}>
           <Program
             program={program}
-            onCommandChange={this.onCommandChange}
+            onProgramChange={this.onProgramChange}
           />
         </div>
       </div>

@@ -17,11 +17,11 @@ const Command = (props) =>
   });
 Command.propTypes = {
   command: PropTypes.object.isRequired,
-  onChange: PropTypes.func
+  onCommandChange: PropTypes.func
 };
 
-const MoveCommand = ({command, onChange}) => {
-  const onNumberChange = (value) => onChange(command.set(distanceLens, value))
+const MoveCommand = ({command, onCommandChange}) => {
+  const onNumberChange = (value) => onCommandChange(command.set(distanceLens, value))
   return (
     <span>
       move&nbsp;
@@ -29,8 +29,8 @@ const MoveCommand = ({command, onChange}) => {
     </span>
   );
 };
-const TurnCommand = ({command, onChange}) => {
-  const onNumberChange = (value) => onChange(command.set(degreesLens, value));
+const TurnCommand = ({command, onCommandChange}) => {
+  const onNumberChange = (value) => onCommandChange(command.set(degreesLens, value));
   return (
     <span>
       turn&nbsp;
@@ -40,18 +40,15 @@ const TurnCommand = ({command, onChange}) => {
 };
 
 
-const Program = (props) => {
-  const {
-    program,
-    onCommandChange
-  } = props;
-
+const Program = ({ program, onProgramChange }) => {
   const children = program.lines.map(({command, lens}, i) => {
-    const onChange = (newValue) => { onCommandChange(lens, newValue); };
+    const onCommandChange = (newCommand) => {
+      onProgramChange(program.set(lens, newCommand));
+    };
 
     return (
       <div key={i} className={cx('program_line')}>
-        <Command command={command} onChange={onChange}/>
+        <Command command={command} onCommandChange={onCommandChange}/>
       </div>
     );
   });
@@ -64,7 +61,7 @@ const Program = (props) => {
 };
 Program.propTypes = {
   program: PropTypes.object.isRequired,
-  onCommandChange: PropTypes.func.isRequired
+  onProgramChange: PropTypes.func.isRequired
 };
 
 export default Program;
