@@ -40,17 +40,19 @@ const TurnCommand = ({command, onCommandChange}) => {
 };
 
 
-const Program = ({program, onProgramChange, highlightedCommands}) => {
-  const children = program.lines.map((entry, i) => {
-    const { command, lens } = entry;
+const Program = ({program, onProgramChange, onHoverChange, highlightedCommands}) => {
+  const children = program.lines.map((line, i) => {
+    const { command, lens } = line;
     const onCommandChange = (newCommand) => {
       onProgramChange(program.set(lens, newCommand));
     };
     const isHighlighted = safeLens(lens, false).get(highlightedCommands);
-    const className = cx('program_line', { 'program_line--highlighted': isHighlighted });
+    const className     = cx('program_line', { 'program_line--highlighted': isHighlighted });
+    const onMouseEnter  = () => { onHoverChange(line); };
+    const onMouseLeave  = () => { onHoverChange(null);  };
 
     return (
-      <div key={i} className={className}>
+      <div key={i} className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         <Command command={command} onCommandChange={onCommandChange}/>
       </div>
     );
@@ -65,6 +67,7 @@ const Program = ({program, onProgramChange, highlightedCommands}) => {
 Program.propTypes = {
   program: PropTypes.object.isRequired,
   onProgramChange: PropTypes.func.isRequired,
+  onHoverChange: PropTypes.func.isRequired,
   highlightedCommands: PropTypes.array.isRequired
 };
 

@@ -63,14 +63,30 @@ class TurtleApp extends React.Component {
     this.addCommand(Turn(degrees));
   }
 
-  onHoveredMarkChange = (entry) => {
-    if(entry) {
-      const { trace } = this.state;
-      const source    = trace.getSource(entry);
+  onHoveredMarkChange = (outputEntry) => {
+    if(outputEntry) {
+      const { trace }  = this.state;
+      const sourceLine = trace.getSource(outputEntry);
 
       this.setState({
-        highlightedMarks:    entry.lens.set([], true),
-        highlightedCommands: source.lens.set([], true)
+        highlightedMarks:    outputEntry.lens.set([], true),
+        highlightedCommands: sourceLine.lens.set([], true)
+      });
+    } else {
+      this.setState({
+        highlightedMarks: [],
+        highlightedCommands: []
+      });
+    }
+  }
+  onHoveredCommandChange = (sourceLine) => {
+    if(sourceLine) {
+      const { trace }   = this.state;
+      const outputEntry = trace.getOutput(sourceLine);
+
+      this.setState({
+        highlightedMarks:    outputEntry ? outputEntry.lens.set([], true) : [],
+        highlightedCommands: sourceLine.lens.set([], true)
       });
     } else {
       this.setState({
@@ -107,6 +123,7 @@ class TurtleApp extends React.Component {
           <Program
             program={program}
             onProgramChange={this.onProgramChange}
+            onHoverChange={this.onHoveredCommandChange}
             highlightedCommands={highlightedCommands}
           />
         </div>
