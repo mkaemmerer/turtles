@@ -91,6 +91,7 @@ class Vector2 {
   magnitude() { return Vector2.magnitude(this);  }
   normalize() { return Vector2.unit(this);       }
   rotate(s)   { return Vector2.rotate(this, s);  }
+  toRotation(){ return Vector2.toRotation(this); }
 }
 
 

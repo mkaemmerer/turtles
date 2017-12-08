@@ -9,6 +9,7 @@ const cx = classnames.bind(styles);
 const Mark = ({mark, ...props}) =>
   mark.match({
     line(data){ return (<LineMark {...props} data={data}/>); },
+    turn(){ return false; }
   });
 Mark.propTypes = {
   mark: PropTypes.object.isRequired,

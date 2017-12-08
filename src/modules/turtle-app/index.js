@@ -85,7 +85,7 @@ class TurtleApp extends React.Component {
       const outputEntry = trace.getOutput(sourceLine);
 
       this.setState({
-        highlightedMarks:    outputEntry ? outputEntry.lens.set([], true) : [],
+        highlightedMarks:    outputEntry.lens.set([], true),
         highlightedCommands: sourceLine.lens.set([], true)
       });
     } else {

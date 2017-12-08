@@ -1,35 +1,48 @@
 import { last } from 'utils/generators';
-import { Line } from './mark';
+import { Line, Turn } from './mark';
 import Output from './output';
 import Trace from './trace';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
-const step = ({placement, output, trace}, programLine) =>
+const step = (placement, programLine) =>
   programLine.command.match({
     move({distance}) {
       const newPlacement = placement.move(distance);
-      const [newOutputEntry, newOutput] = output.append(Line({
-        from: placement.position,
-        to:   newPlacement.position
-      }));
-      const newTrace = trace.register(programLine, newOutputEntry);
-
-      return {
-        placement: newPlacement,
-        output: newOutput,
-        trace: newTrace
-      };
+      const newMarks = [
+        Line({
+          from: placement.position,
+          to:   newPlacement.position
+        })
+      ];
+      return [ newPlacement, newMarks ];
     },
     turn({degrees})  {
       const newPlacement = placement.rotate(degrees * DEGREES_TO_RADIANS);
-      return {
-        placement: newPlacement,
-        output,
-        trace
-      };
+      const newMarks = [
+        Turn({
+          position: placement.position,
+          from:     placement.heading.toRotation(),
+          to:       newPlacement.heading.toRotation()
+        })
+      ];
+      return [ newPlacement, newMarks ];
     }
   });
+
+const stepTrace = ({placement, output, trace}, programLine) => {
+  const [ newPlacement, newMarks ] = step(placement, programLine);
+  placement = newPlacement;
+
+  for(const mark of newMarks) {
+    const [outputEntry, newOutput] = output.append(mark);
+    const newTrace = trace.register(programLine, outputEntry);
+    output = newOutput;
+    trace  = newTrace;
+  }
+
+  return { placement, output, trace };
+};
 
 const run = (placement, program) => {
   const initialState = {
@@ -37,7 +50,7 @@ const run = (placement, program) => {
     output: Output(),
     trace:  Trace()
   };
-  return last(program.interpret(initialState, step));
+  return last(program.interpret(initialState, stepTrace));
 };
 
 export default run;

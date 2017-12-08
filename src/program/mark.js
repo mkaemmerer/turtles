@@ -9,6 +9,7 @@ class Mark {
   }
 }
 
-const Line = ({from, to}) => new Mark('line', {from, to});
+const Line = ({from, to})           => new Mark('line', {from, to});
+const Turn = ({position, from, to}) => new Mark('turn', {position, from, to});
 
-export { Line };
+export { Line, Turn };
