@@ -52,13 +52,13 @@ class TurtleApp extends React.Component {
 
   render() {
     const { program } = this.state;
-    const [placement, lines] = run(this.initialPlacement, program);
+    const [placement, output] = run(this.initialPlacement, program);
 
     return (
       <div className={cx('turtle-app')} {...this.props}>
         <svg className={cx('turtle-app_canvas')}>
           <Drawing
-            lines={lines}
+            output={output}
           />
           <Turtle
             placement={placement}

@@ -4,6 +4,7 @@ $color--guide-line: rgba($color-black, 0.2);
 $color--guide-fill: rgba($color-black, 0.1);
 
 .guides {
+  pointer-events: none;
 }
 
 .guide {

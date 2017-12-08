@@ -1,12 +1,16 @@
 import { last } from 'utils/generators';
+import { Line } from './output';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
-const step = (placement, line) =>
-  line.command.match({
+const step = (placement, programLine) =>
+  programLine.command.match({
     move({distance}) {
       const newPlacement = placement.move(distance);
-      const output = { from: placement.position, to: newPlacement.position };
+      const output = Line({
+        from: placement.position,
+        to:   newPlacement.position
+      }, programLine.lens);
       return [newPlacement, [output]];
     },
     turn({degrees})  {

@@ -20,4 +20,4 @@ const Move = (distance) => new Command('move', {distance});
 export {
   Turn,
   Move
-}
+};
