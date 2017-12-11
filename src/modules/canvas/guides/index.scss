@@ -1,7 +1,7 @@
 @import '../../../style/index';
 
-$color--guide-line: rgba($color-black, 0.2);
-$color--guide-fill: rgba($color-black, 0.1);
+$color--guide-dark: rgba($color-black, 0.2);
+$color--guide-light: rgba($color-black, 0.1);
 
 .guides {
   pointer-events: none;
@@ -19,13 +19,16 @@ $color--guide-fill: rgba($color-black, 0.1);
   display: none;
 }
 .guide_line {
-  stroke: $color--guide-line;
+  stroke: $color--guide-dark;
+}
+.guide_ticks {
+  fill: $color--guide-dark;
 }
 .guide_circle {
-  stroke: $color--guide-line;
+  stroke: $color--guide-dark;
   fill: none;
 }
 .guide_arc {
-  stroke: $color--guide-line;
-  fill:   $color--guide-fill;
+  stroke: $color--guide-dark;
+  fill:   $color--guide-light;
 }
