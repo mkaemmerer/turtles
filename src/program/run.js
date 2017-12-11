@@ -1,13 +1,14 @@
 import { last } from 'utils/generators';
 import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
+import Command from './command';
 import Mark from './mark';
 import Trace from './trace';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
-const step = (placement, programLine) =>
-  programLine.command.match({
+const step = (placement, command) =>
+  Command.match(command, {
     Move(distance) {
       const newPlacement = placement.move(distance);
       const newMarks = [
@@ -32,7 +33,7 @@ const step = (placement, programLine) =>
   });
 
 const stepTrace = ({placement, marks, trace}, programLine) => {
-  const [ newPlacement, newMarks ] = step(placement, programLine);
+  const [ newPlacement, newMarks ] = step(placement, programLine.command);
   placement = newPlacement;
 
   for(const mark of newMarks) {

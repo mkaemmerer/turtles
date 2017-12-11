@@ -1,36 +1,25 @@
 const id = (x) => x;
 
-class Command {
-  constructor(data) {
-    this.data = data;
-  }
-  static Turn(degrees) {
-    return new TurnCommand({degrees});
-  }
-  static Move(distance){
-    return new MoveCommand({distance});
-  }
-  static lens = {
-    get: (c) => c.match({
-      Move: id,
-      Turn: id
-    }),
-    set: (c,amount) => c.match({
-      Move: () => Command.Move(amount),
-      Turn: () => Command.Turn(amount)
-    })
-  }
-}
-class MoveCommand extends Command {
-  match(handlers) {
-    return handlers['Move'](this.data.distance);
-  }
-}
-class TurnCommand extends Command {
-  match(handlers) {
-    return handlers['Turn'](this.data.degrees);
-  }
-}
+const Command = (type, data) => ({type, data});
+Command.Move  = (distance) => Command('Move', {distance});
+Command.Turn  = (degrees)  => Command('Turn', {degrees});
 
+Command.match = ({type, data}, handlers) => {
+  switch(type) {
+    case 'Move': return handlers.Move(data.distance);
+    case 'Turn': return handlers.Turn(data.degrees);
+  }
+};
+
+Command.lens  = {
+  get: (c) => Command.match(c, {
+    Move: id,
+    Turn: id
+  }),
+  set: (c,amount) => Command.match(c, {
+    Move: () => Command.Move(amount),
+    Turn: () => Command.Turn(amount)
+  })
+};
 
 export default Command;
