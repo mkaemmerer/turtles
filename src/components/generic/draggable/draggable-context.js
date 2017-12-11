@@ -13,9 +13,11 @@ const defaultDragState = {
 };
 
 //By default, map to mouseUp and mouseMove
-const defaultAdapter = ({ onDragMove, onDragEnd }) => ({
+const defaultAdapter = ({ onDragMove, onDragEnd, onModifierKeyChanged }) => ({
   onMouseMove: onDragMove,
-  onMouseUp:   onDragEnd
+  onMouseUp:   onDragEnd,
+  onKeyDown:   onModifierKeyChanged,
+  onKeyUp:     onModifierKeyChanged
 });
 
 //Accept an adapter to customize prop names as needed
@@ -102,11 +104,25 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
       this.dragState = defaultDragState;
       component.onDragEnd();
     }
+    onModifierKeyChanged = (e) => {
+      if(!this.dragState.isDragging) { return; }
+
+      if(e.ctrlKey !== this.dragState.ctrlKey ||
+        e.shiftKey !== this.dragState.shiftKey ||
+        e.metaKey !== this.dragState.metaKey
+      ) {
+        this.dragState.ctrlKey  = e.ctrlKey;
+        this.dragState.shiftKey = e.shiftKey;
+        this.dragState.metaKey  = e.metaKey;
+        this.dragState.component.onDrag();
+      }
+    }
 
     render() {
       const adaptedProps = adapter({
         onDragEnd:  this.onDragEnd,
-        onDragMove: this.onDragMove
+        onDragMove: this.onDragMove,
+        onModifierKeyChanged: this.onModifierKeyChanged
       });
 
       return (

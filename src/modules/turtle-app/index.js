@@ -23,7 +23,9 @@ const initialPlacement = new Placement(
 class TurtleApp extends React.Component {
   static propTypes = {
     onMouseUp:   PropTypes.func,
-    onMouseMove: PropTypes.func
+    onMouseMove: PropTypes.func,
+    onKeyDown:   PropTypes.func,
+    onKeyUp:     PropTypes.func
   }
   constructor(props) {
     super(props);
@@ -123,7 +125,7 @@ class TurtleApp extends React.Component {
     } = this.state;
 
     return (
-      <div className={cx('turtle-app')} {...this.props}>
+      <div className={cx('turtle-app')} tabIndex="0" {...this.props}>
         <Canvas
           placement={placement}
           output={output}
