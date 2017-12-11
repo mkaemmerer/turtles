@@ -1,6 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const defaultDragState = {
+  isDragging: false,
+  component:  null,
+  dragStartPosition: null,
+  dragPosition:      null,
+  dragOffset:        null,
+  ctrlKey:  false,
+  shiftKey: false,
+  metaKey:  false
+};
 
 //By default, map to mouseUp and mouseMove
 const defaultAdapter = ({ onDragMove, onDragEnd }) => ({
@@ -22,28 +32,23 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
 
     constructor() {
       super();
-
-      this.dragState = {
-        isDragging:        false,
-        component:         null,
-        dragStartPosition: null,
-        dragPosition:      null,
-        dragOffset:        null,
-      };
+      this.dragState = defaultDragState;
     }
 
     makeDragMonitor = (component) => {
-      const whenActive = (x, d) => () => {
-        return (component === this.dragState.component)
-          ? x()
-          : d;
-      };
+      const getState = () =>
+        (component === this.dragState.component)
+          ? this.dragState
+          : defaultDragState;
 
       return {
-        isDragging:           whenActive(() => this.dragState.isDragging,        false),
-        getDragOffset:        whenActive(() => this.dragState.dragOffset,        null),
-        getDragStartPosition: whenActive(() => this.dragState.dragStartPosition, null),
-        getDragPosition:      whenActive(() => this.dragState.dragPosition,      null),
+        isDragging:           () => getState().isDragging,
+        getDragStartPosition: () => getState().dragStartPosition,
+        getDragPosition:      () => getState().dragPosition,
+        getDragOffset:        () => getState().dragOffset,
+        ctrlKey:              () => getState().ctrlKey,
+        shiftKey:             () => getState().shiftKey,
+        metaKey:              () => getState().metaKey,
         onDragStart:          (e) => { this.onDragStart(e, component); }
       };
     }
@@ -57,6 +62,9 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
         dragStartPosition: {x: e.clientX, y: e.clientY},
         dragPosition:      {x: e.clientX, y: e.clientY},
         dragOffset:        {x: 0, y: 0},
+        ctrlKey:  false,
+        shiftKey: false,
+        metaKey:  false
       };
 
       component.onDragStart();
@@ -73,8 +81,17 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
         x: dragPosition.x - dragStartPosition.x,
         y: dragPosition.y - dragStartPosition.y
       };
-      this.dragState.dragPosition = dragPosition;
-      this.dragState.dragOffset   = dragOffset;
+
+      this.dragState = {
+        isDragging: true,
+        component,
+        dragStartPosition,
+        dragPosition,
+        dragOffset,
+        ctrlKey:  e.ctrlKey,
+        shiftKey: e.shiftKey,
+        metaKey:  e.metaKey
+      };
 
       component.onDrag();
     }
@@ -82,13 +99,7 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
       if(!this.dragState.isDragging) { return; }
 
       const { component } = this.dragState;
-      this.dragState = {
-        isDragging: false,
-        component: null,
-        dragStartPosition: null,
-        dragPosition:      null,
-        dragOffset:        null
-      };
+      this.dragState = defaultDragState;
       component.onDragEnd();
     }
 
