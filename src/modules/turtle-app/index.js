@@ -7,8 +7,7 @@ import { emptyLens } from 'utils/lenses';
 import makeProgram from 'program/program';
 import { Turn, Move } from 'program/command';
 import run from 'program/run';
-import Turtle from '../turtle';
-import Drawing from '../drawing';
+import Canvas from '../canvas';
 import Program from '../program';
 
 import styles from './index.scss';
@@ -125,22 +124,18 @@ class TurtleApp extends React.Component {
 
     return (
       <div className={cx('turtle-app')} {...this.props}>
-        <svg className={cx('turtle-app_canvas')}>
-          <Drawing
-            output={output}
-            onHoverChange={this.onHoveredMarkChange}
-            highlightedMarks={highlightedMarks}
-          />
-          <Turtle
-            placement={placement}
-            onTurtleMoveStart = {this.onTurtleMoveStart}
-            onTurtleMove      = {this.onTurtleMove}
-            onTurtleMoveEnd   = {this.onTurtleMoveEnd}
-            onTurtleRotateStart = {this.onTurtleRotateStart}
-            onTurtleRotate      = {this.onTurtleRotate}
-            onTurtleRotateEnd   = {this.onTurtleRotateEnd}
-          />
-        </svg>
+        <Canvas
+          placement={placement}
+          output={output}
+          highlightedMarks={highlightedMarks}
+          onHoveredMarkChange = {this.onHoveredMarkChange}
+          onTurtleMoveStart   = {this.onTurtleMoveStart}
+          onTurtleMove        = {this.onTurtleMove}
+          onTurtleMoveEnd     = {this.onTurtleMoveEnd}
+          onTurtleRotateStart = {this.onTurtleRotateStart}
+          onTurtleRotate      = {this.onTurtleRotate}
+          onTurtleRotateEnd   = {this.onTurtleRotateEnd}
+        />
         <div className={cx('turtle-app_sidebar')}>
           <Program
             program={program}
