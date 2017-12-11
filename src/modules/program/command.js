@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Cmd from 'program/command';
+import { CommandPrim } from 'program/command';
 import Number from 'components/number';
 
 const Command = (props) =>
-  Cmd.match(props.command, {
+  CommandPrim.match(props.command, {
     Move(distance){ return (<MoveCommand distance={distance} {...props}/>); },
     Turn(degrees) { return (<TurnCommand degrees={degrees}   {...props}/>); }
   });
@@ -15,7 +15,7 @@ Command.propTypes = {
 
 const MoveCommand = ({command, distance, onCommandChange}) => {
   const onNumberChange = (value) => {
-    onCommandChange(Cmd.lens.set(command, value));
+    onCommandChange(CommandPrim.lens.set(command, value));
   };
   return (
     <span>
@@ -26,7 +26,7 @@ const MoveCommand = ({command, distance, onCommandChange}) => {
 };
 const TurnCommand = ({command, degrees, onCommandChange}) => {
   const onNumberChange = (value) => {
-    onCommandChange(Cmd.lens.set(command, value));
+    onCommandChange(CommandPrim.lens.set(command, value));
   };
   return (
     <span>

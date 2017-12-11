@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
-import { emptyLens, indexLens, composeLens } from 'utils/lenses';
+import { emptyLens } from 'utils/lenses';
 import Prog from 'program/program';
-import Command from 'program/command';
+import { Command, CommandPrim } from 'program/command';
 import run from 'program/run';
 import Canvas from '../canvas';
 import Program from '../program';
@@ -47,8 +47,9 @@ class TurtleApp extends React.Component {
 
   addCommand(command) {
     const { program } = this.state;
-    const newProgram = program.append(command);
-    this.currentLens = composeLens(Prog.lens, indexLens(program.length));
+    const newProgram = program.append(Command.Prim(command));
+    const lines = newProgram.lines();
+    this.currentLens = lines[lines.length - 1].lens;
     this.runProgram(newProgram);
   }
   runProgram(program) {
@@ -61,21 +62,21 @@ class TurtleApp extends React.Component {
     this.runProgram(program);
   }
   onTurtleMoveStart = () => {
-    this.addCommand(Command.Move(0));
+    this.addCommand(CommandPrim.Move(0));
   }
   onTurtleMove = (movement) => {
-    const newProgram = this.currentLens.set(this.program, Command.Move(movement));
+    const newProgram = this.currentLens.set(this.program, CommandPrim.Move(movement));
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
     this.currentLens = emptyLens;
   }
   onTurtleRotateStart = () => {
-    this.addCommand(Command.Turn(0));
+    this.addCommand(CommandPrim.Turn(0));
   }
   onTurtleRotate = (rotation) => {
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const newProgram = this.currentLens.set(this.program, Command.Turn(degrees));
+    const newProgram = this.currentLens.set(this.program, CommandPrim.Turn(degrees));
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {

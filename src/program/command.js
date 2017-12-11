@@ -1,25 +1,54 @@
 const id = (x) => x;
 
-const Command = (type, data) => ({type, data});
-Command.Move  = (distance) => Command('Move', {distance});
-Command.Turn  = (degrees)  => Command('Turn', {degrees});
+// Primitive commands. Move and Turn
+const CommandPrim = (type, data) => ({type, data});
+CommandPrim.Move  = (distance) => CommandPrim('Move', {distance});
+CommandPrim.Turn  = (degrees)  => CommandPrim('Turn', {degrees});
 
-Command.match = ({type, data}, handlers) => {
+CommandPrim.match = ({type, data}, handlers) => {
   switch(type) {
     case 'Move': return handlers.Move(data.distance);
     case 'Turn': return handlers.Turn(data.degrees);
   }
 };
-
-Command.lens  = {
-  get: (c) => Command.match(c, {
+CommandPrim.lens  = {
+  get: (c) => CommandPrim.match(c, {
     Move: id,
     Turn: id
   }),
-  set: (c,amount) => Command.match(c, {
-    Move: () => Command.Move(amount),
-    Turn: () => Command.Turn(amount)
-  })
+  set: (c,amount) => CommandPrim.match(c, {
+    Move: () => CommandPrim.Move(amount),
+    Turn: () => CommandPrim.Turn(amount)
+  }),
+  name: 'CommandPrim'
 };
 
+
+// Command expressions
+const Command = (type, data) => ({type, data});
+Command.Prim  = (command)  => Command('Prim', { command });
+Command.Seq   = (commands) => Command('Seq',  { commands });
+
+Command.match = ({type, data}, handlers) => {
+  switch(type) {
+    case 'Prim': return handlers.Prim(data.command);
+    case 'Seq':  return handlers.Seq(data.commands);
+  }
+};
+Command.lens  = {
+  get: (c) => Command.match(c, {
+    Prim: id,
+    Seq:  id
+  }),
+  set: (c,data) => Command.match(c, {
+    Prim: () => Command.Prim(data),
+    Seq:  () => Command.Seq(data)
+  }),
+  name: 'Command'
+};
+
+export {
+  Command,
+  CommandPrim
+};
 export default Command;

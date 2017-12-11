@@ -1,14 +1,14 @@
 import { last } from 'utils/generators';
 import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
-import Command from './command';
+import { CommandPrim } from './command';
 import Mark from './mark';
 import Trace from './trace';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
 const step = (placement, command) =>
-  Command.match(command, {
+  CommandPrim.match(command, {
     Move(distance) {
       const newPlacement = placement.move(distance);
       const newMarks = [
