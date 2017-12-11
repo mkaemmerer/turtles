@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Drawing from './drawing';
 import Turtle from './turtle';
+import Guides from './guides';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -49,12 +50,17 @@ class Canvas extends React.Component {
         />
         <Turtle
           placement={placement}
-          movement={movement}
-          rotation={rotation}
           onMoveDragStart   = {onMoveDragStart}
           onRotateDragStart = {onRotateDragStart}
           isMoveDragging    = {isMoveDragging}
           isRotateDragging  = {isRotateDragging}
+        />
+        <Guides
+          placement={placement}
+          movement={movement}
+          rotation={rotation}
+          showRotation={isRotateDragging}
+          showMovement={isMoveDragging}
         />
       </svg>
     );

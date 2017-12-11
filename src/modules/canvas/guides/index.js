@@ -1,8 +1,14 @@
 import React from 'react';
+import { V2 } from 'utils/vectors';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
+
+const toTransform = ({position, heading}) => {
+  const rotation = V2.toRotation(heading) * 180 / Math.PI;
+  return `translate(${position.x}, ${position.y})rotate(${rotation})`;
+}
 
 const arcString = (arc) => {
   //Normalize arc to something between -2PI and 2PI
@@ -22,7 +28,7 @@ const arcString = (arc) => {
   `;
 }
 
-const Guides = ({ movement, rotation, showMovement, showRotation }) => {
+const Guides = ({ placement, movement, rotation, showMovement, showRotation }) => {
   const moveGuideClasses = cx(
     'guide',
     {
@@ -39,7 +45,7 @@ const Guides = ({ movement, rotation, showMovement, showRotation }) => {
   const arc = arcString(-rotation);
 
   return (
-    <g className={cx('guides')}>
+    <g className={cx('guides')} transform={toTransform(placement)}>
       <g className={moveGuideClasses}>
         <text className={cx('guide_text')}>{movement}</text>
         <line className={cx('guide_line')} x1="-1000" y1="0" x2="1000" y2="0"/>

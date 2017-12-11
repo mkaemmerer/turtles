@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { V2 } from 'utils/vectors';
 import { ShapeTurtle } from 'components/shapes';
 import Controls from '../controls';
-import Guides from '../guides';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -20,9 +19,7 @@ class Turtle extends React.Component {
     onRotateDragStart: PropTypes.func,
     isMoveDragging:    PropTypes.bool,
     isRotateDragging:  PropTypes.bool,
-    placement: PropTypes.object,
-    movement: PropTypes.number,
-    rotation: PropTypes.number
+    placement: PropTypes.object
   }
 
   render() {
@@ -31,19 +28,11 @@ class Turtle extends React.Component {
       isMoveDragging,
       onRotateDragStart,
       isRotateDragging,
-      placement,
-      movement,
-      rotation
+      placement
     } = this.props;
     return (
       <g className={cx('turtle')} transform={toTransform(placement)}>
         <ShapeTurtle/>
-        <Guides
-          movement={movement}
-          rotation={rotation}
-          showRotation={isRotateDragging}
-          showMovement={isMoveDragging}
-        />
         <Controls
           onMoveDragStart={onMoveDragStart}
           onRotateDragStart={onRotateDragStart}
