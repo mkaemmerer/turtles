@@ -87,29 +87,25 @@ class ManagedCanvas extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      placement: props.placement,
+      previousPlacement: props.placement,
       movement: 0,
       rotation: 0
     };
   }
-  componentWillReceiveProps(newProps) {
-    if(newProps.placement !== this.props.placement) {
-      this.setState({ placement: newProps.placement });
-    }
-  }
 
   onMoveDragStart = () => {
+    this.setState({
+      previousPlacement: this.props.placement,
+      movement: 0,
+      rotation: 0
+    });
     this.props.onTurtleMoveStart();
   }
   onMoveDrag = (offset, ctrlKey, shiftKey) => {
     const { placement } = this.props;
     const dist         = V2.dot(placement.heading, toVector(offset));
     const movement     = roundDistance(dist, ctrlKey, shiftKey);
-    const newPlacement = placement.move(movement);
-    this.setState({
-      placement: newPlacement,
-      movement
-    });
+    this.setState({ movement });
     this.props.onTurtleMove(movement);
   }
   onMoveDragEnd = () => {
@@ -118,17 +114,18 @@ class ManagedCanvas extends React.Component {
   }
 
   onRotateDragStart = () => {
+    this.setState({
+      previousPlacement: this.props.placement,
+      movement: 0,
+      rotation: 0
+    });
     this.props.onTurtleRotateStart();
   }
   onRotateDrag = (start, current, ctrlKey, shiftKey) => {
     const { placement } = this.props;
     const angle        = P2.angleBetween(current, placement.position, start);
     const rotation     = roundDegrees(angle, ctrlKey, shiftKey);
-    const newPlacement = placement.rotate(rotation);
-    this.setState({
-      placement: newPlacement,
-      rotation
-    });
+    this.setState({ rotation });
     this.props.onTurtleRotate(rotation);
   }
   onRotateDragEnd = () => {
@@ -137,11 +134,13 @@ class ManagedCanvas extends React.Component {
   }
 
   render() {
-    const { placement, movement, rotation } = this.state;
+    const { placement } = this.props;
+    const { previousPlacement, movement, rotation } = this.state;
 
     return (
       <DraggableCanvas
         {...this.props}
+        previousPlacement = {previousPlacement}
         placement = {placement}
         movement  = {movement}
         rotation  = {rotation}

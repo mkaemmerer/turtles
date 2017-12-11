@@ -5,10 +5,15 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
+const RADIANS_TO_DEGREES = 180 / Math.PI;
+
 const toTransform = ({position, heading}) => {
-  const rotation = V2.toRotation(heading) * 180 / Math.PI;
+  const rotation = V2.toRotation(heading) * RADIANS_TO_DEGREES;
   return `translate(${position.x}, ${position.y})rotate(${rotation})`;
-}
+};
+const toRotation = (rotation) => {
+  return `rotate(${rotation * RADIANS_TO_DEGREES})`;
+};
 
 const arcString = (arc) => {
   //Normalize arc to something between -2PI and 2PI
@@ -42,7 +47,7 @@ const Guides = ({ placement, movement, rotation, showMovement, showRotation }) =
     }
   );
 
-  const arc = arcString(-rotation);
+  const arc = arcString(rotation);
 
   return (
     <g className={cx('guides')} transform={toTransform(placement)}>
@@ -54,7 +59,7 @@ const Guides = ({ placement, movement, rotation, showMovement, showRotation }) =
         <text className={cx('guide_text')}>{rotation}</text>
         <circle className={cx('guide_circle')} r="30"/>
         <path className={cx('guide_arc')} d={arc}/>
-        <line className={cx('guide_line')} x1="0" y1="0" x2="1000" y2="0"/>
+        <line className={cx('guide_line')} transform={toRotation(rotation)} x1="0" y1="0" x2="1000" y2="0"/>
       </g>
     </g>
   );

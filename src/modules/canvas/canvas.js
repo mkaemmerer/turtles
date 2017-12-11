@@ -11,9 +11,10 @@ const cx = classnames.bind(styles);
 class Canvas extends React.Component {
   static propTypes = {
     //Turtle placement
-    placement: PropTypes.object.isRequired,
-    movement:  PropTypes.number.isRequired,
-    rotation:  PropTypes.number.isRequired,
+    placement:         PropTypes.object.isRequired,
+    previousPlacement: PropTypes.object.isRequired,
+    movement:          PropTypes.number.isRequired,
+    rotation:          PropTypes.number.isRequired,
     //Turtle dragging
     onMoveDragStart:   PropTypes.func,
     onRotateDragStart: PropTypes.func,
@@ -30,6 +31,7 @@ class Canvas extends React.Component {
   render() {
     const {
       placement,
+      previousPlacement,
       movement,
       rotation,
       output,
@@ -56,7 +58,7 @@ class Canvas extends React.Component {
           isRotateDragging  = {isRotateDragging}
         />
         <Guides
-          placement={placement}
+          placement={previousPlacement}
           movement={movement}
           rotation={rotation}
           showRotation={isRotateDragging}
