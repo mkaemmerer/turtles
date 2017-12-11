@@ -9,8 +9,10 @@ const ManageState = (Number) => {
       props.onDragStart();
     },
     onDrag(props, monitor) {
-      const offset = monitor.getDragOffset();
-      props.onDrag(offset);
+      const offset   = monitor.getDragOffset();
+      const ctrlKey  = monitor.ctrlKey();
+      const shiftKey = monitor.shiftKey();
+      props.onDrag(offset.x, ctrlKey, shiftKey);
     },
     onDragEnd(props) {
       props.onDragEnd();
@@ -30,8 +32,16 @@ const ManageState = (Number) => {
     onDragStart = () => {
       this.value = this.props.value;
     }
-    onDrag = (offset) => {
-      this.props.onChange(this.value + offset.x);
+    onDrag = (offset, ctrlKey, shiftKey) => {
+      const delta = shiftKey
+        ? Math.floor(offset/10)
+        : offset;
+
+      const value = (ctrlKey && !shiftKey)
+        ? Math.round((this.value + delta) / 10) * 10
+        : this.value + delta;
+
+      this.props.onChange(value);
     }
     onDragEnd = () => {
     }
