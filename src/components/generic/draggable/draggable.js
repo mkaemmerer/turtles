@@ -46,7 +46,7 @@ const MakeDraggable = (spec = defaultSpec, adapter = defaultAdapter) => (Compone
 
     render() {
       const ref = (component) => { this.component = component; };
-      const adaptedProps = adapter(this.monitor);
+      const adaptedProps = adapter(this.props, this.monitor);
 
       return (
         <Component ref={ref} {...this.props} {...adaptedProps} />

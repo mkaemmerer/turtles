@@ -8,8 +8,20 @@ const RADIANS_TO_DEGREES = 180 / Math.PI;
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
 const toVector = ({x,y}) => V2(x,y);
-const roundDistance = (dist) => Math.round(dist);
-const roundDegrees  = (rads) => Math.round(rads * RADIANS_TO_DEGREES) * DEGREES_TO_RADIANS;
+const roundDistance = (value, ctrlKey, shiftKey) => {
+  const dist = Math.round(value);
+  return withSnapping(dist, 10, 0.1, ctrlKey, shiftKey);
+};
+const roundDegrees  = (rads, ctrlKey, shiftKey) => {
+  const degs = Math.round(rads * RADIANS_TO_DEGREES);
+  return withSnapping(degs, 15, 0.5, ctrlKey, shiftKey) * DEGREES_TO_RADIANS;
+};
+const withSnapping = (value, increment, factor, ctrlKey, shiftKey) =>
+  shiftKey
+    ? Math.round(value * factor)
+    : ctrlKey
+      ? Math.round(value / increment) * increment
+      : value;
 
 //Movement
 const moveSpec = {
@@ -18,15 +30,19 @@ const moveSpec = {
   },
   onDrag(props, monitor) {
     const offset = monitor.getDragOffset();
-    props.onMoveDrag(offset);
+    const ctrlKey = monitor.ctrlKey();
+    const shiftKey = monitor.shiftKey();
+    props.onMoveDrag(offset, ctrlKey, shiftKey);
   },
   onDragEnd(props) {
     props.onMoveDragEnd();
   }
 };
-const moveAdapter = (monitor) => ({
+const moveAdapter = (props, monitor) => ({
   isMoveDragging:  monitor.isDragging(),
-  onMoveDragStart: monitor.onDragStart
+  onMoveDragStart: monitor.onDragStart,
+  ctrlKey:  monitor.ctrlKey() || props.ctrlKey,
+  shiftKey: monitor.shiftKey() || props.shiftKey
 });
 const Movable = MakeDraggable(moveSpec, moveAdapter);
 
@@ -38,15 +54,19 @@ const rotateSpec = {
   onDrag(props, monitor) {
     const start = monitor.getDragPosition();
     const current = monitor.getDragStartPosition();
-    props.onRotateDrag(start, current);
+    const ctrlKey = monitor.ctrlKey();
+    const shiftKey = monitor.shiftKey();
+    props.onRotateDrag(start, current, ctrlKey, shiftKey);
   },
   onDragEnd(props) {
     props.onRotateDragEnd();
   }
 };
-const rotateAdapter = (monitor) => ({
+const rotateAdapter = (props, monitor) => ({
   isRotateDragging:  monitor.isDragging(),
-  onRotateDragStart: monitor.onDragStart
+  onRotateDragStart: monitor.onDragStart,
+  ctrlKey:  monitor.ctrlKey() || props.ctrlKey,
+  shiftKey: monitor.shiftKey() || props.shiftKey
 });
 const Rotatable = MakeDraggable(rotateSpec, rotateAdapter);
 
@@ -80,9 +100,10 @@ class ManagedTurtle extends React.Component {
   onMoveDragStart = () => {
     this.props.onTurtleMoveStart();
   }
-  onMoveDrag = (offset) => {
+  onMoveDrag = (offset, ctrlKey, shiftKey) => {
     const { placement } = this.props;
-    const movement     = roundDistance(V2.dot(placement.heading, toVector(offset)));
+    const dist         = V2.dot(placement.heading, toVector(offset));
+    const movement     = roundDistance(dist, ctrlKey, shiftKey);
     const newPlacement = placement.move(movement);
     this.setState({
       placement: newPlacement,
@@ -98,9 +119,10 @@ class ManagedTurtle extends React.Component {
   onRotateDragStart = () => {
     this.props.onTurtleRotateStart();
   }
-  onRotateDrag = (start, current) => {
+  onRotateDrag = (start, current, ctrlKey, shiftKey) => {
     const { placement } = this.props;
-    const rotation     = roundDegrees(P2.angleBetween(current, placement.position, start));
+    const angle        = P2.angleBetween(current, placement.position, start);
+    const rotation     = roundDegrees(angle, ctrlKey, shiftKey);
     const newPlacement = placement.rotate(rotation);
     this.setState({
       placement: newPlacement,

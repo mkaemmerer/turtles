@@ -18,7 +18,7 @@ const ManageState = (Number) => {
       props.onDragEnd();
     }
   };
-  const adapter = (monitor) => ({
+  const adapter = (props, monitor) => ({
     onMouseDown: monitor.onDragStart
   });
   const DraggableNumber = MakeDraggable(spec, adapter)(Number);
