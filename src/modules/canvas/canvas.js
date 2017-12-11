@@ -40,7 +40,8 @@ class Canvas extends React.Component {
       onMoveDragStart,
       onRotateDragStart,
       isMoveDragging,
-      isRotateDragging
+      isRotateDragging,
+      ctrlKey
     } = this.props;
 
     return (
@@ -63,6 +64,7 @@ class Canvas extends React.Component {
           rotation={rotation}
           showRotation={isRotateDragging}
           showMovement={isMoveDragging}
+          showTicks={ctrlKey}
         />
       </svg>
     );

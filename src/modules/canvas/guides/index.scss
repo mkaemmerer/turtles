@@ -15,18 +15,27 @@ $color--guide-light: rgba($color-black, 0.1);
   opacity: 1;
 }
 
+.guide_ticks,
+.guide_path {
+  opacity: 0;
+  transition: opacity $animation-duration-fast;
+}
+.guide_ticks {
+  .guide--show-ticks & { opacity: 1; }
+}
+.guide_path {
+  .guide--show-path & { opacity: 1; }
+}
+
 .guide_text {
   display: none;
 }
 .guide_line {
   stroke: $color--guide-dark;
-}
-.guide_ticks {
-  fill: $color--guide-dark;
-}
-.guide_circle {
-  stroke: $color--guide-dark;
   fill: none;
+}
+.guide_shape {
+  fill: $color--guide-dark;
 }
 .guide_arc {
   stroke: $color--guide-dark;
