@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
-import { emptyLens, indexLens } from 'utils/lenses';
-import makeProgram from 'program/program';
+import { emptyLens, indexLens, composeLens } from 'utils/lenses';
+import Prog from 'program/program';
 import { Turn, Move } from 'program/command';
 import run from 'program/run';
 import Canvas from '../canvas';
@@ -31,7 +31,7 @@ class TurtleApp extends React.Component {
     super(props);
 
     this.initialPlacement = initialPlacement;
-    this.program = makeProgram();
+    this.program = Prog.empty();
     this.currentLens = emptyLens;
 
     const { placement, marks, trace } = run(this.initialPlacement, this.program);
@@ -41,14 +41,14 @@ class TurtleApp extends React.Component {
       marks,
       trace,
       highlightedMarks: [],
-      highlightedCommands: []
+      highlightedCommands: {}
     }
   }
 
   addCommand(command) {
     const { program } = this.state;
     const newProgram = program.append(command);
-    this.currentLens = indexLens(program.length);
+    this.currentLens = composeLens(Prog.lens, indexLens(program.length));
     this.runProgram(newProgram);
   }
   runProgram(program) {
@@ -64,7 +64,7 @@ class TurtleApp extends React.Component {
     this.addCommand(Move(0));
   }
   onTurtleMove = (movement) => {
-    const newProgram = this.program.set(this.currentLens, Move(movement));
+    const newProgram = this.currentLens.set(this.program, Move(movement));
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
@@ -75,7 +75,7 @@ class TurtleApp extends React.Component {
   }
   onTurtleRotate = (rotation) => {
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const newProgram = this.program.set(this.currentLens, Turn(degrees));
+    const newProgram = this.currentLens.set(this.program, Turn(degrees));
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {
@@ -89,12 +89,12 @@ class TurtleApp extends React.Component {
 
       this.setState({
         highlightedMarks:    outputEntry.lens.set([], true),
-        highlightedCommands: sourceLine.lens.set([], true)
+        highlightedCommands: sourceLine.lens.set({}, true)
       });
     } else {
       this.setState({
         highlightedMarks: [],
-        highlightedCommands: []
+        highlightedCommands: {}
       });
     }
   }
@@ -105,12 +105,12 @@ class TurtleApp extends React.Component {
 
       this.setState({
         highlightedMarks:    outputEntry.lens.set([], true),
-        highlightedCommands: sourceLine.lens.set([], true)
+        highlightedCommands: sourceLine.lens.set({}, true)
       });
     } else {
       this.setState({
         highlightedMarks: [],
-        highlightedCommands: []
+        highlightedCommands: {}
       });
     }
   }

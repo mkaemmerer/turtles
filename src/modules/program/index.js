@@ -12,10 +12,11 @@ const Program = ({program, onProgramChange, onHoverChange, highlightedCommands})
     const { command, lens } = line;
     const isHighlighted = safeLens(lens, false).get(highlightedCommands);
     const onCommandChange = (command) => {
-      onProgramChange(program.set(lens, command));
+      const newProgram = lens.set(program, command);
+      onProgramChange(newProgram);
     };
-    const onMouseEnter  = () => { onHoverChange(line); };
-    const onMouseLeave  = () => { onHoverChange(null); };
+    const onMouseEnter = () => { onHoverChange(line); };
+    const onMouseLeave = () => { onHoverChange(null); };
 
     return (
       <ProgramLine
@@ -39,7 +40,7 @@ Program.propTypes = {
   program: PropTypes.object.isRequired,
   onProgramChange: PropTypes.func.isRequired,
   onHoverChange: PropTypes.func.isRequired,
-  highlightedCommands: PropTypes.array.isRequired
+  highlightedCommands: PropTypes.object.isRequired
 };
 
 export default Program;

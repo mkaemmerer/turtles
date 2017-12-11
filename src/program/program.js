@@ -1,4 +1,4 @@
-import { indexLens } from 'utils/lenses';
+import { indexLens, composeLens } from 'utils/lenses';
 
 class Program {
   constructor(commands) {
@@ -8,19 +8,19 @@ class Program {
   static empty() {
     return new Program([]);
   }
+  static lens = {
+    get(p)    { return p.commands || []; },
+    set(p,cs) { return new Program(cs); }
+  }
 
   append(command) {
     return new Program(this.commands.concat(command));
-  }
-  set(lens, newCommand) {
-    const commands = lens.set(this.commands, newCommand);
-    return new Program(commands);
   }
 
   lines() {
     return this.commands.map((command,i) => ({
       command,
-      lens: indexLens(i)
+      lens: composeLens(Program.lens, indexLens(i))
     }));
   }
 
@@ -34,4 +34,4 @@ class Program {
   }
 }
 
-export default Program.empty;
+export default Program;
