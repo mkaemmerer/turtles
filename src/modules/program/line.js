@@ -6,10 +6,8 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const ProgramLine = ({ line, onLineChange, onMouseEnter, onMouseLeave, isHighlighted }) => {
-  const { command, lens } = line;
+const ProgramLine = ({ command, onCommandChange, onMouseEnter, onMouseLeave, isHighlighted }) => {
   const className = cx('program_line', { 'program_line--highlighted': isHighlighted });
-  const onCommandChange = (newCommand) => { onLineChange(lens, newCommand); };
 
   return (
     <div className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -18,8 +16,8 @@ const ProgramLine = ({ line, onLineChange, onMouseEnter, onMouseLeave, isHighlig
   );
 };
 ProgramLine.propTypes = {
-  line:          PropTypes.object.isRequired,
-  onLineChange:  PropTypes.func.isRequired,
+  command:         PropTypes.object.isRequired,
+  onCommandChange: PropTypes.func.isRequired,
   onMouseEnter:  PropTypes.func,
   onMouseLeave:  PropTypes.func,
   isHighlighted: PropTypes.bool.isRequired
@@ -27,8 +25,8 @@ ProgramLine.propTypes = {
 
 
 class OptimizedProgramLine extends React.Component {
-  onLineChange = (lens, command) => {
-    this.props.onLineChange(lens, command);
+  onCommandChange = (command) => {
+    this.props.onCommandChange(command);
   }
   onMouseEnter = () => {
     this.props.onMouseEnter();
@@ -38,18 +36,18 @@ class OptimizedProgramLine extends React.Component {
   }
 
   shouldComponentUpdate(newProps) {
-    const lineChanged      = newProps.line !== this.props.line;
+    const commandChanged   = newProps.command !== this.props.command;
     const highlightChanged = newProps.isHighlighted !== this.props.isHighlighted;
-    return lineChanged || highlightChanged;
+    return commandChanged || highlightChanged;
   }
 
   render() {
-    const { line, isHighlighted } = this.props;
+    const { command, isHighlighted } = this.props;
     return (
       <ProgramLine
-        line={line}
+        command={command}
         isHighlighted={isHighlighted}
-        onLineChange={this.onLineChange}
+        onCommandChange={this.onCommandChange}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
       />

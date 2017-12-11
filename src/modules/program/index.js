@@ -9,9 +9,9 @@ const cx = classnames.bind(styles);
 
 const Program = ({program, onProgramChange, onHoverChange, highlightedCommands}) => {
   const children = program.lines().map((line, i) => {
-    const { lens } = line;
+    const { command, lens } = line;
     const isHighlighted = safeLens(lens, false).get(highlightedCommands);
-    const onLineChange = (lens, command) => {
+    const onCommandChange = (command) => {
       onProgramChange(program.set(lens, command));
     };
     const onMouseEnter  = () => { onHoverChange(line); };
@@ -20,9 +20,9 @@ const Program = ({program, onProgramChange, onHoverChange, highlightedCommands})
     return (
       <ProgramLine
         key={i}
-        line={line}
+        command={command}
         isHighlighted={isHighlighted}
-        onLineChange={onLineChange}
+        onCommandChange={onCommandChange}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       />
