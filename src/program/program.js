@@ -1,5 +1,5 @@
 import { indexLens, safeLens, composeLens, propertyLens } from 'utils/lenses';
-import Command from './command';
+import { Command } from './ast';
 
 const primLens     = composeLens(
   safeLens(propertyLens('data'), {}),

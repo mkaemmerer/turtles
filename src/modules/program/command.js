@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CommandPrim } from 'program/command';
+import { CommandPrim } from 'program/ast';
 import Number from 'components/number';
 
 const Command = (props) =>

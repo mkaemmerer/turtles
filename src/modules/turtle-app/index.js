@@ -5,7 +5,7 @@ import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
 import { emptyLens } from 'utils/lenses';
 import Prog from 'program/program';
-import { Command, CommandPrim } from 'program/command';
+import { Command, CommandPrim } from 'program/ast';
 import run from 'program/run';
 import Canvas from '../canvas';
 import Program from '../program';

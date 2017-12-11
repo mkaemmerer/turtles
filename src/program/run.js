@@ -1,7 +1,7 @@
 import { last } from 'utils/generators';
 import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
-import { CommandPrim } from './command';
+import { CommandPrim } from './ast';
 import Mark from './mark';
 import Trace from './trace';
 
