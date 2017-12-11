@@ -22,33 +22,26 @@ const MakeDraggable = (spec = defaultSpec, adapter = defaultAdapter) => (Compone
 
     constructor(props, context) {
       super(props, context);
-      this.monitor = context.makeDragMonitor();
+      this.monitor = context.makeDragMonitor(this);
     }
-    componentWillReceiveProps() {
-      const isDragging = this.monitor.isDragging();
-      const dragOffset = this.monitor.getDragOffset();
 
-      if(isDragging && !this.isDragging) {
-        if(spec.onDragStart) {
-          spec.onDragStart(this.props, this.monitor, this.component);
-        }
+    onDragStart() {
+      if(spec.onDragStart) {
+        spec.onDragStart(this.props, this.monitor, this.component);
       }
-
-      if(isDragging && dragOffset !== this.dragOffset) {
-        if(spec.onDrag) {
-          spec.onDrag(this.props, this.monitor, this.component);
-        }
+      this.forceUpdate();
+    }
+    onDrag() {
+      if(spec.onDrag) {
+        spec.onDrag(this.props, this.monitor, this.component);
       }
-
-      if(!isDragging && this.isDragging) {
-        if(spec.onDragEnd) {
-          spec.onDragEnd(this.props, this.monitor, this.component);
-        }
+      this.forceUpdate();
+    }
+    onDragEnd() {
+      if(spec.onDragEnd) {
+        spec.onDragEnd(this.props, this.monitor, this.component);
       }
-
-      //Store last values so we can tell if they change
-      this.isDragging = isDragging;
-      this.dragOffset = dragOffset;
+      this.forceUpdate();
     }
 
     render() {

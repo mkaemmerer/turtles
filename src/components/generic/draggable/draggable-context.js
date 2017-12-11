@@ -22,48 +22,49 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
 
     constructor() {
       super();
-      this.id = 0;
-      this.draggingId = null;
-      this.state   = {
-        isDragging: false,
+
+      this.dragState = {
+        isDragging:        false,
+        component:         null,
         dragStartPosition: null,
         dragPosition:      null,
-        dragOffset:        null
+        dragOffset:        null,
       };
     }
 
-    makeDragMonitor = () => {
-      const id = this.id++;
+    makeDragMonitor = (component) => {
       const whenActive = (x, d) => () => {
-        return (id === this.draggingId)
+        return (component === this.dragState.component)
           ? x()
           : d;
       };
 
       return {
-        isDragging:           whenActive(() => this.state.isDragging,        false),
-        getDragOffset:        whenActive(() => this.state.dragOffset,        null),
-        getDragStartPosition: whenActive(() => this.state.dragStartPosition, null),
-        getDragPosition:      whenActive(() => this.state.dragPosition,      null),
-        onDragStart:          (e) => { this.onDragStart(e, id); }
+        isDragging:           whenActive(() => this.dragState.isDragging,        false),
+        getDragOffset:        whenActive(() => this.dragState.dragOffset,        null),
+        getDragStartPosition: whenActive(() => this.dragState.dragStartPosition, null),
+        getDragPosition:      whenActive(() => this.dragState.dragPosition,      null),
+        onDragStart:          (e) => { this.onDragStart(e, component); }
       };
     }
 
-    onDragStart = (e, id) => {
-      if(this.state.isDragging) { return; }
-      this.draggingId = id;
+    onDragStart = (e, component) => {
+      if(this.dragState.isDragging) { return; }
 
-      this.setState({
+      this.dragState = {
         isDragging: true,
+        component,
         dragStartPosition: {x: e.clientX, y: e.clientY},
         dragPosition:      {x: e.clientX, y: e.clientY},
-        dragOffset:        {x: 0, y: 0}
-      });
+        dragOffset:        {x: 0, y: 0},
+      };
+
+      component.onDragStart();
     }
     onDragMove = (e) => {
-      if(!this.state.isDragging) { return; }
+      if(!this.dragState.isDragging) { return; }
 
-      const { dragStartPosition } = this.state;
+      const { dragStartPosition, component } = this.dragState;
       const dragPosition = {
         x: e.clientX,
         y: e.clientY
@@ -72,17 +73,23 @@ const MakeDraggableContext = (adapter = defaultAdapter) => (Container) => {
         x: dragPosition.x - dragStartPosition.x,
         y: dragPosition.y - dragStartPosition.y
       };
+      this.dragState.dragPosition = dragPosition;
+      this.dragState.dragOffset   = dragOffset;
 
-      this.setState({ dragOffset, dragPosition });
+      component.onDrag();
     }
     onDragEnd = () => {
-      this.draggingId = null;
-      this.setState({
+      if(!this.dragState.isDragging) { return; }
+
+      const { component } = this.dragState;
+      this.dragState = {
         isDragging: false,
+        component: null,
         dragStartPosition: null,
         dragPosition:      null,
         dragOffset:        null
-      });
+      };
+      component.onDragEnd();
     }
 
     render() {
