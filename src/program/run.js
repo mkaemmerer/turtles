@@ -1,7 +1,7 @@
 import { last } from 'utils/generators';
 import { V2 } from 'utils/vectors';
+import { indexLens } from 'utils/lenses';
 import { Line, Turn } from './mark';
-import Output from './output';
 import Trace from './trace';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
@@ -31,25 +31,26 @@ const step = (placement, programLine) =>
     }
   });
 
-const stepTrace = ({placement, output, trace}, programLine) => {
+const stepTrace = ({placement, marks, trace}, programLine) => {
   const [ newPlacement, newMarks ] = step(placement, programLine);
   placement = newPlacement;
 
   for(const mark of newMarks) {
-    const [outputEntry, newOutput] = output.append(mark);
-    const newTrace = trace.register(programLine, outputEntry);
-    output = newOutput;
-    trace  = newTrace;
+    const markLens = indexLens(marks.length);
+    const outputEntry = { mark, lens: markLens };
+
+    marks = marks.concat(mark);
+    trace = trace.register(programLine, outputEntry);
   }
 
-  return { placement, output, trace };
+  return { placement, marks, trace };
 };
 
 const run = (placement, program) => {
   const initialState = {
     placement,
-    output: Output(),
-    trace:  Trace()
+    marks: [],
+    trace: Trace()
   };
   return last(program.interpret(initialState, stepTrace));
 };

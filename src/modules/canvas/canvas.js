@@ -23,7 +23,7 @@ class Canvas extends React.Component {
     ctrlKey:  PropTypes.bool.isRequired,
     shiftKey: PropTypes.bool.isRequired,
     //Drawing
-    output:           PropTypes.object.isRequired,
+    marks:            PropTypes.array.isRequired,
     highlightedMarks: PropTypes.array.isRequired,
     onHoveredMarkChange: PropTypes.func.isRequired
   }
@@ -34,7 +34,7 @@ class Canvas extends React.Component {
       previousPlacement,
       movement,
       rotation,
-      output,
+      marks,
       highlightedMarks,
       onHoveredMarkChange,
       onMoveDragStart,
@@ -48,7 +48,7 @@ class Canvas extends React.Component {
     return (
       <svg className={cx('canvas')}>
         <Drawing
-          output={output}
+          marks={marks}
           onHoverChange={onHoveredMarkChange}
           highlightedMarks={highlightedMarks}
         />

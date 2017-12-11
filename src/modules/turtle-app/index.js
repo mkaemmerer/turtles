@@ -34,11 +34,11 @@ class TurtleApp extends React.Component {
     this.program = makeProgram();
     this.currentLens = emptyLens;
 
-    const { placement, output, trace } = run(this.initialPlacement, this.program);
+    const { placement, marks, trace } = run(this.initialPlacement, this.program);
     this.state = {
       program: this.program,
       placement,
-      output,
+      marks,
       trace,
       highlightedMarks: [],
       highlightedCommands: []
@@ -53,8 +53,8 @@ class TurtleApp extends React.Component {
   }
   runProgram(program) {
     this.program = program;
-    const { placement, output, trace } = run(this.initialPlacement, program);
-    this.setState({ program, placement, output, trace });
+    const { placement, marks, trace } = run(this.initialPlacement, program);
+    this.setState({ program, placement, marks, trace });
   }
 
   onProgramChange = (program) => {
@@ -119,7 +119,7 @@ class TurtleApp extends React.Component {
     const {
       program,
       placement,
-      output,
+      marks,
       highlightedMarks,
       highlightedCommands
     } = this.state;
@@ -128,7 +128,7 @@ class TurtleApp extends React.Component {
       <div className={cx('turtle-app')} tabIndex="0" {...this.props}>
         <Canvas
           placement={placement}
-          output={output}
+          marks={marks}
           highlightedMarks={highlightedMarks}
           onHoveredMarkChange = {this.onHoveredMarkChange}
           onTurtleMoveStart   = {this.onTurtleMoveStart}
