@@ -26,9 +26,7 @@ export function reduce(f, acc, generator) {
 }
 
 export function toArray(generator) {
-  let arr = [];
-  for(const x of generator) { arr.push(x); }
-  return arr;
+  return Array.from(generator);
 }
 
 export function last(generator) {

@@ -13,9 +13,9 @@ Command.propTypes = {
   onCommandChange: PropTypes.func
 };
 
-const MoveCommand = ({command, distance, onCommandChange}) => {
+const MoveCommand = ({distance, onCommandChange}) => {
   const onNumberChange = (value) => {
-    onCommandChange(CommandPrim.lens.set(command, value));
+    onCommandChange(CommandPrim.Move(value));
   };
   return (
     <span>
@@ -24,9 +24,9 @@ const MoveCommand = ({command, distance, onCommandChange}) => {
     </span>
   );
 };
-const TurnCommand = ({command, degrees, onCommandChange}) => {
+const TurnCommand = ({degrees, onCommandChange}) => {
   const onNumberChange = (value) => {
-    onCommandChange(CommandPrim.lens.set(command, value));
+    onCommandChange(CommandPrim.Turn(value));
   };
   return (
     <span>
