@@ -1,0 +1,27 @@
+@import '../../style/index';
+
+.canvas {
+  display: flex;
+  position: relative;
+  flex: 1;
+
+  margin: $space-s;
+  background-color: $color-white;
+  border: $border-style-standard;
+}
+
+.canvas_inner {
+  flex: 1;
+}
+
+.canvas_overlay {
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+
+  position: absolute;
+  top:    0;
+  bottom: 0;
+  left:   0;
+  right:  0;
+}

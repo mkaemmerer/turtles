@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import Drawing from './drawing';
 import Turtle from './turtle';
 import Guides from './guides';
+import Hint from './hint';
 
-import styles from './index.scss';
+import styles from './canvas.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
@@ -46,28 +47,34 @@ class Canvas extends React.Component {
     } = this.props;
 
     return (
-      <svg className={cx('canvas')}>
-        <Drawing
-          marks={marks}
-          onHoverChange={onHoveredMarkChange}
-          highlightedMarks={highlightedMarks}
-        />
-        <Turtle
-          placement={placement}
-          onMoveDragStart   = {onMoveDragStart}
-          onRotateDragStart = {onRotateDragStart}
-          isMoveDragging    = {isMoveDragging}
-          isRotateDragging  = {isRotateDragging}
-        />
-        <Guides
-          placement={previousPlacement}
-          movement={movement}
-          rotation={rotation}
-          showRotation={isRotateDragging}
-          showMovement={isMoveDragging}
-          showTicks={ctrlKey && !shiftKey}
-        />
-      </svg>
+      <div className={cx('canvas')}>
+        <svg className={cx('canvas_inner')}>
+          <Drawing
+            marks={marks}
+            onHoverChange={onHoveredMarkChange}
+            highlightedMarks={highlightedMarks}
+          />
+          <Turtle
+            placement={placement}
+            onMoveDragStart   = {onMoveDragStart}
+            onRotateDragStart = {onRotateDragStart}
+            isMoveDragging    = {isMoveDragging}
+            isRotateDragging  = {isRotateDragging}
+          />
+          <Guides
+            placement={previousPlacement}
+            movement={movement}
+            rotation={rotation}
+            showRotation={isRotateDragging}
+            showMovement={isMoveDragging}
+            showTicks={ctrlKey && !shiftKey}
+          />
+        </svg>
+
+        <div className={cx('canvas_overlay')}>
+          <Hint isVisible={isMoveDragging || isRotateDragging}/>
+        </div>
+      </div>
     );
   }
 }
