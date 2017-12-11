@@ -1,32 +1,33 @@
-import { propertyLens, indexLens, composeLens } from 'utils/lenses';
-
-const commandLens = propertyLens('command');
+import { indexLens } from 'utils/lenses';
 
 class Program {
-  constructor(lines) {
-    this.lines = lines;
+  constructor(commands) {
+    this.commands = commands;
+    this.length = commands.length;
   }
   static empty() {
     return new Program([]);
   }
 
   append(command) {
-    const i = this.lines.length;
-    const lens = indexLens(i);
-    const line = { command, lens };
-    const program = new Program(this.lines.concat(line));
-
-    return [line, program];
+    return new Program(this.commands.concat(command));
   }
   set(lens, newCommand) {
-    const lines = composeLens(lens, commandLens).set(this.lines, newCommand);
-    return new Program(lines);
+    const commands = lens.set(this.commands, newCommand);
+    return new Program(commands);
+  }
+
+  lines() {
+    return this.commands.map((command,i) => ({
+      command,
+      lens: indexLens(i)
+    }));
   }
 
   * interpret(state, step){
     yield state;
 
-    for(const line of this.lines) {
+    for(const line of this.lines()) {
       state = step(state, line);
       yield state;
     }

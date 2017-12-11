@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
-import { emptyLens } from 'utils/lenses';
+import { emptyLens, indexLens } from 'utils/lenses';
 import makeProgram from 'program/program';
 import { Turn, Move } from 'program/command';
 import run from 'program/run';
@@ -32,7 +32,7 @@ class TurtleApp extends React.Component {
 
     this.initialPlacement = initialPlacement;
     this.program = makeProgram();
-    this.currentCommand = emptyLens;
+    this.currentLens = emptyLens;
 
     const { placement, output, trace } = run(this.initialPlacement, this.program);
     this.state = {
@@ -47,8 +47,8 @@ class TurtleApp extends React.Component {
 
   addCommand(command) {
     const { program } = this.state;
-    const [newCommand, newProgram] = program.append(command);
-    this.currentCommand = newCommand.lens;
+    const newProgram = program.append(command);
+    this.currentLens = indexLens(program.length);
     this.runProgram(newProgram);
   }
   runProgram(program) {
@@ -64,22 +64,22 @@ class TurtleApp extends React.Component {
     this.addCommand(Move(0));
   }
   onTurtleMove = (movement) => {
-    const newProgram = this.program.set(this.currentCommand, Move(movement));
+    const newProgram = this.program.set(this.currentLens, Move(movement));
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
-    this.currentCommand = emptyLens;
+    this.currentLens = emptyLens;
   }
   onTurtleRotateStart = () => {
     this.addCommand(Turn(0));
   }
   onTurtleRotate = (rotation) => {
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const newProgram = this.program.set(this.currentCommand, Turn(degrees));
+    const newProgram = this.program.set(this.currentLens, Turn(degrees));
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {
-    this.currentCommand = emptyLens;
+    this.currentLens = emptyLens;
   }
 
   onHoveredMarkChange = (outputEntry) => {

@@ -8,7 +8,7 @@ import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 const Program = ({program, onProgramChange, onHoverChange, highlightedCommands}) => {
-  const children = program.lines.map((line, i) => {
+  const children = program.lines().map((line, i) => {
     const { lens } = line;
     const isHighlighted = safeLens(lens, false).get(highlightedCommands);
     const onLineChange = (lens, command) => {
