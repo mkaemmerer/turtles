@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
+import { emptyLens } from 'utils/lenses';
 import makeProgram from 'program/program';
 import { Turn, Move } from 'program/command';
 import run from 'program/run';
-
 import Turtle from '../turtle';
 import Drawing from '../drawing';
 import Program from '../program';
@@ -30,12 +30,12 @@ class TurtleApp extends React.Component {
     super(props);
 
     this.initialPlacement = initialPlacement;
-    this.currentCommand = null;
+    this.program = makeProgram();
+    this.currentCommand = emptyLens;
 
-    const program = makeProgram();
-    const { placement, output, trace } = run(this.initialPlacement, program);
+    const { placement, output, trace } = run(this.initialPlacement, this.program);
     this.state = {
-      program,
+      program: this.program,
       placement,
       output,
       trace,
@@ -51,6 +51,7 @@ class TurtleApp extends React.Component {
     this.runProgram(newProgram);
   }
   runProgram(program) {
+    this.program = program;
     const { placement, output, trace } = run(this.initialPlacement, program);
     this.setState({ program, placement, output, trace });
   }
@@ -62,26 +63,22 @@ class TurtleApp extends React.Component {
     this.addCommand(Move(0));
   }
   onTurtleMove = (movement) => {
-    //TODO: this is getting run before the previous state has had a chance to update, so the program doesn't contain the new command yet
-    const { program } = this.state;
-    const newProgram = program.set(this.currentCommand, Move(movement));
+    const newProgram = this.program.set(this.currentCommand, Move(movement));
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
-    this.currentCommand = null;
+    this.currentCommand = emptyLens;
   }
   onTurtleRotateStart = () => {
     this.addCommand(Turn(0));
   }
   onTurtleRotate = (rotation) => {
-    //TODO: this is getting run before the previous state has had a chance to update, so the program doesn't contain the new command yet
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const { program } = this.state;
-    const newProgram = program.set(this.currentCommand, Turn(degrees));
+    const newProgram = this.program.set(this.currentCommand, Turn(degrees));
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {
-    this.currentCommand = null;
+    this.currentCommand = emptyLens;
   }
 
   onHoveredMarkChange = (outputEntry) => {
