@@ -8,7 +8,7 @@ const DEGREES_TO_RADIANS = Math.PI / 180;
 
 const step = (placement, programLine) =>
   programLine.command.match({
-    move({distance}) {
+    move(distance) {
       const newPlacement = placement.move(distance);
       const newMarks = [
         Line({
@@ -18,7 +18,7 @@ const step = (placement, programLine) =>
       ];
       return [ newPlacement, newMarks ];
     },
-    turn({degrees})  {
+    turn(degrees)  {
       const newPlacement = placement.rotate(degrees * DEGREES_TO_RADIANS);
       const newMarks = [
         Turn({

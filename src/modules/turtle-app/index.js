@@ -5,7 +5,7 @@ import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
 import { emptyLens, indexLens, composeLens } from 'utils/lenses';
 import Prog from 'program/program';
-import { Turn, Move } from 'program/command';
+import Command from 'program/command';
 import run from 'program/run';
 import Canvas from '../canvas';
 import Program from '../program';
@@ -61,21 +61,21 @@ class TurtleApp extends React.Component {
     this.runProgram(program);
   }
   onTurtleMoveStart = () => {
-    this.addCommand(Move(0));
+    this.addCommand(Command.Move(0));
   }
   onTurtleMove = (movement) => {
-    const newProgram = this.currentLens.set(this.program, Move(movement));
+    const newProgram = this.currentLens.set(this.program, Command.Move(movement));
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
     this.currentLens = emptyLens;
   }
   onTurtleRotateStart = () => {
-    this.addCommand(Turn(0));
+    this.addCommand(Command.Turn(0));
   }
   onTurtleRotate = (rotation) => {
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const newProgram = this.currentLens.set(this.program, Turn(degrees));
+    const newProgram = this.currentLens.set(this.program, Command.Turn(degrees));
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {
