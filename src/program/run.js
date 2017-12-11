@@ -1,27 +1,27 @@
 import { last } from 'utils/generators';
 import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
-import { Line, Turn } from './mark';
+import Mark from './mark';
 import Trace from './trace';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
 const step = (placement, programLine) =>
   programLine.command.match({
-    move(distance) {
+    Move(distance) {
       const newPlacement = placement.move(distance);
       const newMarks = [
-        Line({
+        Mark.Line({
           from: placement.position,
           to:   newPlacement.position
         })
       ];
       return [ newPlacement, newMarks ];
     },
-    turn(degrees)  {
+    Turn(degrees)  {
       const newPlacement = placement.rotate(degrees * DEGREES_TO_RADIANS);
       const newMarks = [
-        Turn({
+        Mark.Turn({
           position: placement.position,
           from:     V2.toRotation(placement.heading),
           to:       V2.toRotation(newPlacement.heading)

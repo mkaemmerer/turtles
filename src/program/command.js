@@ -12,23 +12,23 @@ class Command {
   }
   static lens = {
     get: (c) => c.match({
-      move: id,
-      turn: id
+      Move: id,
+      Turn: id
     }),
     set: (c,amount) => c.match({
-      move: () => Command.Move(amount),
-      turn: () => Command.Turn(amount)
+      Move: () => Command.Move(amount),
+      Turn: () => Command.Turn(amount)
     })
   }
 }
 class MoveCommand extends Command {
   match(handlers) {
-    return handlers['move'](this.data.distance);
+    return handlers['Move'](this.data.distance);
   }
 }
 class TurnCommand extends Command {
   match(handlers) {
-    return handlers['turn'](this.data.degrees);
+    return handlers['Turn'](this.data.degrees);
   }
 }
 

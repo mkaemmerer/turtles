@@ -5,8 +5,8 @@ import Number from 'components/number';
 
 const Command = (props) =>
   props.command.match({
-    move(distance){ return (<MoveCommand distance={distance} {...props}/>); },
-    turn(degrees) { return (<TurnCommand degrees={degrees}   {...props}/>); }
+    Move(distance){ return (<MoveCommand distance={distance} {...props}/>); },
+    Turn(degrees) { return (<TurnCommand degrees={degrees}   {...props}/>); }
   });
 Command.propTypes = {
   command: PropTypes.object.isRequired,

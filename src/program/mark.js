@@ -1,15 +1,24 @@
 class Mark {
-  constructor(type, data) {
-    this.type = type;
+  constructor(data) {
     this.data = data;
   }
+  static Line({from, to}){
+    return new LineMark({from, to});
+  }
+  static Turn({position, from, to}) {
+    return new TurnMark({position, from, to});
+  }
+}
+class LineMark extends Mark {
   match(handlers) {
-    const handle = handlers[this.type];
-    return handle(this.data);
+    return handlers['Line'](this.data);
+  }
+}
+class TurnMark extends Mark {
+  match(handlers) {
+    return handlers['Turn'](this.data);
   }
 }
 
-const Line = ({from, to})           => new Mark('line', {from, to});
-const Turn = ({position, from, to}) => new Mark('turn', {position, from, to});
 
-export { Line, Turn };
+export default Mark;
