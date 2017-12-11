@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Turtle from '../turtle';
-import Drawing from '../drawing';
+import Turtle from './turtle';
+import Drawing from './drawing';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
