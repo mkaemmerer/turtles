@@ -21,7 +21,7 @@ const MoveCommand = ({command, onCommandChange}) => {
   return (
     <span>
       move &nbsp;
-      <Number value={command.data.distance} onChange={onNumberChange}/>
+      <Number value={command.data.distance} increment={10} scaleFactor={0.1} onChange={onNumberChange}/>
     </span>
   );
 };
@@ -30,7 +30,7 @@ const TurnCommand = ({command, onCommandChange}) => {
   return (
     <span>
       turn &nbsp;
-      <Number value={command.data.degrees} onChange={onNumberChange}/>
+      <Number value={command.data.degrees} increment={15} scaleFactor={0.5} onChange={onNumberChange}/>
     </span>
   );
 };

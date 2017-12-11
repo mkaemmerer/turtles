@@ -25,20 +25,28 @@ const ManageState = (Number) => {
 
   class ManagedNumber extends React.Component {
     static propTypes = {
-      value:    PropTypes.number,
-      onChange: PropTypes.func
+      value:       PropTypes.number,
+      increment:   PropTypes.number,
+      scaleFactor: PropTypes.number,
+      onChange:    PropTypes.func.isRequired
+    }
+    static defaultProps = {
+      increment: 10,
+      scaleFactor: 0.1
     }
 
     onDragStart = () => {
       this.value = this.props.value;
     }
     onDrag = (offset, ctrlKey, shiftKey) => {
+      const { increment, scaleFactor } = this.props;
+
       const delta = shiftKey
-        ? Math.floor(offset/10)
+        ? Math.floor(offset * scaleFactor)
         : offset;
 
       const value = (ctrlKey && !shiftKey)
-        ? Math.round((this.value + delta) / 10) * 10
+        ? Math.round((this.value + delta) / increment) * increment
         : this.value + delta;
 
       this.props.onChange(value);
