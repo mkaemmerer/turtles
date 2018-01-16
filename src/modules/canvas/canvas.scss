@@ -25,3 +25,14 @@
   left:   0;
   right:  0;
 }
+
+.canvas_overlay-footer {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  flex: 1;
+  height: $space-l;
+
+  margin: $space-inset-s;
+  align-self: flex-end;
+}

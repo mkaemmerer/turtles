@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Key from 'components/key';
 import Drawing from './drawing';
 import Turtle from './turtle';
 import Guides from './guides';
@@ -72,7 +73,16 @@ class Canvas extends React.Component {
         </svg>
 
         <div className={cx('canvas_overlay')}>
-          <Hint isVisible={isMoveDragging || isRotateDragging}/>
+          <div className={cx('canvas_overlay-footer')}>
+            <Hint isVisible={isMoveDragging}>
+              <span><Key name="Ctrl"/>: Snap to nearest 10</span>
+              <span><Key name="Shift"/>: Fine tune</span>
+            </Hint>
+            <Hint isVisible={isRotateDragging}>
+              <span><Key name="Ctrl"/>: Snap to nearest 15</span>
+              <span><Key name="Shift"/>: Fine tune</span>
+            </Hint>
+          </div>
         </div>
       </div>
     );

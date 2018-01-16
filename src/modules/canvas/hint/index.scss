@@ -1,12 +1,13 @@
 @import '../../../style/index';
 
 .hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+
   display: flex;
   justify-content: space-around;
-  flex: 1;
 
-  margin: $space-inset-s;
-  align-self: flex-end;
   text-align: center;
 }
 
