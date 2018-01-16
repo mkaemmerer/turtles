@@ -10,7 +10,7 @@ const Hint = ({ isVisible }) => {
   const className = cx('hint', { 'hint--visible': isVisible });
   return (
     <div className={className}>
-      <span><Key name="Ctrl"/>: Snap to nearest 10</span>
+      <span><Key name="Ctrl"/>: Snap to nearest 10</span>,&nbsp;&nbsp;
       <span><Key name="Shift"/>: Fine tune</span>
     </div>
   );
