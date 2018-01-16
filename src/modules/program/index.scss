@@ -11,6 +11,7 @@
   @include scrollable();
 }
 .program_footer {
+  margin: $space-inset-s;
 }
 
 .program_line {

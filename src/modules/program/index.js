@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { safeLens } from 'utils/lenses';
+import Key from 'components/key';
 import ProgramLine from './line';
-import Hint from './hint';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -19,15 +19,22 @@ class Program extends React.Component {
   constructor() {
     super();
     this.state = {
-      isDragging: false
+      isDraggingDistance: false,
+      isDraggingDegrees:  false
     };
   }
 
-  onDragStart = () => {
-    this.setState({ isDragging: true });
+  onDistanceDragStart = () => {
+    this.setState({ isDraggingDistance: true });
   }
-  onDragEnd = () => {
-    this.setState({ isDragging: false });
+  onDistanceDragEnd = () => {
+    this.setState({ isDraggingDistance: false });
+  }
+  onDegreesDragStart = () => {
+    this.setState({ isDraggingDegrees: true });
+  }
+  onDegreesDragEnd = () => {
+    this.setState({ isDraggingDegrees: false });
   }
 
   renderLine(line, i) {
@@ -48,10 +55,12 @@ class Program extends React.Component {
         command={command}
         isHighlighted={isHighlighted}
         onCommandChange={onCommandChange}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onDragStart={this.onDragStart}
-        onDragEnd={this.onDragEnd}
+        onMouseEnter = {onMouseEnter}
+        onMouseLeave = {onMouseLeave}
+        onDistanceDragStart = {this.onDistanceDragStart}
+        onDistanceDragEnd   = {this.onDistanceDragEnd}
+        onDegreesDragStart  = {this.onDegreesDragStart}
+        onDegreesDragEnd    = {this.onDegreesDragEnd}
       />
     );
   }
@@ -59,15 +68,36 @@ class Program extends React.Component {
     const { program } = this.props;
     return program.lines().map((line, i) => this.renderLine(line, i));
   }
+  renderHint() {
+    const { isDraggingDistance, isDraggingDegrees } = this.state;
+
+    if(isDraggingDistance) {
+      return (
+        <div>
+          <span><Key name="Ctrl"/>: Snap to nearest 10</span>,&nbsp;&nbsp;
+          <span><Key name="Shift"/>: Fine tune</span>
+        </div>
+      );
+    }
+    if(isDraggingDegrees) {
+      return (
+        <div>
+          <span><Key name="Ctrl"/>: Snap to nearest 15</span>,&nbsp;&nbsp;
+          <span><Key name="Shift"/>: Fine tune</span>
+        </div>
+      );
+    }
+
+    return null;
+  }
   render() {
-    const { isDragging } = this.state;
     return (
       <div className={cx('program')}>
         <div className={cx('program_lines')}>
           {this.renderLines()}
         </div>
         <div className={cx('program_footer')}>
-          <Hint isVisible={isDragging}/>
+          {this.renderHint()}
         </div>
       </div>
     );

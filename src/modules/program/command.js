@@ -11,11 +11,13 @@ const Command = (props) =>
 Command.propTypes = {
   command: PropTypes.object.isRequired,
   onCommandChange: PropTypes.func,
-  onDragStart: PropTypes.func,
-  onDragEnd:   PropTypes.func
+  onDistanceDragStart: PropTypes.func,
+  onDistanceDragEnd:   PropTypes.func,
+  onDegreesDragStart:  PropTypes.func,
+  onDegreesDragEnd:    PropTypes.func
 };
 
-const MoveCommand = ({distance, onCommandChange, onDragStart, onDragEnd }) => {
+const MoveCommand = ({distance, onCommandChange, onDistanceDragStart, onDistanceDragEnd }) => {
   const onNumberChange = (value) => {
     onCommandChange(CommandPrim.Move(value));
   };
@@ -27,13 +29,13 @@ const MoveCommand = ({distance, onCommandChange, onDragStart, onDragEnd }) => {
         increment={10}
         scaleFactor={0.1}
         onChange={onNumberChange}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
+        onDragStart={onDistanceDragStart}
+        onDragEnd={onDistanceDragEnd}
       />
     </span>
   );
 };
-const TurnCommand = ({degrees, onCommandChange, onDragStart, onDragEnd }) => {
+const TurnCommand = ({degrees, onCommandChange, onDegreesDragStart, onDegreesDragEnd }) => {
   const onNumberChange = (value) => {
     onCommandChange(CommandPrim.Turn(value));
   };
@@ -45,8 +47,8 @@ const TurnCommand = ({degrees, onCommandChange, onDragStart, onDragEnd }) => {
         increment={15}
         scaleFactor={0.5}
         onChange={onNumberChange}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
+        onDragStart={onDegreesDragStart}
+        onDragEnd={onDegreesDragEnd}
       />
     </span>
   );

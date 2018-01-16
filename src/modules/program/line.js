@@ -6,12 +6,19 @@ import styles from './index.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const ProgramLine = ({ command, onCommandChange, onMouseEnter, onMouseLeave, onDragStart, onDragEnd, isHighlighted }) => {
+const ProgramLine = ({ command, onCommandChange, onMouseEnter, onMouseLeave, onDistanceDragStart, onDistanceDragEnd, onDegreesDragStart, onDegreesDragEnd, isHighlighted }) => {
   const className = cx('program_line', { 'program_line--highlighted': isHighlighted });
 
   return (
     <div className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      <Command command={command} onCommandChange={onCommandChange} onDragStart={onDragStart} onDragEnd={onDragEnd}/>
+      <Command
+        command={command}
+        onCommandChange={onCommandChange}
+        onDistanceDragStart = {onDistanceDragStart}
+        onDistanceDragEnd   = {onDistanceDragEnd}
+        onDegreesDragStart  = {onDegreesDragStart}
+        onDegreesDragEnd    = {onDegreesDragEnd}
+      />
     </div>
   );
 };
@@ -20,8 +27,10 @@ ProgramLine.propTypes = {
   onCommandChange: PropTypes.func.isRequired,
   onMouseEnter:  PropTypes.func,
   onMouseLeave:  PropTypes.func,
-  onDragStart:   PropTypes.func,
-  onDragEnd:     PropTypes.func,
+  onDistanceDragStart: PropTypes.func,
+  onDistanceDragEnd:   PropTypes.func,
+  onDegreesDragStart:  PropTypes.func,
+  onDegreesDragEnd:    PropTypes.func,
   isHighlighted: PropTypes.bool.isRequired
 };
 
@@ -44,7 +53,7 @@ class OptimizedProgramLine extends React.Component {
   }
 
   render() {
-    const { command, isHighlighted, onDragStart, onDragEnd } = this.props;
+    const { command, isHighlighted, onDistanceDragStart, onDistanceDragEnd, onDegreesDragStart, onDegreesDragEnd } = this.props;
     return (
       <ProgramLine
         command={command}
@@ -52,8 +61,10 @@ class OptimizedProgramLine extends React.Component {
         onCommandChange={this.onCommandChange}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
+        onDistanceDragStart = {onDistanceDragStart}
+        onDistanceDragEnd   = {onDistanceDragEnd}
+        onDegreesDragStart  = {onDegreesDragStart}
+        onDegreesDragEnd    = {onDegreesDragEnd}
       />
     );
   }
