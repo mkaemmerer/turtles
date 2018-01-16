@@ -28,15 +28,20 @@ const ManageState = (Number) => {
       value:       PropTypes.number,
       increment:   PropTypes.number,
       scaleFactor: PropTypes.number,
-      onChange:    PropTypes.func.isRequired
+      onChange:    PropTypes.func.isRequired,
+      onDragStart: PropTypes.func,
+      onDragEnd:   PropTypes.func
     }
     static defaultProps = {
       increment: 10,
-      scaleFactor: 0.1
+      scaleFactor: 0.1,
+      onDragStart: () => {},
+      onDragEnd:   () => {}
     }
 
     onDragStart = () => {
       this.value = this.props.value;
+      this.props.onDragStart();
     }
     onDrag = (offset, ctrlKey, shiftKey) => {
       const { increment, scaleFactor } = this.props;
@@ -52,6 +57,7 @@ const ManageState = (Number) => {
       this.props.onChange(value);
     }
     onDragEnd = () => {
+      this.props.onDragEnd();
     }
 
     render() {
