@@ -1,0 +1,19 @@
+@import '../../../style/index';
+
+.hint {
+  display: flex;
+  justify-content: space-around;
+  flex: 1;
+
+  margin: $space-inset-s;
+  align-self: flex-end;
+  text-align: center;
+}
+
+.hint {
+  opacity: 0;
+  transition: opacity $animation-duration-fast;
+}
+.hint--visible {
+  opacity: 1;
+}

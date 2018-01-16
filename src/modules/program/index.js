@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { safeLens } from 'utils/lenses';
 import ProgramLine from './line';
+import Hint from './hint';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -32,7 +33,12 @@ const Program = ({program, onProgramChange, onHoverChange, highlightedCommands})
 
   return (
     <div className={cx('program')}>
-      {children}
+      <div className={cx('program_lines')}>
+        {children}
+      </div>
+      <div className={cx('program_footer')}>
+        <Hint isVisible={false}/>
+      </div>
     </div>
   );
 };

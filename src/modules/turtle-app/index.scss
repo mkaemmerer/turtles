@@ -9,6 +9,7 @@
 }
 
 .turtle-app_sidebar {
+  display: flex;
   width: $space-xl * 8;
   background-color: $color-white;
   box-shadow: $shadow-m;

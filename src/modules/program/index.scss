@@ -1,8 +1,17 @@
 @import '../../style/index';
 
 .program {
+  width: 100%;
   display: flex;
   flex-direction: column;
+}
+.program_lines {
+  flex: 1;
+  overflow-y: scroll;
+  @include scrollable();
+}
+.program_footer {
+  text-align: center;
 }
 
 .program_line {
