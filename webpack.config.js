@@ -16,6 +16,9 @@ module.exports = {
 			'./src/index.js'
 		])
 	},
+	resolveLoader: {
+		modules: ['node_modules', path.resolve(__dirname, 'loaders')]
+	},
 	resolve: {
 		alias: {
 			'utils':      path.resolve(__dirname, 'src/utils/'),
@@ -43,6 +46,10 @@ module.exports = {
 				test: /\.svg$/,
 				exclude:/\.sprite\.svg$/,
 				loaders: ['babel-loader', 'react-svg-loader?jsx=true']
+			},
+			{
+				test: /\.tt/,
+				loaders: ['turtletalk-loader']
 			}
 		]
 	},

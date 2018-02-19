@@ -1,0 +1,9 @@
+let side = 100
+move(side)
+turn(-90)
+move(side)
+turn(-90)
+move(side)
+turn(-90)
+move(side)
+turn(-90)
