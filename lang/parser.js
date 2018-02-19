@@ -24,22 +24,33 @@ const tNum   = P.regex(/-?[0-9]+/).map(x => Number(x)).desc('a number');
 const tOpenParen  = P.string('(');
 const tCloseParen = P.string(')');
 
+
+//Primitives
+const prim  = P.lazy(() => P.alt(pMove, pTurn));
+const pMove = tMove.result({ 'type': 'Prim.Move' });
+const pTurn = tTurn.result({ 'type': 'Prim.Turn' });
+
 //Expressions
-const expr   = P.lazy(() => P.alt(eApp, expr1));
-const expr1  = P.lazy(() => P.alt(ePrim, eConst, eVar));
-const ePrim  = P.alt(tMove, tTurn).map((name) => ({ type: 'ePrim', name }));
-const eConst = tNum.map((value) => ({ type: 'eConst', value }));
-const eVar   = tVar.map((name)  => ({ type: 'eVar',   name }));
-const eApp   = P.seqObj(
-  ['type',  P.of('eApp')],
-  ['func',  expr1],
+const expr = P.lazy(() => P.alt(ePrim, eConst, eVar).chain(exprMore));
+const exprMore = (expr) =>
+  P.alt(
+    P.of(expr).notFollowedBy(tOpenParen),
+    eApp(expr).chain(exprMore)
+  );
+
+const ePrim  = prim.map((name) => ({ type: 'Expr.Prim', prim }));
+const eConst = tNum.map((value) => ({ type: 'Expr.Const', value }));
+const eVar   = tVar.map((name)  => ({ type: 'Expr.Var',   name }));
+const eApp   = (expr1) => P.seqObj(
+  ['type',  P.of('Expr.App')],
+  ['func',  P.of(expr1)],
   ['args',  expr.sepBy(tComma.then(space)).wrap(tOpenParen, tCloseParen)]
 );
 
 //Bindings
 const binding = P.lazy(() => P.alt(bLet));
 const bLet = P.seqObj(
-  ['type',  P.of('bLet')],
+  ['type',  P.of('Binding.Let')],
   tLet.then(space),
   ['var',   tVar],
   space.then(tEqual).then(space),
@@ -53,7 +64,7 @@ const block = (indent) => {
 
   return P
     .seqObj(
-      ['type', P.of('block')],
+      ['type', P.of('Block')],
       ['bindings', bindingsPart],
       newline,
       ['commands', commandsPart]
