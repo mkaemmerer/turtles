@@ -8,6 +8,14 @@ export function* map(f, generator) {
   for(const x of generator) { yield f(x); }
 }
 
+export function* flatten(generator) {
+  for(const g of generator) { yield* g; }
+}
+
+export function* flatMap(f, generator) {
+  for(const x of generator) { yield* f(x); }
+}
+
 export function forEach(f, generator) {
   for(const x of generator) { f(x); }
 }
@@ -27,6 +35,10 @@ export function reduce(f, acc, generator) {
 
 export function toArray(generator) {
   return Array.from(generator);
+}
+
+export function* fromIterable(iterable) {
+  for(const x of iterable) { yield x; }
 }
 
 export function last(generator) {

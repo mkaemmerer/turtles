@@ -7,6 +7,12 @@ class FluentGenerator {
   map(f) {
     return new FluentGenerator(gen.map(f, this.generator));
   }
+  flatten() {
+    return new FluentGenerator(gen.flatten(this.generator));
+  }
+  flatMap(f) {
+    return new FluentGenerator(gen.flatMap(f, this.generator));
+  }
   forEach(f) {
     gen.forEach(f, this.generator);
   }
