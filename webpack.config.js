@@ -1,61 +1,60 @@
-const StyleLintPlugin = require('stylelint-webpack-plugin');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
-function getEntrySources(sources) {
-	if (process.env.NODE_ENV !== 'production') {
-		sources.push('webpack-dev-server/client?http://localhost:9000');
-		sources.push('webpack/hot/only-dev-server');
-	}
-
-	return sources;
-}
-
 module.exports = {
-	entry: {
-		index: getEntrySources([
-			'./src/index.js'
-		])
-	},
-	resolveLoader: {
-		modules: ['node_modules', path.resolve(__dirname, 'loaders')]
-	},
-	resolve: {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader']
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              localIdentName: '[path][name]__[local]--[hash:base64:5]'
+            }
+          },
+          'sass-loader'
+        ]
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: { minimize: true }
+          }
+        ]
+      },
+			{
+				test: /\.tt$/,
+				use: ['turtletalk-loader']
+			}
+    ]
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: './index.html',
+      filename: './index.html'
+    })
+  ],
+  resolve: {
 		alias: {
 			'utils':      path.resolve(__dirname, 'src/utils/'),
+      'style':      path.resolve(__dirname, 'src/style/'),
 			'program':    path.resolve(__dirname, 'src/program/'),
 			'components': path.resolve(__dirname, 'src/components/'),
-			'modules':    path.resolve(__dirname, 'src/modules/')
+			'modules':    path.resolve(__dirname, 'src/modules/'),
+			'pages':      path.resolve(__dirname, 'src/pages/')
 		}
 	},
-	output: {
-		publicPath: 'http://localhost:9000/',
-		filename: 'public/[name].js'
-	},
-	module: {
-		loaders: [
-			{
-				test: /\.js$/,
-				loaders: ['babel-loader', 'eslint-loader'],
-				exclude: /node_modules/
-			},
-			{
-				test: /\.scss$/,
-				loaders: ['style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]', 'sass-loader']
-			},
-			{
-				test: /\.svg$/,
-				exclude:/\.sprite\.svg$/,
-				loaders: ['babel-loader', 'react-svg-loader?jsx=true']
-			},
-			{
-				test: /\.tt/,
-				loaders: ['turtletalk-loader']
-			}
-		]
-	},
-	plugins: [
-		new StyleLintPlugin({
-			syntax: 'scss'
-		})
-	]
+	resolveLoader: {
+    modules: ['node_modules', path.resolve(__dirname, 'loaders')]
+  }
 };

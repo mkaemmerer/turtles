@@ -43,7 +43,7 @@ const Controls = ({ onMoveDragStart, onRotateDragStart, showMovement, showRotati
     </g>
   )
 };
-Controls.PropTypes = {
+Controls.propTypes = {
   onMoveDragStart:   PropTypes.func,
   onRotateDragStart: PropTypes.func,
   showMovement:      PropTypes.bool,
