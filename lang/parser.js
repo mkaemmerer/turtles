@@ -31,14 +31,14 @@ const pMove = tMove.result({ 'type': 'Prim.Move' });
 const pTurn = tTurn.result({ 'type': 'Prim.Turn' });
 
 //Expressions
-const expr = P.lazy(() => P.alt(ePrim, eConst, eVar).chain(exprMore));
+const expr = P.lazy(() => P.alt(eCmd, eConst, eVar).chain(exprMore));
 const exprMore = (expr) =>
   P.alt(
     P.of(expr).notFollowedBy(tOpenParen),
     eApp(expr).chain(exprMore)
   );
 
-const ePrim  = prim.map((name) => ({ type: 'Expr.Prim', prim }));
+const eCmd   = cmd.map((cmd)    => ({ type: 'Expr.Cmd',   cmd }));
 const eConst = tNum.map((value) => ({ type: 'Expr.Const', value }));
 const eVar   = tVar.map((name)  => ({ type: 'Expr.Var',   name }));
 const eApp   = (expr1) => P.seqObj(
@@ -52,19 +52,24 @@ const binding = P.lazy(() => P.alt(bLet));
 const bLet = P.seqObj(
   ['type',  P.of('Binding.Let')],
   tLet.then(space),
-  ['var',   tVar],
+  ['name',  tVar],
   space.then(tEqual).then(space),
-  ['value', expr]
+  ['expr',  expr]
 );
 
 //Block scope
-const block = (indent) => {
+const cmd = P.lazy(() => P.alt(cMove, cTurn, cBlock(0)));
+const cMove = tMove.then(expr).wrap(tOpenParen, tCloseParen)
+  .map((expr) => ({type: 'Cmd.Move', expr }));
+const cTurn = tTurn.then(expr).wrap(tOpenParen, tCloseParen)
+  .map((expr) => ({type: 'Cmd.Turn', expr }));
+const cBlock = (indent) => {
   const bindingsPart = binding.sepBy(newline);
   const commandsPart = expr.sepBy(newline);
 
   return P
     .seqObj(
-      ['type', P.of('Block')],
+      ['type', P.of('Cmd.Block')],
       ['bindings', bindingsPart],
       newline,
       ['commands', commandsPart]
@@ -72,5 +77,5 @@ const block = (indent) => {
 };
 
 
-const program = block(0).skip(newline).skip(P.eof);
+const program = cBlock(0).skip(newline).skip(P.eof);
 module.exports = program;
