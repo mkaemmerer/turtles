@@ -1,12 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CommandPrim } from 'program/ast';
+import * as AST from 'lang/ast';
 import Number from 'components/number';
 
+const MoveConst = (value) => AST.Cmd.Move({ expr: AST.Expr.Const({ value }) });
+const TurnConst = (value) => AST.Cmd.Turn({ expr: AST.Expr.Const({ value }) });
+
+const match = (node, handlers) => handlers[node.type](node);
+
 const Command = (props) =>
-  CommandPrim.match(props.command, {
-    Move(distance){ return (<MoveCommand distance={distance} {...props}/>); },
-    Turn(degrees) { return (<TurnCommand degrees={degrees}   {...props}/>); }
+  match(props.command, {
+    'Cmd.Move'({expr}) { return (<MoveCommand expr={expr} {...props}/>); },
+    'Cmd.Turn'({expr}) { return (<TurnCommand expr={expr} {...props}/>); },
+    'Cmd.Block': () => null
   });
 Command.propTypes = {
   command: PropTypes.object.isRequired,
@@ -17,15 +23,15 @@ Command.propTypes = {
   onDegreesDragEnd:    PropTypes.func
 };
 
-const MoveCommand = ({distance, onCommandChange, onDistanceDragStart, onDistanceDragEnd }) => {
+const MoveCommand = ({expr, onCommandChange, onDistanceDragStart, onDistanceDragEnd }) => {
   const onNumberChange = (value) => {
-    onCommandChange(CommandPrim.Move(value));
+    onCommandChange(MoveConst(value));
   };
   return (
     <span>
       move &nbsp;
       <Number
-        value={distance}
+        value={expr.value}
         increment={10}
         scaleFactor={0.1}
         onChange={onNumberChange}
@@ -35,15 +41,15 @@ const MoveCommand = ({distance, onCommandChange, onDistanceDragStart, onDistance
     </span>
   );
 };
-const TurnCommand = ({degrees, onCommandChange, onDegreesDragStart, onDegreesDragEnd }) => {
+const TurnCommand = ({expr, onCommandChange, onDegreesDragStart, onDegreesDragEnd }) => {
   const onNumberChange = (value) => {
-    onCommandChange(CommandPrim.Turn(value));
+    onCommandChange(TurnConst(value));
   };
   return (
     <span>
       turn &nbsp;
       <Number
-        value={degrees}
+        value={expr.value}
         increment={15}
         scaleFactor={0.5}
         onChange={onNumberChange}

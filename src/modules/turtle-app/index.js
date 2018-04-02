@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
-import { emptyLens } from 'utils/lenses';
-import Prog from 'program/program';
-import { Command, CommandPrim } from 'program/ast';
+import { emptyLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
 import run from 'program/run';
+import * as AST from 'lang/ast';
 import Canvas from '../canvas';
 import Program from '../program';
 
@@ -19,6 +18,14 @@ const initialPlacement = new Placement(
   P2(480, 380),
   V2(0, -1)
 );
+const initialProgram = AST.Cmd.Block({
+  binds: [],
+  cmds: []
+});
+
+const MoveConst = (value) => AST.Cmd.Move({ expr: AST.Expr.Const({ value }) });
+const TurnConst = (value) => AST.Cmd.Turn({ expr: AST.Expr.Const({ value }) });
+
 
 class TurtleApp extends React.Component {
   static propTypes = {
@@ -31,7 +38,7 @@ class TurtleApp extends React.Component {
     super(props);
 
     this.initialPlacement = initialPlacement;
-    this.program = Prog.empty();
+    this.program = initialProgram;
     this.currentLens = emptyLens;
 
     const { placement, marks, trace } = run(this.initialPlacement, this.program);
@@ -46,10 +53,10 @@ class TurtleApp extends React.Component {
   }
 
   addCommand(command) {
-    const { program } = this.state;
-    const newProgram = program.append(Command.Prim(command));
-    const lines = newProgram.lines();
-    this.currentLens = lines[lines.length - 1].lens;
+    const newProgram = AST.Cmd.Block({
+      binds: this.program.binds,
+      cmds:  this.program.cmds.concat(command)
+    });
     this.runProgram(newProgram);
   }
   runProgram(program) {
@@ -62,21 +69,29 @@ class TurtleApp extends React.Component {
     this.runProgram(program);
   }
   onTurtleMoveStart = () => {
-    this.addCommand(CommandPrim.Move(0));
+    this.addCommand(MoveConst(0));
+    this.currentLens = composeLens(
+      propertyLens('cmds'),
+      indexLens(this.program.cmds.length - 1)
+    );
   }
   onTurtleMove = (movement) => {
-    const newProgram = this.currentLens.set(this.program, CommandPrim.Move(movement));
+    const newProgram = this.currentLens.set(this.program, MoveConst(movement));
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
     this.currentLens = emptyLens;
   }
   onTurtleRotateStart = () => {
-    this.addCommand(CommandPrim.Turn(0));
+    this.addCommand(TurnConst(0));
+    this.currentLens = composeLens(
+      propertyLens('cmds'),
+      indexLens(this.program.cmds.length - 1)
+    );
   }
   onTurtleRotate = (rotation) => {
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const newProgram = this.currentLens.set(this.program, CommandPrim.Turn(degrees));
+    const newProgram = this.currentLens.set(this.program, TurnConst(degrees));
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {
@@ -84,6 +99,8 @@ class TurtleApp extends React.Component {
   }
 
   onHoveredMarkChange = (outputEntry) => {
+    /* eslint-disable */
+    return;
     if(outputEntry) {
       const { trace }  = this.state;
       const sourceLine = trace.getSource(outputEntry);
@@ -100,6 +117,8 @@ class TurtleApp extends React.Component {
     }
   }
   onHoveredCommandChange = (sourceLine) => {
+    /* eslint-disable */
+    return;
     if(sourceLine) {
       const { trace }   = this.state;
       const outputEntry = trace.getOutput(sourceLine);

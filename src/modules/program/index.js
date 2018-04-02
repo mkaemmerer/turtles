@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { safeLens } from 'utils/lenses';
+import { safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
 import Key from 'components/key';
 import ProgramLine from './line';
 
@@ -37,16 +37,15 @@ class Program extends React.Component {
     this.setState({ isDraggingDegrees: false });
   }
 
-  renderLine(line, i) {
+  renderLine(command, lens, i) {
     const {program, onProgramChange, onHoverChange, highlightedCommands} = this.props;
-    const { command, lens } = line;
 
     const isHighlighted = safeLens(lens, false).get(highlightedCommands);
     const onCommandChange = (command) => {
       const newProgram = lens.set(program, command);
       onProgramChange(newProgram);
     };
-    const onMouseEnter = () => { onHoverChange(line); };
+    const onMouseEnter = () => { onHoverChange(command, lens); };
     const onMouseLeave = () => { onHoverChange(null); };
 
     return (
@@ -66,7 +65,13 @@ class Program extends React.Component {
   }
   renderLines() {
     const { program } = this.props;
-    return program.lines().map((line, i) => this.renderLine(line, i));
+    return program.cmds.map((cmd, i) => {
+      const lens = composeLens(
+        safeLens(propertyLens('cmds'), []),
+        indexLens(i)
+      );
+      return this.renderLine(cmd, lens, i);
+    });
   }
   renderHint() {
     const { isDraggingDistance, isDraggingDegrees } = this.state;

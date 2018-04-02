@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { last } from 'utils/generators';
 import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
@@ -53,7 +54,7 @@ const run = (placement, program) => {
     marks: [],
     trace: Trace()
   };
-  return last(program.interpret(initialState, stepTrace));
+  return initialState;//last(program.interpret(initialState, stepTrace));
 };
 
 export default run;
