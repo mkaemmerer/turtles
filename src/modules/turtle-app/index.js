@@ -23,8 +23,18 @@ const initialProgram = AST.Cmd.Block({
   cmds: []
 });
 
-const MoveConst = (value) => AST.Cmd.Move({ expr: AST.Expr.Const({ value }) });
-const TurnConst = (value) => AST.Cmd.Turn({ expr: AST.Expr.Const({ value }) });
+const MoveConst = (value) =>
+  AST.Expr.Cmd({
+    cmd: AST.Cmd.Move({
+      expr: AST.Expr.Const({ value })
+    })
+  });
+const TurnConst = (value) =>
+  AST.Expr.Cmd({
+    cmd: AST.Cmd.Turn({
+      expr: AST.Expr.Const({ value })
+    })
+  });
 
 
 class TurtleApp extends React.Component {

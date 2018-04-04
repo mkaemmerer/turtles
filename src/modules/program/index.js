@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
 import Key from 'components/key';
-import ProgramLine from './line';
+import { Block } from './program';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -37,41 +36,18 @@ class Program extends React.Component {
     this.setState({ isDraggingDegrees: false });
   }
 
-  renderLine(command, lens, i) {
-    const {program, onProgramChange, onHoverChange, highlightedCommands} = this.props;
-
-    const isHighlighted = safeLens(lens, false).get(highlightedCommands);
-    const onCommandChange = (command) => {
-      const newProgram = lens.set(program, command);
-      onProgramChange(newProgram);
-    };
-    const onMouseEnter = () => { onHoverChange(command, lens); };
-    const onMouseLeave = () => { onHoverChange(null); };
-
+  renderBlock() {
+    const { program, onProgramChange } = this.props;
     return (
-      <ProgramLine
-        key={i}
-        command={command}
-        isHighlighted={isHighlighted}
-        onCommandChange={onCommandChange}
-        onMouseEnter = {onMouseEnter}
-        onMouseLeave = {onMouseLeave}
+      <Block
+        block={program}
+        onChange={onProgramChange}
         onDistanceDragStart = {this.onDistanceDragStart}
         onDistanceDragEnd   = {this.onDistanceDragEnd}
         onDegreesDragStart  = {this.onDegreesDragStart}
         onDegreesDragEnd    = {this.onDegreesDragEnd}
       />
     );
-  }
-  renderLines() {
-    const { program } = this.props;
-    return program.cmds.map((cmd, i) => {
-      const lens = composeLens(
-        safeLens(propertyLens('cmds'), []),
-        indexLens(i)
-      );
-      return this.renderLine(cmd, lens, i);
-    });
   }
   renderHint() {
     const { isDraggingDistance, isDraggingDegrees } = this.state;
@@ -99,7 +75,7 @@ class Program extends React.Component {
     return (
       <div className={cx('program')}>
         <div className={cx('program_lines')}>
-          {this.renderLines()}
+          {this.renderBlock()}
         </div>
         <div className={cx('program_footer')}>
           {this.renderHint()}
