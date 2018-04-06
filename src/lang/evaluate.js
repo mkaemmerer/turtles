@@ -1,5 +1,6 @@
 import { fromIterable, flatMap } from 'utils/generators';
 import { Expr, Cmd, Bind } from './ast';
+import Out from './output';
 
 const match = (node, handlers) => handlers[node.type](node);
 
@@ -41,15 +42,15 @@ const runCommand = (command) =>
     'Cmd.Move':  ({expr}) =>
       match(evaluateExpr(expr), {
         'Expr.Const': ({value}) => {
-          const move = { type: 'move', distance: value };
-          return fromIterable([{ mark: move }]);
+          const out = Out.Move({distance: value});
+          return fromIterable([{ out }]);
         }
       }),
     'Cmd.Turn':  ({expr}) =>
       match(evaluateExpr(expr), {
         'Expr.Const': ({value}) => {
-          const turn = { type: 'turn', degrees: value };
-          return fromIterable([{ mark: turn }]);
+          const out = Out.Turn({degrees: value});
+          return fromIterable([{ out }]);
         }
       }),
     'Cmd.Block': ({binds, cmds}) => {
