@@ -78,16 +78,14 @@ const language = (indent) => P.createLanguage({
       )
       .map(Bind.Let);
 
-    return P.alt(bLet);
+    return bLet;
   },
 
   block(lang) {
     return P
       .seqObj(
-        ['binds', lang.binding.thru(indentLine(indent)).sepBy(newline)],
-        newline,
-        ['cmds', lang.expr.thru(indentLine(indent)).sepBy(newline)],
-        newline
+        ['binds', lang.binding.thru(indentLine(indent)).skip(newline).many()],
+        ['cmds', lang.expr.thru(indentLine(indent)).skip(newline).many()]
       );
   }
 });
