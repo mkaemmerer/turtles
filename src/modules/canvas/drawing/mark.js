@@ -7,6 +7,7 @@ import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 const RADIANS_TO_DEGREES = 180 / Math.PI;
+const DEGREES_TO_RADIANS = Math.PI / 180;
 
 
 const Mark = ({mark, ...props}) =>
@@ -33,17 +34,17 @@ const LineMark = ({ isHighlighted, data, ...props }) => {
 };
 
 const TurnMark = ({ isHighlighted, data, ...props }) => {
-  const { from, to, position } = data;
+  const { from, degrees, position } = data;
   const className = cx('mark', 'mark--turn', { 'mark--highlighted': isHighlighted });
 
   return (
     <g
       {...props}
       className={className}
-      transform={`translate(${position.x},${position.y})rotate(${from*RADIANS_TO_DEGREES})`}
+      transform={`translate(${position.x},${position.y})rotate(${RADIANS_TO_DEGREES * from})`}
     >
-      <circle className={cx('mark_hitbox')} cx="0" cy="0" r="5"/>
-      <path className={cx('mark_arrow')} d={turnPath(to - from)}/>
+      <circle className={cx('mark_hitbox')} cx="0" cy="0" r="15"/>
+      <path className={cx('mark_arrow')} d={turnPath(DEGREES_TO_RADIANS * degrees)}/>
     </g>
   );
 };

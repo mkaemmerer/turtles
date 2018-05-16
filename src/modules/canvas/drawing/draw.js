@@ -1,11 +1,14 @@
-const turnPath = (angle) => {
-  const arc = 0;
-  const sweep = 0;
+//TODO: this code sucks
+const arrowPath = (angle, sign) => {
+  const arc   = sign * angle > Math.PI ? 1 : 0;
+  const sweep = sign > 0 ? 1 : 0;
 
-  const f =  -0.6;
-  const z =  15;
+  const z = sign * 15;    //width of the arrow
+  const f = sign * 0.7;   //height of the arrow (radians)
+  const w = 2;            //width of the line
+
   const r0 = 15;
-  const r1 = r0+1;
+  const r1 = r0+w;
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
 
@@ -19,8 +22,8 @@ const turnPath = (angle) => {
       r0*sin
     ],
     [
-      r0*cos - z*sin,
-      r0*sin + z*cos
+      r0*cos + z*sin,
+      r0*sin - z*cos
     ],
     [
       r1 * Math.cos(angle - f),
@@ -42,6 +45,11 @@ const turnPath = (angle) => {
   `;
 };
 
+const turnPath = (angle) =>
+  (angle > 0)
+    ? arrowPath(angle, 1)
+    : arrowPath(angle, -1);
+
 export {
  turnPath
-}
+};

@@ -24,6 +24,7 @@ const step = (placement, prim) =>
       const newMarks = [
         Mark.Turn({
           position: placement.position,
+          degrees,
           from:     V2.toRotation(placement.heading),
           to:       V2.toRotation(newPlacement.heading)
         })
@@ -38,7 +39,7 @@ const stepTrace = ({placement, marks, trace}, {effect, location}) => {
 
   for(const mark of newMarks) {
     const markLens = indexLens(marks.length);
-    
+
     marks = marks.concat(mark);
     trace = trace.register(location, markLens);
   }

@@ -5,8 +5,8 @@ class Mark {
   static Line({from, to}){
     return new LineMark({from, to});
   }
-  static Turn({position, from, to}) {
-    return new TurnMark({position, from, to});
+  static Turn({position, from, to, degrees}) {
+    return new TurnMark({position, from, to, degrees});
   }
 }
 class LineMark extends Mark {
