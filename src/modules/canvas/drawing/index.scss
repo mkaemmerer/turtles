@@ -2,20 +2,23 @@
 
 .drawing {
   fill: none;
+  stroke: none;
 }
 
 .mark {
   cursor: pointer;
 }
 .mark--highlighted {
-  stroke: $color-blue-2;
+  .mark_line {
+    stroke: $color-blue-2;
+  }
+  .mark_arrow {
+    fill: $color-blue-2;
+  }
 }
 
 .mark_turn {
   stroke: none;
-  .mark--highlighted & {
-    fill: $color-blue-2;
-  }
 }
 .mark_line {
   stroke: $color-black;
@@ -23,5 +26,5 @@
 }
 .mark_hitbox {
   stroke: transparent;
-  stroke-width: 30;
+  stroke-width: 20;
 }
