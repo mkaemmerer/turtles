@@ -2,7 +2,6 @@
 
 .drawing {
   fill: none;
-  stroke: $color-black;
 }
 
 .mark {
@@ -11,7 +10,15 @@
 .mark--highlighted {
   stroke: $color-blue-2;
 }
+
+.mark_turn {
+  stroke: none;
+  .mark--highlighted & {
+    fill: $color-blue-2;
+  }
+}
 .mark_line {
+  stroke: $color-black;
   stroke-width: 2;
 }
 .mark_hitbox {

@@ -1,5 +1,5 @@
 import React from 'react';
-import program from '../../../programs/square-prims.tt';
+import program from '../../../programs/simple-turn.tt';
 import TurtleApp from './turtle-app';
 
 const App = (props) => (
