@@ -7,19 +7,16 @@ class Trace {
     return new Trace([], []);
   }
 
-  // register(sourceLine, outputEntry) {
-  //   const newOutputRegistry = sourceLine.lens.set(this.outputRegistry, outputEntry);
-  //   const newSourceRegistry = outputEntry.lens.set(this.sourceRegistry, sourceLine);
-  //   return new Trace(newSourceRegistry, newOutputRegistry);
-  // }
-  register() {
-    return this;
+  register(sourceLens, outputLens) {
+    const newOutputRegistry = sourceLens.set(this.outputRegistry, outputLens);
+    const newSourceRegistry = outputLens.set(this.sourceRegistry, sourceLens);
+    return new Trace(newSourceRegistry, newOutputRegistry);
   }
-  getOutput(sourceLine) {
-    return sourceLine.lens.get(this.outputRegistry);
+  getOutput(sourceLens) {
+    return sourceLens.get(this.outputRegistry);
   }
-  getSource(outputEntry) {
-    return outputEntry.lens.get(this.sourceRegistry);
+  getSource(outputLens) {
+    return outputLens.get(this.sourceRegistry);
   }
 }
 

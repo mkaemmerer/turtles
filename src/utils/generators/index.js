@@ -5,7 +5,8 @@ export function* range(start, end) {
 }
 
 export function* map(f, generator) {
-  for(const x of generator) { yield f(x); }
+  let i = 0;
+  for(const x of generator) { yield f(x, i); i++; }
 }
 
 export function* flatten(generator) {
@@ -13,7 +14,8 @@ export function* flatten(generator) {
 }
 
 export function* flatMap(f, generator) {
-  for(const x of generator) { yield* f(x); }
+  let i = 0;
+  for(const x of generator) { yield* f(x, i); i++; }
 }
 
 export function forEach(f, generator) {

@@ -1,4 +1,5 @@
 import { fromIterable, flatMap } from 'utils/generators';
+import { idLens, composeLens, propertyLens, indexLens, safeLens } from 'utils/lenses';
 import { Expr, Cmd, Bind } from './ast';
 import Effect from './effect';
 
@@ -37,13 +38,15 @@ const evaluateBindings = (bindings) =>
   , emptyScope);
 
 // Run
-const runCommand = (command) =>
+const runCommand = (command, location = idLens) =>
+  // TODO: this method of location mapping is not very good... need something
+  // that takes into account function application, bindings, substitution, etc.
   match(command, {
     'Cmd.Move':  ({expr}) =>
       match(evaluateExpr(expr), {
         'Expr.Const': ({value}) => {
           const effect = Effect.Move({distance: value});
-          const out    = { effect };
+          const out    = { effect, location };
           return fromIterable([out]);
         }
       }),
@@ -51,15 +54,22 @@ const runCommand = (command) =>
       match(evaluateExpr(expr), {
         'Expr.Const': ({value}) => {
           const effect = Effect.Turn({degrees: value});
-          const out    = { effect };
+          const out    = { effect, location };
           return fromIterable([out]);
         }
       }),
     'Cmd.Block': ({binds, cmds}) => {
       const scope = evaluateBindings(binds);
-      const run = (expr) =>
+      const run = (expr, i) =>
         match(evaluateExpr(substitute(scope, expr)), {
-          'Expr.Cmd': ({cmd}) => runCommand(cmd)
+          'Expr.Cmd': ({cmd}) => {
+            const newLens = composeLens(
+              safeLens(propertyLens('cmds'), []),
+              indexLens(i)
+            );
+            const newLocation = composeLens(location, newLens);
+            return runCommand(cmd, newLocation);
+          }
         });
       return flatMap(run, cmds);
     }

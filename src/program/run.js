@@ -32,16 +32,15 @@ const step = (placement, prim) =>
     }
   });
 
-const stepTrace = ({placement, marks, trace}, traceLine) => {
-  const [ newPlacement, newMarks ] = step(placement, traceLine.effect);
+const stepTrace = ({placement, marks, trace}, {effect, location}) => {
+  const [ newPlacement, newMarks ] = step(placement, effect);
   placement = newPlacement;
 
   for(const mark of newMarks) {
     const markLens = indexLens(marks.length);
-    const outputEntry = { mark, lens: markLens };
-
+    
     marks = marks.concat(mark);
-    trace = trace.register(traceLine, outputEntry);
+    trace = trace.register(location, markLens);
   }
 
   return { placement, marks, trace };
