@@ -35,6 +35,12 @@ class Program extends React.Component {
   onDegreesDragEnd = () => {
     this.setState({ isDraggingDegrees: false });
   }
+  onMouseEnter = (lens) => {
+    this.props.onHoverChange(lens);
+  }
+  onMouseLeave = () => {
+    this.props.onHoverChange(null);
+  }
 
   renderBlock() {
     const { program, onProgramChange } = this.props;
@@ -42,6 +48,8 @@ class Program extends React.Component {
       <Block
         block={program}
         onChange={onProgramChange}
+        onMouseEnter = {this.onMouseEnter}
+        onMouseLeave = {this.onMouseLeave}
         onDistanceDragStart = {this.onDistanceDragStart}
         onDistanceDragEnd   = {this.onDistanceDragEnd}
         onDegreesDragStart  = {this.onDegreesDragStart}

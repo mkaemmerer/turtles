@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
+import { idLens, safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
 import Number from 'components/number';
 import ProgramLine from './line';
 
 const match = (node, handlers) => handlers[node.type](node);
 
 const mouseHandlerTypes = {
-  // onMouseEnter: PropTypes.func.isRequired,
-  // onMouseLeave: PropTypes.func.isRequired,
   onDistanceDragStart: PropTypes.func.isRequired,
   onDistanceDragEnd:   PropTypes.func.isRequired,
   onDegreesDragStart:  PropTypes.func.isRequired,
@@ -16,10 +14,17 @@ const mouseHandlerTypes = {
 };
 
 // Block
-const Block = ({block, onChange, ...props}) => {
-  const renderCommandExpression = (cmdExpr, lens, i) => {
+const Block = ({block, onChange, onMouseEnter, ...props}) => {
+  const cmds = block.cmds.map((cmdExpr, i) => {
+    const lens = composeLens(
+      safeLens(propertyLens('cmds'), []),
+      safeLens(indexLens(i), {})
+    );
     const onExpressionChange = (cmd) => {
       onChange(lens.set(block, cmd));
+    };
+    const onExpressionMouseEnter = (child) => {
+      onMouseEnter(composeLens(lens, child));
     };
     return (
       <Expression
@@ -27,15 +32,9 @@ const Block = ({block, onChange, ...props}) => {
         key={i}
         expr={cmdExpr}
         onChange={onExpressionChange}
+        onMouseEnter={onExpressionMouseEnter}
       />
     );
-  }
-  const cmds = block.cmds.map((cmdExpr, i) => {
-    const lens = composeLens(
-      safeLens(propertyLens('cmds'), []),
-      indexLens(i)
-    );
-    return renderCommandExpression(cmdExpr, lens, i);
   });
 
   return (<div>{cmds}</div>);
@@ -43,6 +42,8 @@ const Block = ({block, onChange, ...props}) => {
 Block.propTypes = {
   block: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  onMouseEnter: PropTypes.func.isRequired,
+  onMouseLeave: PropTypes.func.isRequired,
   ...mouseHandlerTypes
 };
 
@@ -56,16 +57,21 @@ const Command = (props) =>
 Command.propTypes = {
   cmd: PropTypes.object.isRequired,
   onChange: PropTypes.func,
+  onMouseEnter: PropTypes.func.isRequired,
+  onMouseLeave: PropTypes.func.isRequired,
   ...mouseHandlerTypes
 };
 
-const MoveCommand = ({cmd, onChange, ...props }) => {
+const MoveCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => {
+  const lens = propertyLens('expr');
   const onExprChange = (expr) => {
-    const lens = propertyLens('expr');
     onChange(lens.set(cmd, expr));
   };
+  const onLineMouseEnter = () => {
+    onMouseEnter(idLens);
+  };
   return (
-    <ProgramLine>
+    <ProgramLine onMouseEnter={onLineMouseEnter} onMouseLeave={onMouseLeave}>
       move &nbsp;
       <Expression
         {...props}
@@ -76,13 +82,16 @@ const MoveCommand = ({cmd, onChange, ...props }) => {
     </ProgramLine>
   );
 };
-const TurnCommand = ({cmd, onChange, ...props }) => {
+const TurnCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => {
+  const lens = propertyLens('expr');
   const onExprChange = (expr) => {
-    const lens = propertyLens('expr');
     onChange(lens.set(cmd, expr));
   };
+  const onLineMouseEnter = () => {
+    onMouseEnter(idLens);
+  };
   return (
-    <ProgramLine>
+    <ProgramLine onMouseEnter={onLineMouseEnter} onMouseLeave={onMouseLeave}>
       turn &nbsp;
       <Expression
         {...props}
@@ -108,8 +117,8 @@ Expression.propTypes = {
 };
 
 const ConstExpression = ({ expr, kind, onChange, ...props }) => {
+  const lens = propertyLens('value');
   const onValueChange = (value) => {
-    const lens = propertyLens('value');
     onChange(lens.set(expr, value));
   };
 
@@ -133,10 +142,13 @@ const ConstExpression = ({ expr, kind, onChange, ...props }) => {
     />
   );
 };
-const CommandExpression = ({ expr, onChange, ...props }) => {
+const CommandExpression = ({ expr, onChange, onMouseEnter, ...props }) => {
+  const lens = safeLens(propertyLens('cmd'), {});
   const onCmdChange = (cmd) => {
-    const lens = propertyLens('cmd');
     onChange(lens.set(expr, cmd));
+  };
+  const onCmdMouseEnter = (child) => {
+    onMouseEnter(composeLens(lens, child));
   };
 
   return (
@@ -144,6 +156,7 @@ const CommandExpression = ({ expr, onChange, ...props }) => {
       {...props}
       cmd={expr.cmd}
       onChange={ onCmdChange }
+      onMouseEnter={ onCmdMouseEnter }
     />
   );
 };

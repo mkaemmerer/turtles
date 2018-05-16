@@ -123,16 +123,13 @@ class TurtleApp extends React.Component {
       });
     }
   }
-  onHoveredCommandChange = (sourceLine) => {
-    /* eslint-disable */
-    return;
-    if(sourceLine) {
-      const { trace }   = this.state;
-      const outputEntry = trace.getOutput(sourceLine);
-
+  onHoveredCommandChange = (sourceLens) => {
+    if(sourceLens) {
+      const { trace }  = this.state;
+      const outputLens = trace.getOutput(sourceLens);
       this.setState({
-        highlightedMarks:    outputEntry.lens.set([], true),
-        highlightedCommands: sourceLine.lens.set({}, true)
+        highlightedMarks:    outputLens.set([], true),
+        highlightedCommands: sourceLens.set({}, true)
       });
     } else {
       this.setState({

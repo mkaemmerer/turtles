@@ -4,7 +4,7 @@ class Trace {
     this.sourceRegistry = sourceRegistry;
   }
   static empty() {
-    return new Trace([], []);
+    return new Trace({}, []);
   }
 
   register(sourceLens, outputLens) {

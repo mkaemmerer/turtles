@@ -64,8 +64,11 @@ const runCommand = (command, location = idLens) =>
         match(evaluateExpr(substitute(scope, expr)), {
           'Expr.Cmd': ({cmd}) => {
             const newLens = composeLens(
-              safeLens(propertyLens('cmds'), []),
-              indexLens(i)
+              composeLens(
+                safeLens(propertyLens('cmds'), []),
+                safeLens(indexLens(i), {})
+              ),
+              safeLens(propertyLens('cmd'), {})
             );
             const newLocation = composeLens(location, newLens);
             return runCommand(cmd, newLocation);
