@@ -43,11 +43,12 @@ class Program extends React.Component {
   }
 
   renderBlock() {
-    const { program, onProgramChange } = this.props;
+    const { program, onProgramChange, highlightedCommands } = this.props;
     return (
       <Block
         block={program}
         onChange={onProgramChange}
+        highlightedCommands={highlightedCommands}
         onMouseEnter = {this.onMouseEnter}
         onMouseLeave = {this.onMouseLeave}
         onDistanceDragStart = {this.onDistanceDragStart}

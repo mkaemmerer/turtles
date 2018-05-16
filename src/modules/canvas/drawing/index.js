@@ -34,8 +34,8 @@ const Drawing = ({marks, onHoverChange, highlightedMarks}) => {
   const children = marks.map((mark, i) => {
     const lens = indexLens(i);
     const isHighlighted = safeLens(lens, false).get(highlightedMarks);
-    const onMouseEnter  = () => { onHoverChange({mark, lens}); };
-    const onMouseLeave  = () => { onHoverChange(null);  };
+    const onMouseEnter  = () => { onHoverChange(lens); };
+    const onMouseLeave  = () => { onHoverChange(null); };
 
     return (
       <Mark

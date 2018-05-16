@@ -14,7 +14,7 @@ const mouseHandlerTypes = {
 };
 
 // Block
-const Block = ({block, onChange, onMouseEnter, ...props}) => {
+const Block = ({block, onChange, onMouseEnter, highlightedCommands, ...props}) => {
   const cmds = block.cmds.map((cmdExpr, i) => {
     const lens = composeLens(
       safeLens(propertyLens('cmds'), []),
@@ -33,6 +33,7 @@ const Block = ({block, onChange, onMouseEnter, ...props}) => {
         expr={cmdExpr}
         onChange={onExpressionChange}
         onMouseEnter={onExpressionMouseEnter}
+        highlightedCommands={lens.get(highlightedCommands)}
       />
     );
   });
@@ -62,7 +63,7 @@ Command.propTypes = {
   ...mouseHandlerTypes
 };
 
-const MoveCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => {
+const MoveCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, highlightedCommands, ...props }) => {
   const lens = propertyLens('expr');
   const onExprChange = (expr) => {
     onChange(lens.set(cmd, expr));
@@ -71,7 +72,11 @@ const MoveCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => 
     onMouseEnter(idLens);
   };
   return (
-    <ProgramLine onMouseEnter={onLineMouseEnter} onMouseLeave={onMouseLeave}>
+    <ProgramLine
+      onMouseEnter={onLineMouseEnter}
+      onMouseLeave={onMouseLeave}
+      isHighlighted={highlightedCommands === true}
+    >
       move &nbsp;
       <Expression
         {...props}
@@ -82,7 +87,7 @@ const MoveCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => 
     </ProgramLine>
   );
 };
-const TurnCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => {
+const TurnCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, highlightedCommands, ...props }) => {
   const lens = propertyLens('expr');
   const onExprChange = (expr) => {
     onChange(lens.set(cmd, expr));
@@ -91,7 +96,11 @@ const TurnCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, ...props }) => 
     onMouseEnter(idLens);
   };
   return (
-    <ProgramLine onMouseEnter={onLineMouseEnter} onMouseLeave={onMouseLeave}>
+    <ProgramLine
+      onMouseEnter={onLineMouseEnter}
+      onMouseLeave={onMouseLeave}
+      isHighlighted={highlightedCommands === true}
+    >
       turn &nbsp;
       <Expression
         {...props}
@@ -113,6 +122,7 @@ Expression.propTypes = {
   expr: PropTypes.object.isRequired,
   kind: PropTypes.oneOf(['distance', 'degrees']),
   onChange:    PropTypes.func,
+  highlightedCommands: PropTypes.object,
   ...mouseHandlerTypes
 };
 
@@ -142,7 +152,7 @@ const ConstExpression = ({ expr, kind, onChange, ...props }) => {
     />
   );
 };
-const CommandExpression = ({ expr, onChange, onMouseEnter, ...props }) => {
+const CommandExpression = ({ expr, onChange, onMouseEnter, highlightedCommands, ...props }) => {
   const lens = safeLens(propertyLens('cmd'), {});
   const onCmdChange = (cmd) => {
     onChange(lens.set(expr, cmd));
@@ -157,6 +167,7 @@ const CommandExpression = ({ expr, onChange, onMouseEnter, ...props }) => {
       cmd={expr.cmd}
       onChange={ onCmdChange }
       onMouseEnter={ onCmdMouseEnter }
+      highlightedCommands={lens.get(highlightedCommands)}
     />
   );
 };

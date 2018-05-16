@@ -105,16 +105,14 @@ class TurtleApp extends React.Component {
     this.currentLens = emptyLens;
   }
 
-  onHoveredMarkChange = (outputEntry) => {
-    /* eslint-disable */
-    return;
-    if(outputEntry) {
+  onHoveredMarkChange = (outputLens) => {
+    if(outputLens) {
       const { trace }  = this.state;
-      const sourceLine = trace.getSource(outputEntry);
+      const sourceLens = trace.getSource(outputLens);
 
       this.setState({
-        highlightedMarks:    outputEntry.lens.set([], true),
-        highlightedCommands: sourceLine.lens.set({}, true)
+        highlightedMarks:    outputLens.set([], true),
+        highlightedCommands: sourceLens.set({}, true)
       });
     } else {
       this.setState({
