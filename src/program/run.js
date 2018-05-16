@@ -9,7 +9,7 @@ const DEGREES_TO_RADIANS = Math.PI / 180;
 
 const step = (placement, prim) =>
   match(prim, {
-    'Out.Move': ({distance}) => {
+    'Effect.Move': ({distance}) => {
       const newPlacement = placement.move(distance);
       const newMarks = [
         Mark.Line({
@@ -19,7 +19,7 @@ const step = (placement, prim) =>
       ];
       return [ newPlacement, newMarks ];
     },
-    'Out.Turn': ({degrees}) => {
+    'Effect.Turn': ({degrees}) => {
       const newPlacement = placement.rotate(degrees * DEGREES_TO_RADIANS);
       const newMarks = [
         Mark.Turn({
@@ -33,7 +33,7 @@ const step = (placement, prim) =>
   });
 
 const stepTrace = ({placement, marks, trace}, traceLine) => {
-  const [ newPlacement, newMarks ] = step(placement, traceLine.out);
+  const [ newPlacement, newMarks ] = step(placement, traceLine.effect);
   placement = newPlacement;
 
   for(const mark of newMarks) {
