@@ -1,5 +1,7 @@
 @import '../../../style/index';
 
+$color--mark-highlighted: $color-blue-4;
+
 .drawing {
   fill: none;
   stroke: none;
@@ -10,10 +12,10 @@
 }
 .mark--highlighted {
   .mark_line {
-    stroke: $color-blue-2;
+    stroke: $color--mark-highlighted;
   }
   .mark_arrow {
-    fill: $color-blue-2;
+    fill: $color--mark-highlighted;
   }
 }
 

@@ -1,7 +1,7 @@
 @import "./color";
 
-$color--scrollbar-track: $color-gray-7;
-$color--scrollbar-thumb: $color-gray-4;
+$color--scrollbar-track: $color-gray-2;
+$color--scrollbar-thumb: $color-gray-7;
 $scrollbar-size: 8px;
 
 @mixin scrollable {
