@@ -4,6 +4,10 @@ import { idLens, safeLens, indexLens, propertyLens, composeLens } from 'utils/le
 import Number from 'components/number';
 import ProgramLine from './line';
 
+import styles from './index.scss';
+import classnames from 'classnames/bind';
+const cx = classnames.bind(styles);
+
 const match = (node, handlers) => handlers[node.type](node);
 
 const mouseHandlerTypes = {
@@ -116,7 +120,8 @@ const TurnCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, highlightedComm
 const Expression = (props) =>
   match(props.expr, {
     'Expr.Const'() { return (<ConstExpression {...props}/>); },
-    'Expr.Cmd'()   { return (<CommandExpression {...props}/>); }
+    'Expr.Cmd'()   { return (<CommandExpression {...props}/>); },
+    'Expr.Var'()   { return (<VarExpression {...props}/>); }
   });
 Expression.propTypes = {
   expr: PropTypes.object.isRequired,
@@ -169,6 +174,11 @@ const CommandExpression = ({ expr, onChange, onMouseEnter, highlightedCommands, 
       onMouseEnter={ onCmdMouseEnter }
       highlightedCommands={lens.get(highlightedCommands)}
     />
+  );
+};
+const VarExpression = ({ expr }) => {
+  return (
+    <span className={cx('variable')}>{expr.name}</span>
   );
 };
 
