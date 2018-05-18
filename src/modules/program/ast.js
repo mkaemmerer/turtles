@@ -4,7 +4,7 @@ import { idLens, safeLens, indexLens, propertyLens, composeLens } from 'utils/le
 import Number from 'components/number';
 import ProgramLine from './line';
 
-import styles from './index.scss';
+import styles from './ast.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
@@ -19,6 +19,23 @@ const mouseHandlerTypes = {
 
 // Block
 const Block = ({block, onChange, onMouseEnter, highlightedCommands, ...props}) => {
+  const binds = block.binds.map((bindExpr, i) => {
+    const lens = composeLens(
+      safeLens(propertyLens('binds'), []),
+      safeLens(indexLens(i), {})
+    );
+    const onBindingChange = (cmd) => {
+      onChange(lens.set(block, cmd));
+    };
+    return (
+      <Bind
+        {...props}
+        key={i}
+        bind={bindExpr}
+        onChange={onBindingChange}
+      />
+    );
+  });
   const cmds = block.cmds.map((cmdExpr, i) => {
     const lens = composeLens(
       safeLens(propertyLens('cmds'), []),
@@ -42,7 +59,7 @@ const Block = ({block, onChange, onMouseEnter, highlightedCommands, ...props}) =
     );
   });
 
-  return (<div>{cmds}</div>);
+  return (<div>{binds}{cmds}</div>);
 };
 Block.propTypes = {
   block: PropTypes.object.isRequired,
@@ -50,6 +67,31 @@ Block.propTypes = {
   onMouseEnter: PropTypes.func.isRequired,
   onMouseLeave: PropTypes.func.isRequired,
   ...mouseHandlerTypes
+};
+
+// Bindings
+const Bind = (props) =>
+  match(props.bind, {
+    'Bind.Let'() { return (<LetBind {...props}/>); }
+  });
+
+const LetBind = ({bind, onChange, ...props}) => {
+  const lens = propertyLens('expr');
+  const onExprChange = (expr) => {
+    onChange(lens.set(bind, expr));
+  };
+  return (
+    <ProgramLine>
+      let &nbsp;
+      <span className={cx('variable')}>{bind.name}</span>
+      &nbsp;=&nbsp;
+      <Expression
+        {...props}
+        expr={bind.expr}
+        onChange={onExprChange}
+      />
+    </ProgramLine>
+  );
 };
 
 // Commands
@@ -126,7 +168,7 @@ const Expression = (props) =>
 Expression.propTypes = {
   expr: PropTypes.object.isRequired,
   kind: PropTypes.oneOf(['distance', 'degrees']),
-  onChange:    PropTypes.func,
+  onChange: PropTypes.func,
   highlightedCommands: PropTypes.object,
   ...mouseHandlerTypes
 };
