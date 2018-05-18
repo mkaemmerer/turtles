@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Key from 'components/key';
-import { Block } from './program';
+import { Block } from './ast';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
