@@ -189,14 +189,16 @@ const ConstExpression = ({ expr, kind, onChange, ...props }) => {
   const increment = kind === 'degrees' ? 15 : 10;
 
   return (
-    <Number
-      value={expr.value}
-      increment={increment}
-      scaleFactor={0.1}
-      onChange={onValueChange}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-    />
+    <span className={cx('constant')}>
+      <Number
+        value={expr.value}
+        increment={increment}
+        scaleFactor={0.1}
+        onChange={onValueChange}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+      />
+    </span>
   );
 };
 const CommandExpression = ({ expr, onChange, onMouseEnter, highlightedCommands, ...props }) => {
