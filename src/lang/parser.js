@@ -63,6 +63,7 @@ const language = (indent) => P.createLanguage({
       )
       .map(Cmd.Turn);
     const cDo = tDo
+      .skip(newline)
       .then(language(indent+2).block)
       .map(Cmd.Block);
 
@@ -85,7 +86,8 @@ const language = (indent) => P.createLanguage({
     return P
       .seqObj(
         ['binds', lang.binding.thru(indentLine(indent)).skip(newline).many()],
-        ['cmds', lang.expr.thru(indentLine(indent)).skip(newline).many()]
+        ['cmds', lang.expr.thru(indentLine(indent)).sepBy(newline)],
+        newline
       );
   }
 });

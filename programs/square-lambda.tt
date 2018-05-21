@@ -1,0 +1,12 @@
+let square = (side) -> do
+  move(side)
+  turn(-90)
+  move(side)
+  turn(-90)
+  move(side)
+  turn(-90)
+  move(side)
+  turn(-90)
+
+square(200)
+square(100)
