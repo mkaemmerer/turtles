@@ -33,12 +33,16 @@ const Block = ({block, onChange, onMouseEnter, highlightedCommands, ...props}) =
     const onBindingChange = (cmd) => {
       onChange(lens.set(block, cmd));
     };
+    const onBindingMouseEnter = (child) => {
+      onMouseEnter(composeLens(lens, child));
+    };
     return (
       <Bind
         {...props}
         key={i}
         bind={bindExpr}
         onChange={onBindingChange}
+        onMouseEnter={onBindingMouseEnter}
         highlightedCommands={lens.get(highlightedCommands)}
       />
     );

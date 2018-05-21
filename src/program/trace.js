@@ -1,3 +1,5 @@
+import {emptyLens} from 'utils/lenses';
+
 class Trace {
   constructor(sourceRegistry, outputRegistry) {
     this.outputRegistry = outputRegistry;
@@ -13,10 +15,16 @@ class Trace {
     return new Trace(newSourceRegistry, newOutputRegistry);
   }
   getOutput(sourceLens) {
-    return sourceLens.get(this.outputRegistry);
+    const output = sourceLens.get(this.outputRegistry);
+    return output.get
+      ? output
+      : emptyLens;
   }
   getSource(outputLens) {
-    return outputLens.get(this.sourceRegistry);
+    const source = outputLens.get(this.sourceRegistry);
+    return source.get
+      ? source
+      : emptyLens;
   }
 }
 
