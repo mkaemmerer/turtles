@@ -42,11 +42,7 @@ Line.propTypes = {
 
 
 const Lines = ({program, onChange}) => {
-  const programProps = {
-    onChange: (value, lens) => {
-      onChange(lens.set(program, value));
-    }
-  };
+  const programProps = {onChange};
   const doc = printBlock(programProps, program);
 
   const lines = layout(doc);

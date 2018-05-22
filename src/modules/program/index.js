@@ -44,10 +44,14 @@ class Program extends React.Component {
 
   renderLines() {
     const { program, onProgramChange, highlightedCommands } = this.props;
+    const onChange = (value, lens) => {
+      onProgramChange(lens.set(program, value));
+    };
+
     return (
       <Lines
         program={program}
-        onChange={onProgramChange}
+        onChange={onChange}
         highlightedCommands={highlightedCommands}
         onMouseEnter = {this.onMouseEnter}
         onMouseLeave = {this.onMouseLeave}

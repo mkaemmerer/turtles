@@ -1,7 +1,5 @@
 @import '../../style/index';
 
-$color--program-line-highlighted: $color-blue-0;
-
 .program {
   width: 100%;
   display: flex;
@@ -10,18 +8,10 @@ $color--program-line-highlighted: $color-blue-0;
 .program_lines {
   flex: 1;
   overflow-y: scroll;
+  user-select: none;
   @include scrollable();
 }
 .program_footer {
   margin: $space-inset-s;
   height: $space-l;
-}
-
-.program_line {
-  font-family: $font-family-monospace;
-  padding: $space-inset-stretch-s;
-  line-height: $space-l;
-}
-.program_line--highlighted {
-  background: $color--program-line-highlighted;
 }
