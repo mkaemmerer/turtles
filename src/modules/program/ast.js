@@ -1,5 +1,5 @@
 import React from 'react';
-import { indexLens, propertyLens, composeLens, idLens } from 'utils/lenses';
+import { indexLens, propertyLens, composeLens, idLens, safeLens } from 'utils/lenses';
 import Number from 'components/number';
 import { indent, concat, str, seq, intersperse, newline, Doc } from 'lang/doc';
 
@@ -9,37 +9,41 @@ const cx = classnames.bind(styles);
 
 const match = (node, handlers) => handlers[node.type](node);
 
+const safeIndexLens = (i) => safeLens(indexLens(i), {});
+
 const lenses = {
   cmd: {
-    move:  { expr: propertyLens('expr') },
-    turn:  { expr: propertyLens('expr') },
+    move:  { expr: safeLens(propertyLens('expr'), {}) },
+    turn:  { expr: safeLens(propertyLens('expr'), {}) },
     block: {
-      binds: propertyLens('binds'),
-      cmds: propertyLens('cmds'),
-      bind(i) { return composeLens(lenses.cmd.block.binds, indexLens(i)); },
-      cmd(i)  { return composeLens(lenses.cmd.block.cmds,  indexLens(i)); }
+      binds: safeLens(propertyLens('binds'), []),
+      cmds:  safeLens(propertyLens('cmds'), []),
+      bind(i) { return composeLens(lenses.cmd.block.binds, safeIndexLens(i)); },
+      cmd(i)  { return composeLens(lenses.cmd.block.cmds,  safeIndexLens(i)); }
     }
   },
   expr: {
-    cmd:   { cmd: propertyLens('cmd') },
+    cmd:   { cmd:   safeLens(propertyLens('cmd'), {}) },
     const: { value: propertyLens('value') },
-    var:   { name: propertyLens('name') },
+    var:   { name:  propertyLens('name') },
     app:   {
-      func: propertyLens('func'),
-      args: propertyLens('args'),
-      arg(i) { return composeLens(lenses.expr.app.args, indexLens(i)); }
+      func: safeLens(propertyLens('func'), {}),
+      args: safeLens(propertyLens('args'), []),
+      arg(i) { return composeLens(lenses.expr.app.args, safeIndexLens(i)); }
     },
     lam:   {
-      names: propertyLens('names'),
-      expr: propertyLens('expr'),
-      name(i) { return composeLens(lenses.expr.lam.names, indexLens(i)); }
+      names: safeLens(propertyLens('names'), []),
+      expr:  safeLens(propertyLens('expr'), {}),
+      name(i) { return composeLens(lenses.expr.lam.names, safeIndexLens(i)); }
     }
   },
   bind: {
-    let: { name: propertyLens('name'), expr: propertyLens('expr') }
+    let: { name: propertyLens('name'), expr: safeLens(propertyLens('expr'), {}) }
   }
 };
 
+// Sentry
+const Sentry = () => null;
 
 // Tokens
 const Var = ({children}) => (
@@ -77,6 +81,7 @@ const printCmd = (props, cmd, lens) =>
 const printCmdMove = (props, cmd, lens) => {
   const exprLens = composeLens(lens, lenses.cmd.move.expr);
   return seq([
+    str(<Sentry lens={lens}/>),
     str('move'),
     str('('),
     printExpr({kind: 'distance', ...props}, cmd.expr, exprLens),
@@ -86,6 +91,7 @@ const printCmdMove = (props, cmd, lens) => {
 const printCmdTurn = (props, cmd, lens) => {
   const exprLens = composeLens(lens, lenses.cmd.turn.expr);
   return seq([
+    str(<Sentry lens={lens}/>),
     str('turn'),
     str('('),
     printExpr({kind: 'degrees', ...props}, cmd.expr, exprLens),
@@ -94,6 +100,7 @@ const printCmdTurn = (props, cmd, lens) => {
 };
 const printCmdBlock = (props, cmd, lens) => {
   return seq([
+    str(<Sentry lens={lens}/>),
     str('do'),
     indent(concat(newline, printBlock(props, cmd, lens)))
   ]);
@@ -183,5 +190,6 @@ export {
   printCmd,
   printBlock,
   printExpr,
-  printBind
+  printBind,
+  Sentry
 };

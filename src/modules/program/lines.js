@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { printBlock } from './ast';
+import { printBlock, Sentry } from './ast';
 
 import styles from './lines.scss';
 import classnames from 'classnames/bind';
@@ -47,7 +47,10 @@ const Lines = ({
   onDistanceDragStart,
   onDistanceDragEnd,
   onDegreesDragStart,
-  onDegreesDragEnd
+  onDegreesDragEnd,
+  onMouseEnter,
+  onMouseLeave,
+  highlightedCommands
 }) => {
   const programProps = {
     onChange,
@@ -57,15 +60,37 @@ const Lines = ({
     onDegreesDragEnd
   };
   const doc = printBlock(programProps, program);
-
   const lines = layout(doc);
-  const lineElements = lines.map((line, i) => (
-    <Line key={i}>{React.Children.toArray(line)}</Line>
-  ));
+  const lineElements = lines.map((line, i) => {
+    const command = line.find((token) => token.type === Sentry) || { props: {} };
+    const lens    = command.props.lens;
+    return (
+      <Line
+        key={i}
+        isHighlighted={lens && lens.get(highlightedCommands) === true}
+        onMouseEnter={() => { onMouseEnter(lens); }}
+        onMouseLeave={() => { onMouseLeave(); }}
+      >
+        {React.Children.toArray(line)}
+      </Line>
+    );
+  });
   return (
     <React.Fragment>
       {lineElements}
     </React.Fragment>
-  )
+  );
 };
+Lines.propTypes = {
+  program: PropTypes.object,
+  onChange: PropTypes.func,
+  onDistanceDragStart: PropTypes.func,
+  onDistanceDragEnd:   PropTypes.func,
+  onDegreesDragStart:  PropTypes.func,
+  onDegreesDragEnd:    PropTypes.func,
+  onMouseEnter:        PropTypes.func,
+  onMouseLeave:        PropTypes.func,
+  highlightedCommands: PropTypes.object
+};
+
 export default Lines;
