@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Key from 'components/key';
-import { Block } from './ast';
+import Lines from './ast';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -42,11 +42,11 @@ class Program extends React.Component {
     this.props.onHoverChange(null);
   }
 
-  renderBlock() {
+  renderLines() {
     const { program, onProgramChange, highlightedCommands } = this.props;
     return (
-      <Block
-        block={program}
+      <Lines
+        program={program}
         onChange={onProgramChange}
         highlightedCommands={highlightedCommands}
         onMouseEnter = {this.onMouseEnter}
@@ -84,7 +84,7 @@ class Program extends React.Component {
     return (
       <div className={cx('program')}>
         <div className={cx('program_lines')}>
-          {this.renderBlock()}
+          {this.renderLines()}
         </div>
         <div className={cx('program_footer')}>
           {this.renderHint()}

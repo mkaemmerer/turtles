@@ -1,291 +1,124 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { idLens, safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
-import Number from 'components/number';
-import ProgramLine from './line';
-
-import styles from './ast.scss';
-import classnames from 'classnames/bind';
-const cx = classnames.bind(styles);
+// import PropTypes from 'prop-types';
+// import { idLens, safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
 
 const match = (node, handlers) => handlers[node.type](node);
-const intersperse = (arr, sep) => {
-  if (arr.length === 0) {
-    return [];
-  }
-  return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
-};
 
-const mouseHandlerTypes = {
-  onDistanceDragStart: PropTypes.func.isRequired,
-  onDistanceDragEnd:   PropTypes.func.isRequired,
-  onDegreesDragStart:  PropTypes.func.isRequired,
-  onDegreesDragEnd:    PropTypes.func.isRequired
-};
+const PP = {
+  Empty: { type: 'PP.Empty' },
+  Text: ({text,  doc}) => ({ type: 'PP.Text', text,  doc}),
+  Line: ({depth, doc}) => ({ type: 'PP.Line', depth, doc}),
 
-// Block
-const Block = ({block, onChange, onMouseEnter, highlightedCommands, ...props}) => {
-  const binds = block.binds.map((bindExpr, i) => {
-    const lens = composeLens(
-      safeLens(propertyLens('binds'), []),
-      safeLens(indexLens(i), {})
-    );
-    const onBindingChange = (cmd) => {
-      onChange(lens.set(block, cmd));
-    };
-    const onBindingMouseEnter = (child) => {
-      onMouseEnter(composeLens(lens, child));
-    };
-    return (
-      <Bind
-        {...props}
-        key={i}
-        bind={bindExpr}
-        onChange={onBindingChange}
-        onMouseEnter={onBindingMouseEnter}
-        highlightedCommands={lens.get(highlightedCommands)}
-      />
-    );
+  indent: (doc) => match(doc, {
+    'PP.Empty': () => PP.Empty,
+    'PP.Text': ({text, doc}) => PP.Text({
+      text,
+      doc: PP.indent(doc)
+    }),
+    'PP.Line': ({depth, doc}) => PP.Line({
+      depth: depth+1,
+      doc: PP.indent(doc)
+    })
+  }),
+  concat: (doc1, doc2) => match(doc1, {
+    'PP.Empty': () => doc2,
+    'PP.Text': ({text, doc}) => PP.Text({
+      text,
+      doc: PP.concat(doc, doc2)
+    }),
+    'PP.Line': ({depth, doc}) => PP.Line({
+      depth,
+      doc: PP.concat(doc, doc2)
+    })
+  }),
+  layout: (doc) => match(doc, {
+    'PP.Empty': () => [],
+    'PP.Text': ({text,  doc}) => {
+      const [line = '', ...lines] = PP.layout(doc);
+      return [`${text}${line}`, ...lines];
+    },
+    'PP.Line': ({depth, doc}) => {
+      const [line = '', ...lines] = PP.layout(doc);
+      return ['', `${' '.repeat(depth)}${line}`, ...lines];
+    }
+  })
+};
+PP.str         = (text) => PP.Text({text, doc: PP.Empty});
+PP.seq         = (arr) => arr.reduce(PP.concat, PP.Empty);
+PP.newline     = PP.Line({depth: 0, doc: PP.Empty});
+PP.intersperse = (docs, sep) =>
+  docs.reduce((acc, doc) =>
+    (doc === docs[0])
+      ? doc
+      : PP.seq([acc, sep, doc])
+  , PP.Empty);
+
+// Command
+const printCommand = (command) =>
+  match(command, {
+    'Cmd.Move':  ({expr}) => PP.seq([
+      PP.str('move('),
+      printExpr(expr),
+      PP.str(')')
+    ]),
+    'Cmd.Turn':  ({expr}) => PP.seq([
+      PP.str('turn('),
+      printExpr(expr),
+      PP.str(')')
+    ]),
+    'Cmd.Block': (block) => PP.seq([
+      PP.str('do'),
+      PP.indent(PP.concat(PP.newline, printBlock(block)))
+    ])
   });
-  const cmds = block.cmds.map((cmdExpr, i) => {
-    const lens = composeLens(
-      safeLens(propertyLens('cmds'), []),
-      safeLens(indexLens(i), {})
-    );
-    const onExpressionChange = (cmd) => {
-      onChange(lens.set(block, cmd));
-    };
-    const onExpressionMouseEnter = (child) => {
-      onMouseEnter(composeLens(lens, child));
-    };
-    return (
-      <Expression
-        {...props}
-        key={i}
-        expr={cmdExpr}
-        onChange={onExpressionChange}
-        onMouseEnter={onExpressionMouseEnter}
-        highlightedCommands={lens.get(highlightedCommands)}
-      />
-    );
+
+const printBlock = ({binds, cmds}) => {
+  const bindPart = (binds.length > 0)
+    ? PP.concat(PP.intersperse(binds.map(printBind), PP.newline), PP.newline)
+    : PP.Empty;
+  const cmdPart = PP.intersperse(cmds.map(printExpr), PP.newline);
+  return PP.seq([bindPart, cmdPart, PP.newline]);
+};
+
+// Expression
+const printExpr = (expr) =>
+  match(expr, {
+    'Expr.Var':   ({name})  => PP.str(name),
+    'Expr.Const': ({value}) => PP.str(`${value}`),
+    'Expr.Cmd':   ({cmd})   => printCommand(cmd),
+    'Expr.Lam':   ({names, expr}) => PP.seq([
+      PP.intersperse(names.map(PP.str), PP.str(', ')),
+      PP.str(' -> '),
+      printExpr(expr)
+    ]),
+    'Expr.App':   ({func, args}) => PP.seq([
+      printExpr(func),
+      PP.str('('),
+      PP.intersperse(args.map(printExpr), PP.str(', ')),
+      PP.str(')')
+    ])
   });
 
-  return (<div>{binds}{cmds}</div>);
-};
-Block.propTypes = {
-  block: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onMouseEnter: PropTypes.func.isRequired,
-  onMouseLeave: PropTypes.func.isRequired,
-  ...mouseHandlerTypes
-};
+// Binding
+const printBind = (bind) => match(bind, {
+  'Bind.Let': ({name, expr}) => PP.seq([
+    PP.str('let '),
+    PP.str(name),
+    PP.str(' = '),
+    printExpr(expr)
+  ])
+});
 
-// Bindings
-const Bind = (props) =>
-  match(props.bind, {
-    'Bind.Let'() { return (<LetBind {...props}/>); }
-  });
-Bind.propTypes = {
-  bind: PropTypes.object.isRequired,
-  onChange: PropTypes.func,
-  highlightedCommands: PropTypes.object,
-  ...mouseHandlerTypes
-};
-
-const LetBind = ({bind, onChange, highlightedCommands, ...props}) => {
-  const lens = safeLens(propertyLens('expr'), {});
-  const onExprChange = (expr) => {
-    onChange(lens.set(bind, expr));
-  };
-  return (
-    <ProgramLine>
-      let&nbsp;
-      <span className={cx('variable')}>{bind.name}</span>
-      &nbsp;=&nbsp;
-      <Expression
-        {...props}
-        expr={bind.expr}
-        onChange={onExprChange}
-        highlightedCommands={lens.get(highlightedCommands)}
-      />
-    </ProgramLine>
-  );
-};
-
-// Commands
-const Command = (props) =>
-  match(props.cmd, {
-    'Cmd.Move'()  { return (<MoveCommand {...props}/>); },
-    'Cmd.Turn'()  { return (<TurnCommand {...props}/>); },
-    'Cmd.Block'() { return (<Block block={props.cmd} {...props}/>); }
-  });
-Command.propTypes = {
-  cmd: PropTypes.object.isRequired,
-  onChange: PropTypes.func,
-  onMouseEnter: PropTypes.func.isRequired,
-  onMouseLeave: PropTypes.func.isRequired,
-  ...mouseHandlerTypes
-};
-
-const MoveCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, highlightedCommands, ...props }) => {
-  const lens = propertyLens('expr');
-  const onExprChange = (expr) => {
-    onChange(lens.set(cmd, expr));
-  };
-  const onLineMouseEnter = () => {
-    onMouseEnter(idLens);
-  };
-  return (
-    <ProgramLine
-      onMouseEnter={onLineMouseEnter}
-      onMouseLeave={onMouseLeave}
-      isHighlighted={highlightedCommands === true}
-    >
-      move&nbsp;
-      <Expression
-        {...props}
-        expr={cmd.expr}
-        kind="distance"
-        onChange={onExprChange}
-      />
-    </ProgramLine>
-  );
-};
-const TurnCommand = ({cmd, onChange, onMouseEnter, onMouseLeave, highlightedCommands, ...props }) => {
-  const lens = propertyLens('expr');
-  const onExprChange = (expr) => {
-    onChange(lens.set(cmd, expr));
-  };
-  const onLineMouseEnter = () => {
-    onMouseEnter(idLens);
-  };
-  return (
-    <ProgramLine
-      onMouseEnter={onLineMouseEnter}
-      onMouseLeave={onMouseLeave}
-      isHighlighted={highlightedCommands === true}
-    >
-      turn&nbsp;
-      <Expression
-        {...props}
-        expr={cmd.expr}
-        kind="degrees"
-        onChange={onExprChange}
-      />
-    </ProgramLine>
-  );
-};
-
-// Expressions
-const Expression = (props) =>
-  match(props.expr, {
-    'Expr.Cmd'()   { return (<CommandExpression {...props}/>); },
-    'Expr.Const'() { return (<ConstExpression {...props}/>); },
-    'Expr.Var'()   { return (<VarExpression {...props}/>); },
-    'Expr.Lam'()   { return (<LamExpression {...props}/>); },
-    'Expr.App'()   { return (<AppExpression {...props}/>); }
-  });
-Expression.propTypes = {
-  expr: PropTypes.object.isRequired,
-  kind: PropTypes.oneOf(['distance', 'degrees']),
-  onChange: PropTypes.func,
-  highlightedCommands: PropTypes.object,
-  ...mouseHandlerTypes
-};
-
-const CommandExpression = ({ expr, onChange, onMouseEnter, highlightedCommands, ...props }) => {
-  const lens = safeLens(propertyLens('cmd'), {});
-  const onCmdChange = (cmd) => {
-    onChange(lens.set(expr, cmd));
-  };
-  const onCmdMouseEnter = (child) => {
-    onMouseEnter(composeLens(lens, child));
-  };
-
-  return (
-    <Command
-      {...props}
-      cmd={expr.cmd}
-      onChange={ onCmdChange }
-      onMouseEnter={ onCmdMouseEnter }
-      highlightedCommands={lens.get(highlightedCommands)}
-    />
-  );
-};
-const ConstExpression = ({ expr, kind, onChange, ...props }) => {
-  const lens = propertyLens('value');
-  const onValueChange = (value) => {
-    onChange(lens.set(expr, value));
-  };
-
-  const onDragStart = kind === 'degrees'
-    ? props.onDegreesDragStart
-    : props.onDistanceDragStart;
-  const onDragEnd = kind === 'degrees'
-    ? props.onDegreesDragEnd
-    : props.onDistanceDragEnd;
-
-  const increment = kind === 'degrees' ? 15 : 10;
-
-  return (
-    <span className={cx('constant')}>
-      <Number
-        value={expr.value}
-        increment={increment}
-        scaleFactor={0.1}
-        onChange={onValueChange}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-      />
-    </span>
-  );
-};
-const VarExpression = ({ expr }) => (
-  <span className={cx('variable')}>{expr.name}</span>
-);
-const LamExpression = ({ expr, onChange, highlightedCommands, ...props }) => {
-  const names = expr.names.map((name) => (
-    <span key={name} className={cx('variable')}>{name}</span>
+const Lines = ({program}) => {
+  const lines = PP.layout(printBlock(program));
+  const lineElements = lines.map((line, i) => (
+    <div key={i}>{line}</div>
   ));
-
-  const lens = safeLens(propertyLens('expr'), {});
-  const onBodyChange = (body) => {
-    onChange(lens.set(expr, body));
-  };
-  const body = (
-    <Expression
-      expr={expr.expr}
-      onChange={onBodyChange}
-      highlightedCommands={lens.get(highlightedCommands)}
-      {...props}
-    />
-  );
 
   return (
     <React.Fragment>
-      ({intersperse(names, ', ')}) -&gt;
-      {body}
+      {lineElements}
     </React.Fragment>
-  );
-};
-const AppExpression = ({expr, onChange, highlightedCommands, ...props}) => {
-  const lens = safeLens(propertyLens('func'), {});
-  const onFuncChange = (func) => {
-    onChange(lens.set(expr, func));
-  };
-  return (
-    <Expression
-      expr={expr.func}
-      onChange={onFuncChange}
-      {...props}
-      highlightedCommands={lens.get(highlightedCommands)}
-    />
-  );
-};
-
-
-export {
-  Block,
-  Command,
-  Expression
+  )
 }
+export default Lines;
