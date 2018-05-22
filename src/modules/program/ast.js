@@ -79,7 +79,7 @@ const printCmdMove = (props, cmd, lens) => {
   return seq([
     str('move'),
     str('('),
-    printExpr(props, cmd.expr, exprLens),
+    printExpr({kind: 'distance', ...props}, cmd.expr, exprLens),
     str(')')
   ]);
 };
@@ -88,7 +88,7 @@ const printCmdTurn = (props, cmd, lens) => {
   return seq([
     str('turn'),
     str('('),
-    printExpr(props, cmd.expr, exprLens),
+    printExpr({kind: 'degrees', ...props}, cmd.expr, exprLens),
     str(')')
   ]);
 };
@@ -113,12 +113,23 @@ const printExprVar = (props, expr) => {
 };
 const printExprConst = (props, expr, lens) => {
   const constLens = composeLens(lens, lenses.expr.const.value);
+  const onDragStart = props.kind === 'degrees'
+    ? props.onDegreesDragStart
+    : props.onDistanceDragStart;
+  const onDragEnd = props.kind === 'degrees'
+    ? props.onDegreesDragEnd
+    : props.onDistanceDragEnd;
+  const increment = props.kind === 'degrees' ? 15 : 10;
+
   return str(
     <Const>
       <Number
         value={expr.value}
-        onChange={(value) => { props.onChange(value, constLens); }}
+        increment={increment}
         scaleFactor={0.1}
+        onChange={(value) => { props.onChange(value, constLens); }}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
       />
     </Const>
   );

@@ -41,8 +41,21 @@ Line.propTypes = {
 };
 
 
-const Lines = ({program, onChange}) => {
-  const programProps = {onChange};
+const Lines = ({
+  program,
+  onChange,
+  onDistanceDragStart,
+  onDistanceDragEnd,
+  onDegreesDragStart,
+  onDegreesDragEnd
+}) => {
+  const programProps = {
+    onChange,
+    onDistanceDragStart,
+    onDistanceDragEnd,
+    onDegreesDragStart,
+    onDegreesDragEnd
+  };
   const doc = printBlock(programProps, program);
 
   const lines = layout(doc);
