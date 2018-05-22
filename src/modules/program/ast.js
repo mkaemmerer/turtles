@@ -1,7 +1,7 @@
-import React from 'react';
-import { indent, concat, str, seq, intersperse, newline, Doc } from 'lang/doc';
+// import React from 'react';
 // import PropTypes from 'prop-types';
 // import { idLens, safeLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
+import { indent, concat, str, seq, intersperse, newline, Doc } from 'lang/doc';
 
 const match = (node, handlers) => handlers[node.type](node);
 
@@ -61,34 +61,9 @@ const printBind = (bind) => match(bind, {
   ])
 });
 
-
-const layout = (doc) => match(doc, {
-  'Doc.Empty': () => [],
-  'Doc.Text': ({text,  doc}) => {
-    const [line = [], ...lines] = layout(doc);
-    return [[text, ...line], ...lines];
-  },
-  'Doc.Line': ({depth, doc}) => {
-    const [line = [], ...lines] = layout(doc);
-    const indent = (
-      <span key="indent" style={{whiteSpace: 'pre'}}>
-        {`${' '.repeat(depth)}`}
-      </span>
-    );
-    return [[], [indent, ...line], ...lines];
-  }
-});
-
-const Lines = ({program}) => {
-  const lines = layout(printBlock(program));
-  const lineElements = lines.map((line, i) => (
-    <div key={i}>{line}</div>
-  ));
-
-  return (
-    <React.Fragment>
-      {lineElements}
-    </React.Fragment>
-  )
-}
-export default Lines;
+export {
+  printCommand,
+  printBlock,
+  printExpr,
+  printBind
+};
