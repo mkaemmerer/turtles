@@ -18,7 +18,7 @@ const layout = (doc) => match(doc, {
     const [line = [], ...lines] = layout(doc);
     const indent = (
       <span key="indent" style={{whiteSpace: 'pre'}}>
-        {`${' '.repeat(depth)}`}
+        {`${'  '.repeat(depth)}`}
       </span>
     );
     return [[], [indent, ...line], ...lines];
@@ -41,12 +41,18 @@ Line.propTypes = {
 };
 
 
-const Lines = ({program}) => {
-  const lines = layout(printBlock(program));
-  const lineElements = lines.map((line, i) => (
-    <Line key={i}>{line}</Line>
-  ));
+const Lines = ({program, onChange}) => {
+  const programProps = {
+    onChange: (value, lens) => {
+      onChange(lens.set(program, value));
+    }
+  };
+  const doc = printBlock(programProps, program);
 
+  const lines = layout(doc);
+  const lineElements = lines.map((line, i) => (
+    <Line key={i}>{React.Children.toArray(line)}</Line>
+  ));
   return (
     <React.Fragment>
       {lineElements}
