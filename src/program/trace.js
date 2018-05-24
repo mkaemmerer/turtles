@@ -1,5 +1,7 @@
 import {emptyLens} from 'utils/lenses';
 
+const over = (f) => (lens, x) => lens.set(x, f(lens.get(x)));
+
 class Trace {
   constructor(sourceRegistry, outputRegistry) {
     this.outputRegistry = outputRegistry;
@@ -11,15 +13,19 @@ class Trace {
 
   //TODO: handle many outputs per source line, and many source lines per output
   register(sourceLens, outputLens) {
-    const newOutputRegistry = sourceLens.set(this.outputRegistry, outputLens);
+    const appendSource = over((list) => {
+      const outputList = (list instanceof Array) ? list : [];
+      return outputList.concat(outputLens);
+    });
+    const newOutputRegistry = appendSource(sourceLens, this.outputRegistry);
     const newSourceRegistry = outputLens.set(this.sourceRegistry, sourceLens);
     return new Trace(newSourceRegistry, newOutputRegistry);
   }
   getOutput(sourceLens) {
     const output = sourceLens.get(this.outputRegistry);
-    return output.get
+    return (output instanceof Array)
       ? output
-      : emptyLens;
+      : [];
   }
   getSource(outputLens) {
     const source = outputLens.get(this.sourceRegistry);

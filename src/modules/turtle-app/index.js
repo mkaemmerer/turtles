@@ -124,10 +124,16 @@ class TurtleApp extends React.Component {
   onHoveredCommandChange = (sourceLens) => {
     if(sourceLens) {
       const { trace }  = this.state;
-      const outputLens = trace.getOutput(sourceLens);
+      const highlightedCommands = sourceLens.set({}, true);
+      const highlightedMarks    = trace
+        .getOutput(sourceLens)
+        .reduce((list, lens) =>
+          lens.set(list,true),
+        []);
+
       this.setState({
-        highlightedMarks:    outputLens.set([], true),
-        highlightedCommands: sourceLens.set({}, true)
+        highlightedMarks,
+        highlightedCommands
       });
     } else {
       this.setState({
