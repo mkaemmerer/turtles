@@ -41,7 +41,7 @@ const stepTrace = ({placement, marks, trace}, {effect, location}) => {
     const markLens = indexLens(marks.length);
 
     marks = marks.concat(mark);
-    trace = trace.register(location, markLens);
+    trace = trace.register(location[0], markLens);
   }
 
   return { placement, marks, trace };

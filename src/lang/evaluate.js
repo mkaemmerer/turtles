@@ -1,188 +1,120 @@
 import { fromIterable, flatMap } from 'utils/generators';
-import { idLens, composeLens, propertyLens, indexLens, safeLens } from 'utils/lenses';
-import { Expr, Cmd, Bind } from './ast';
+import { idLens, composeLens } from 'utils/lenses';
+import { Lens } from './ast';
 import Effect from './effect';
 
 const match = (node, handlers) => handlers[node.type](node);
 
-// Scope
-const emptyScope  = {};
-const makeScope   = (names, values) => {
-  const scope = {};
+// Closures
+const Clos = (type, data) => ({type, ...data});
+Clos.Lam = ({names, expr, loc, env}) => Clos('Clos.Lam', {names, expr, loc, env});
+Clos.Cmd = ({cmd, loc, env}) => Clos('Clos.Cmd', {cmd, loc, env});
+
+// Environment
+const emptyEnv = {};
+const extendEnv = (env, names, values) => {
+  const newEnv = Object.assign({}, env);
   for(const i in names) {
-    scope[names[i]] = values[i];
+    newEnv[names[i]] = values[i];
   }
-  return scope;
+  return newEnv;
 };
-const addToScope  = (scope, name, value) => ({
-  ...scope,
-  [name]: value
-});
-const findInScope = (scope, name) => scope[name];
-
-// Create fresh variable names for avoiding capture
-let varId = 0;
-const newName = () => {
-  return `$${varId++}`;
+const lookupEnv = (env, name) => {
+  const value = env[name];
+  if(!value) {
+    throw new Error(`Unbound variable ${name}`);
+  }
+  return value;
 };
 
-// Bindings
-const evaluateBindings = (bindings) =>
-  bindings.reduce((scope, binding) =>
-    match(binding, {
-      'Bind.Let': ({name, expr}) => {
-        const value = evaluateExpr(substitute(scope, expr));
-        return addToScope(scope, name, value);
-      }
-    })
-  , emptyScope);
+// Stack Trace
+const emptyStack = [idLens];
+const extendStackTrace = (loc1, loc2) => {
+  return [...loc2, ...loc1];
+};
+const focusStackTrace = (loc, newLens) => {
+  const [ lens, ...stack ] = loc;
+  return [composeLens(lens, newLens), ...stack];
+};
+
 
 // Run
-const runCommand = (command, location = idLens) =>
-  // TODO: this method of location mapping is not very good... need something
-  // that takes into account function application, bindings, substitution, etc.
+const runCommand = (command, env = emptyEnv, loc = emptyStack) =>
   match(command, {
     'Cmd.Move':  ({expr}) =>
-      match(evaluateExpr(expr), {
+      match(evaluateExpr(expr, loc, env), {
         'Expr.Const': ({value}) => {
           const effect = Effect.Move({distance: value});
-          const out    = { effect, location };
+          const out    = { effect, location: loc };
           return fromIterable([out]);
         }
       }),
     'Cmd.Turn':  ({expr}) =>
-      match(evaluateExpr(expr), {
+      match(evaluateExpr(expr, loc, env), {
         'Expr.Const': ({value}) => {
           const effect = Effect.Turn({degrees: value});
-          const out    = { effect, location };
+          const out    = { effect, location: loc };
           return fromIterable([out]);
         }
       }),
     'Cmd.Block': ({binds, cmds}) => {
-      const scope = evaluateBindings(binds);
-      const run = (expr, i) =>
-        match(evaluateExpr(substitute(scope, expr)), {
-          'Expr.Cmd': ({cmd}) => {
-            const newLens = composeLens(
-              composeLens(
-                safeLens(propertyLens('cmds'), []),
-                safeLens(indexLens(i), {})
-              ),
-              safeLens(propertyLens('cmd'), {})
-            );
-            const newLocation = composeLens(location, newLens);
-            return runCommand(cmd, newLocation);
-          }
-        });
+      let newEnv = env;
+      for(const i in binds) {
+        const bind = binds[i];
+        const newLoc = focusStackTrace(loc, Lens.Cmd.Block.bind(i));
+        newEnv = evaluateDefinition(bind, newLoc, newEnv);
+      }
+
+      const run = (expr, i) => {
+        const newLoc = focusStackTrace(loc, Lens.Cmd.Block.cmd(i));
+        const clos   = evaluateExpr(expr, newLoc, newEnv);
+        const {cmd, env, loc: closureLoc} =
+          match(clos, { 'Clos.Cmd': () => clos });
+        return runCommand(cmd, env, closureLoc);
+      };
+
       return flatMap(run, cmds);
     }
   });
 
+// Bindings
+const evaluateDefinition = (defn, loc, env) =>
+  match(defn, {
+    'Bind.Let': ({name, expr}) => {
+      const lens = Lens.Bind.Let.expr;
+      const newLoc = focusStackTrace(loc, lens);
+      const value = evaluateExpr(expr, newLoc, env);
+      return extendEnv(env, [name], [value]);
+    }
+  });
+
 // Evaluate
-const evaluateExpr = (expr) =>
+const evaluateExpr = (expr, loc, env) =>
   match(expr, {
-    'Expr.Var':   ({name}) => { throw new Error(`Unbound variable ${name}`) },
+    'Expr.Var':   ({name}) => lookupEnv(env, name),
     'Expr.Const': () => expr,
-    'Expr.Cmd':   () => expr,
-    'Expr.Lam':   () => expr,
-    'Expr.App':   ({func, args}) => {
-      const {names, expr} = match(evaluateExpr(func), {'Expr.Lam': lam => lam });
-      const values        = args.map(evaluateExpr);
-      const scope         = makeScope(names, values);
-      return evaluateExpr(substitute(scope, expr));
-    }
-  });
-
-// Substitute variables in `expr` with the values in `scope`.
-// Performs a renaming first so that only free variables will be replaced.
-const substitute = (scope, expr) => unsafeSubstitute(scope, rename(expr));
-
-// Substitute variables in `expr` with the values in `scope`.
-// Unsafe, because this will replace both free and bound variables.
-const unsafeSubstitute = (scope, expr) => {
-  const subExpr = (expr) => match(expr, {
-    'Expr.Var':   ({name}) => {
-      const value = findInScope(scope, name);
-      return (value === undefined)
-        ? expr
-        : value;
+    'Expr.Cmd':   ({cmd}) => {
+      const newLoc = focusStackTrace(loc, Lens.Expr.Cmd.cmd);
+      return Clos.Cmd({cmd, loc: newLoc, env});
     },
-    'Expr.Const': ()       => expr,
-    'Expr.Cmd':   ({cmd})  => Expr.Cmd({
-        cmd: subCmd(cmd)
-      }),
-    'Expr.Lam':   ({names, expr}) => Expr.Lam({
-        names,
-        expr: subExpr(expr)
-      }),
-    'Expr.App':   ({func, args}) => Expr.App({
-        func: subExpr(func),
-        args: args.map(subExpr)
-      })
-  });
-  const subCmd = (cmd) => match(cmd, {
-    'Cmd.Move':  ({expr}) => Cmd.Move({expr: subExpr(expr)}),
-    'Cmd.Turn':  ({expr}) => Cmd.Turn({expr: subExpr(expr)}),
-    'Cmd.Block': ({binds, cmds}) => Cmd.Block({
-        binds: binds.map(subBind),
-        cmds:  cmds.map(subExpr)
-      })
-  });
-  const subBind = (bind) => match(bind, {
-    'Bind.Let': ({name, expr}) => Bind.Let({
-        name,
-        expr: subExpr(expr)
-      })
-  });
-
-  return subExpr(expr);
-};
-
-// Returns an expression that is alpha-equivalent to `expr`,
-// with fresh names for all of the bound variables.
-// Used before substitution to prevent capture.
-const rename = (expr) => {
-  const makeRenameScope = (oldNames, newNames) => {
-    return makeScope(oldNames, newNames.map(name => Expr.Var({name})));
-  };
-  const getName = (bind) => match(bind, {
-    'Bind.Let': ({name}) => name
-  });
-
-  const renameExpr = (expr) => match(expr, {
-    'Expr.Var':   () => expr,
-    'Expr.Const': () => expr,
-    'Expr.Cmd':   ({cmd}) => Expr.Cmd({cmd: renameCmd(cmd)}),
     'Expr.Lam':   ({names, expr}) => {
-      const newNames = names.map(newName);
-      const scope = makeRenameScope(names, newNames);
-      const newExpr = unsafeSubstitute(scope, renameExpr(expr));
-      return Expr.Lam({names: newNames, expr: newExpr})
+      const newLoc = focusStackTrace(loc, Lens.Expr.Lam.expr);
+      return Clos.Lam({names, expr, loc: newLoc, env})
     },
-    'Expr.App':   () => expr
-  });
-  const renameCmd = (cmd) => match(cmd, {
-    'Cmd.Move':  () => cmd,
-    'Cmd.Turn':  () => cmd,
-    'Cmd.Block': ({binds, cmds}) => {
-      const names = binds.map(getName);
-      const newNames = names.map(newName);
-      const scope = makeRenameScope(names, newNames);
-      return Cmd.Block({
-        binds: binds.map((bind, i) => renameBind(scope, newNames[i], bind)),
-        cmds:  cmds.map((cmd) => unsafeSubstitute(scope, cmd))
+    'Expr.App':   ({func, args}) => {
+      const funcLoc = focusStackTrace(loc, Lens.Expr.App.func);
+      const {names, expr, loc: closureLoc, env: closureEnv} =
+        match(evaluateExpr(func, funcLoc, env), {'Clos.Lam': lam => lam });
+      const values = args.map((arg, i) => {
+        const argLoc = focusStackTrace(loc, Lens.Expr.App.arg(i));
+        return evaluateExpr(arg, argLoc, env);
       });
+
+      const newEnv = extendEnv(closureEnv, names, values);
+      const newLoc = extendStackTrace(loc, closureLoc);
+      return evaluateExpr(expr, newLoc, newEnv);
     }
   });
-  const renameBind = (scope, newName, bind) => match(bind, {
-    'Bind.Let': ({name, expr}) => Bind.Let({
-        name,
-        expr: unsafeSubstitute(scope, expr)
-      })
-  });
-
-  return renameExpr(expr);
-};
 
 const runProgram = (program) => runCommand(program);
 export default runProgram;

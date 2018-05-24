@@ -9,6 +9,7 @@ class Trace {
     return new Trace({}, []);
   }
 
+  //TODO: handle many outputs per source line, and many source lines per output
   register(sourceLens, outputLens) {
     const newOutputRegistry = sourceLens.set(this.outputRegistry, outputLens);
     const newSourceRegistry = outputLens.set(this.sourceRegistry, sourceLens);

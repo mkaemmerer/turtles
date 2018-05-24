@@ -1,6 +1,7 @@
 import React from 'react';
-import { indexLens, propertyLens, composeLens, idLens, safeLens } from 'utils/lenses';
+import { composeLens, idLens } from 'utils/lenses';
 import Number from 'components/number';
+import { Lens } from 'lang/ast';
 import { indent, concat, str, seq, intersperse, newline, Doc } from 'lang/doc';
 
 import styles from './ast.scss';
@@ -8,39 +9,6 @@ import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 const match = (node, handlers) => handlers[node.type](node);
-
-const safeIndexLens = (i) => safeLens(indexLens(i), {});
-
-const lenses = {
-  cmd: {
-    move:  { expr: safeLens(propertyLens('expr'), {}) },
-    turn:  { expr: safeLens(propertyLens('expr'), {}) },
-    block: {
-      binds: safeLens(propertyLens('binds'), []),
-      cmds:  safeLens(propertyLens('cmds'), []),
-      bind(i) { return composeLens(lenses.cmd.block.binds, safeIndexLens(i)); },
-      cmd(i)  { return composeLens(lenses.cmd.block.cmds,  safeIndexLens(i)); }
-    }
-  },
-  expr: {
-    cmd:   { cmd:   safeLens(propertyLens('cmd'), {}) },
-    const: { value: propertyLens('value') },
-    var:   { name:  propertyLens('name') },
-    app:   {
-      func: safeLens(propertyLens('func'), {}),
-      args: safeLens(propertyLens('args'), []),
-      arg(i) { return composeLens(lenses.expr.app.args, safeIndexLens(i)); }
-    },
-    lam:   {
-      names: safeLens(propertyLens('names'), []),
-      expr:  safeLens(propertyLens('expr'), {}),
-      name(i) { return composeLens(lenses.expr.lam.names, safeIndexLens(i)); }
-    }
-  },
-  bind: {
-    let: { name: propertyLens('name'), expr: safeLens(propertyLens('expr'), {}) }
-  }
-};
 
 // Sentry
 const Sentry = () => null;
@@ -56,11 +24,11 @@ const Const = ({children}) => (
 // Block
 const printBlock = (props, block, lens = idLens) => {
   const binds = block.binds.map((bind, i) => {
-    const bindLens = composeLens(lens, lenses.cmd.block.bind(i));
+    const bindLens = composeLens(lens, Lens.Cmd.Block.bind(i));
     return printBind(props, bind, bindLens);
   });
   const cmds  = block.cmds.map((cmd, i) => {
-    const cmdLens = composeLens(lens, lenses.cmd.block.cmd(i));
+    const cmdLens = composeLens(lens, Lens.Cmd.Block.cmd(i));
     return printExpr(props, cmd, cmdLens);
   });
 
@@ -79,7 +47,7 @@ const printCmd = (props, cmd, lens) =>
     'Cmd.Block': () => printCmdBlock(props, cmd, lens)
   });
 const printCmdMove = (props, cmd, lens) => {
-  const exprLens = composeLens(lens, lenses.cmd.move.expr);
+  const exprLens = composeLens(lens, Lens.Cmd.Move.expr);
   return seq([
     str(<Sentry lens={lens}/>),
     str('move'),
@@ -89,7 +57,7 @@ const printCmdMove = (props, cmd, lens) => {
   ]);
 };
 const printCmdTurn = (props, cmd, lens) => {
-  const exprLens = composeLens(lens, lenses.cmd.turn.expr);
+  const exprLens = composeLens(lens, Lens.Cmd.Turn.expr);
   return seq([
     str(<Sentry lens={lens}/>),
     str('turn'),
@@ -119,7 +87,7 @@ const printExprVar = (props, expr) => {
   return str(<Var>{expr.name}</Var>);
 };
 const printExprConst = (props, expr, lens) => {
-  const constLens = composeLens(lens, lenses.expr.const.value);
+  const constLens = composeLens(lens, Lens.Expr.Const.value);
   const onDragStart = props.kind === 'degrees'
     ? props.onDegreesDragStart
     : props.onDistanceDragStart;
@@ -142,11 +110,11 @@ const printExprConst = (props, expr, lens) => {
   );
 };
 const printExprCmd = (props, expr, lens) => {
-  const cmdLens = composeLens(lens, lenses.expr.cmd.cmd);
+  const cmdLens = composeLens(lens, Lens.Expr.Cmd.cmd);
   return printCmd(props, expr.cmd, cmdLens);
 };
 const printExprLam = (props, expr, lens) => {
-  const exprLens = composeLens(lens, lenses.expr.lam.expr);
+  const exprLens = composeLens(lens, Lens.Expr.Lam.expr);
   const names = expr.names.map((name) => str(<Var>{name}</Var>));
 
   return seq([
@@ -158,9 +126,9 @@ const printExprLam = (props, expr, lens) => {
   ]);
 };
 const printExprApp = (props, expr, lens) => {
-  const funcLens = composeLens(lens, lenses.expr.app.func);
+  const funcLens = composeLens(lens, Lens.Expr.App.func);
   const args = expr.args.map((arg, i) => {
-    const argLens = composeLens(lens, lenses.expr.app.arg(i));
+    const argLens = composeLens(lens, Lens.Expr.App.arg(i));
     return printExpr(props, arg, argLens);
   });
 
@@ -177,7 +145,7 @@ const printBind = (props, bind, lens) => match(bind, {
   'Bind.Let': () => printBindLet(props, bind, lens)
 });
 const printBindLet = (props, bind, lens) => {
-  const exprLens = composeLens(lens, lenses.bind.let.expr);
+  const exprLens = composeLens(lens, Lens.Bind.Let.expr);
   return seq([
     str('let '),
     str(<Var>{bind.name}</Var>),
