@@ -77,6 +77,7 @@ const ManageState = (Canvas) => {
   class ManagedCanvas extends React.Component {
     static propTypes = {
       placement: PropTypes.object.isRequired,
+      panOrigin: PropTypes.object.isRequired,
       onTurtleMoveStart:   PropTypes.func.isRequired,
       onTurtleMove:        PropTypes.func.isRequired,
       onTurtleMoveEnd:     PropTypes.func.isRequired,
@@ -122,8 +123,9 @@ const ManageState = (Canvas) => {
       this.props.onTurtleRotateStart();
     }
     onRotateDrag = (start, current, ctrlKey, shiftKey) => {
-      const { placement } = this.props;
-      const angle         = P2.angleBetween(current, placement.position, start);
+      const { placement, panOrigin } = this.props;
+      const position      = P2.offset(placement.position, V2.fromTo(P2.origin, panOrigin));
+      const angle         = P2.angleBetween(current, position, start);
       const rotation      = roundDegrees(angle, ctrlKey, shiftKey);
       this.setState({ rotation });
       this.props.onTurtleRotate(rotation);
@@ -134,14 +136,12 @@ const ManageState = (Canvas) => {
     }
 
     render() {
-      const { placement } = this.props;
       const { previousPlacement, movement, rotation } = this.state;
 
       return (
         <DraggableCanvas
           {...this.props}
           previousPlacement = {previousPlacement}
-          placement = {placement}
           movement  = {movement}
           rotation  = {rotation}
           onMoveDragStart   = {this.onMoveDragStart}

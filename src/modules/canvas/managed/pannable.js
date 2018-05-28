@@ -27,7 +27,7 @@ const Pannable = MakeDraggable(panSpec, panAdapter);
 //Component
 const ManageState = (Canvas) => {
   const PannableCanvas = Pannable(Canvas);
-  class ManagedCanvas extends React.Component {
+  class ManagedPannableCanvas extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -61,7 +61,7 @@ const ManageState = (Canvas) => {
       );
     }
   }
-  return ManagedCanvas;
+  return ManagedPannableCanvas;
 };
 
 export default ManageState;
