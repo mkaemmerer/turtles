@@ -1,7 +1,7 @@
 import React from 'react';
 import { composeLens, idLens } from 'utils/lenses';
 import Number from 'components/number';
-import { Lens } from 'lang/ast';
+import Lens from 'lang/ast-lenses';
 import { indent, concat, str, seq, intersperse, newline, Doc } from 'lang/doc';
 
 import styles from './ast.scss';
