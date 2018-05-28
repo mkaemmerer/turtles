@@ -24,6 +24,10 @@ module.exports = {
         ]
       },
       {
+        test: /\.svg$/,
+        loaders: ['babel-loader', 'react-svg-loader?jsx=true']
+      },
+      {
         test: /\.html$/,
         use: [
           {

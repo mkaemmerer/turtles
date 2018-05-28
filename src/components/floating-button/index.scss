@@ -1,0 +1,28 @@
+@import '~style/index';
+
+$button_background-color:            $color-white;
+$button_color:                       $color--text-standard;
+$button--active_background-color:    $color-gray-1;
+
+.floating-button {
+  display: inline-flex;
+  border-radius: 50%;
+
+  background-color: $button_background-color;
+  color: $button_color;
+  box-shadow: $shadow-s;
+  padding: $space-inset-s;
+
+  font-family: $font-family-standard;
+  font-size: $font-size-m;
+  line-height: 1;
+
+  cursor: pointer;
+  border: none;
+}
+.floating-button:active {
+  background-color: $button--active_background-color;
+}
+.floating-button:focus {
+  outline: none;
+}

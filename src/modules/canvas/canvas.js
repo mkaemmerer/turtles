@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FloatingButton from 'components/floating-button';
+import { IconCrosshairs } from 'components/icon';
 import Key from 'components/key';
 import Drawing from './drawing';
 import Turtle from './turtle';
@@ -95,6 +97,9 @@ class Canvas extends React.PureComponent {
         </svg>
 
         <div className={cx('canvas_overlay')}>
+          <div className={cx('canvas_overlay-hud')}>
+            <FloatingButton><IconCrosshairs size="s"/></FloatingButton>
+          </div>
           <div className={cx('canvas_overlay-footer')}>
             <Hint isVisible={isMoveDragging}>
               <span><Key name="Ctrl"/>: Snap to nearest 10</span>
