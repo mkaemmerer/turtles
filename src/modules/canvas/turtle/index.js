@@ -13,7 +13,7 @@ const toTransform = ({position, heading}) => {
   return `translate(${position.x}, ${position.y})rotate(${rotation})`;
 }
 
-class Turtle extends React.Component {
+class Turtle extends React.PureComponent {
   static propTypes = {
     onMoveDragStart:   PropTypes.func,
     onRotateDragStart: PropTypes.func,

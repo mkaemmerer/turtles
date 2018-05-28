@@ -8,34 +8,37 @@ import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 
-const Drawing = ({marks, onHoverChange, highlightedMarks}) => {
-  const children = marks.map((mark, i) => {
-    const lens = indexLens(i);
-    const isHighlighted = safeLens(lens, false).get(highlightedMarks);
-    const onMouseEnter  = () => { onHoverChange(lens); };
-    const onMouseLeave  = () => { onHoverChange(null); };
+class Drawing extends React.PureComponent {
+  static propTypes = {
+    marks: PropTypes.array.isRequired,
+    onHoverChange: PropTypes.func.isRequired,
+    highlightedMarks: PropTypes.array.isRequired
+  }
 
+  render() {
+    const {marks, onHoverChange, highlightedMarks} = this.props;
+    const children = marks.map((mark, i) => {
+      const lens = indexLens(i);
+      const isHighlighted = safeLens(lens, false).get(highlightedMarks);
+      const onMouseEnter  = () => { onHoverChange(lens); };
+      const onMouseLeave  = () => { onHoverChange(null); };
+
+      return (
+        <Mark
+          key={i}
+          mark={mark}
+          isHighlighted={isHighlighted}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        />
+      );
+    });
     return (
-      <Mark
-        key={i}
-        mark={mark}
-        isHighlighted={isHighlighted}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      />
+      <g className={cx('drawing')}>
+        {children}
+      </g>
     );
-  });
-
-  return (
-    <g className={cx('drawing')}>
-      {children}
-    </g>
-  );
+  }
 }
-Drawing.propTypes = {
-  marks: PropTypes.array.isRequired,
-  onHoverChange: PropTypes.func.isRequired,
-  highlightedMarks: PropTypes.array.isRequired
-};
 
 export default Drawing;

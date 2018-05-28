@@ -21,7 +21,7 @@ const CanvasBackground = (props) => (
   />
 );
 
-class Canvas extends React.Component {
+class Canvas extends React.PureComponent {
   static propTypes = {
     //Turtle placement
     placement:         PropTypes.object.isRequired,
