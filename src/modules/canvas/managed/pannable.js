@@ -46,6 +46,11 @@ const ManageState = (Canvas) => {
     }
     onPanDragEnd = () => {
     }
+    onPanRecenter = () => {
+      this.setState({
+        viewOrigin: P2.origin
+      });
+    }
 
     render() {
       const { viewOrigin } = this.state;
@@ -57,6 +62,7 @@ const ManageState = (Canvas) => {
           onPanDragStart = {this.onPanDragStart}
           onPanDrag      = {this.onPanDrag}
           onPanDragEnd   = {this.onPanDragEnd}
+          onPanRecenter  = {this.onPanRecenter}
         />
       );
     }

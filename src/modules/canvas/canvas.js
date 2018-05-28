@@ -40,6 +40,7 @@ class Canvas extends React.PureComponent {
     //View panning
     viewOrigin:     PropTypes.object.isRequired,
     onPanDragStart: PropTypes.func.isRequired,
+    onPanRecenter:  PropTypes.func.isRequired,
     isPanDragging:  PropTypes.bool.isRequired,
     //Drawing
     marks:            PropTypes.array.isRequired,
@@ -62,6 +63,7 @@ class Canvas extends React.PureComponent {
       isRotateDragging,
       viewOrigin,
       onPanDragStart,
+      onPanRecenter,
       isPanDragging,
       ctrlKey,
       shiftKey
@@ -98,7 +100,9 @@ class Canvas extends React.PureComponent {
 
         <div className={cx('canvas_overlay')}>
           <div className={cx('canvas_overlay-hud')}>
-            <FloatingButton><IconCrosshairs size="s"/></FloatingButton>
+            <FloatingButton onClick={onPanRecenter}>
+              <IconCrosshairs size="s"/>
+            </FloatingButton>
           </div>
           <div className={cx('canvas_overlay-footer')}>
             <Hint isVisible={isMoveDragging}>

@@ -36,8 +36,9 @@
 .canvas_overlay-hud {
   pointer-events: auto;
   position: absolute;
-  top: 0;
-  left: 0;
+  padding: $space-inset-m;
+  bottom: 0;
+  right: 0;
 }
 
 .canvas_overlay-footer {
