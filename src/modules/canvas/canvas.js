@@ -38,10 +38,10 @@ class Canvas extends React.PureComponent {
     ctrlKey:  PropTypes.bool.isRequired,
     shiftKey: PropTypes.bool.isRequired,
     //View panning
-    viewOrigin:     PropTypes.object.isRequired,
-    onPanDragStart: PropTypes.func.isRequired,
-    onPanRecenter:  PropTypes.func.isRequired,
-    isPanDragging:  PropTypes.bool.isRequired,
+    viewOrigin:    PropTypes.object.isRequired,
+    onPanStart:    PropTypes.func.isRequired,
+    onPanRecenter: PropTypes.func.isRequired,
+    isPanning:     PropTypes.bool.isRequired,
     //Drawing
     marks:            PropTypes.array.isRequired,
     highlightedMarks: PropTypes.array.isRequired,
@@ -62,18 +62,18 @@ class Canvas extends React.PureComponent {
       isMoveDragging,
       isRotateDragging,
       viewOrigin,
-      onPanDragStart,
+      onPanStart,
       onPanRecenter,
-      isPanDragging,
+      isPanning,
       ctrlKey,
       shiftKey
     } = this.props;
-    const className = cx('canvas', { 'canvas--is-panning': isPanDragging });
+    const className = cx('canvas', { 'canvas--is-panning': isPanning });
 
     return (
       <div className={className}>
         <svg className={cx('canvas_inner')}>
-          <CanvasBackground onMouseDown={onPanDragStart}/>
+          <CanvasBackground onMouseDown={onPanStart}/>
           <g transform={`translate(${viewOrigin.x}, ${viewOrigin.y})`}>
             <Drawing
               marks={marks}
@@ -101,7 +101,7 @@ class Canvas extends React.PureComponent {
         <div className={cx('canvas_overlay')}>
           <div className={cx('canvas_overlay-hud')}>
             <FloatingButton onClick={onPanRecenter}>
-              <IconCrosshairs size="s"/>
+              <IconCrosshairs size="s"/>&nbsp;Recenter
             </FloatingButton>
           </div>
           <div className={cx('canvas_overlay-footer')}>

@@ -2,11 +2,12 @@
 
 $button_background-color:            $color-white;
 $button_color:                       $color--text-standard;
+$button--focus_background-color:     $color-gray-0;
 $button--active_background-color:    $color-gray-1;
 
 .floating-button {
   display: inline-flex;
-  border-radius: 50%;
+  border-radius: $space-l;
 
   background-color: $button_background-color;
   color: $button_color;
@@ -15,14 +16,15 @@ $button--active_background-color:    $color-gray-1;
 
   font-family: $font-family-standard;
   font-size: $font-size-m;
-  line-height: 1;
+  text-transform: uppercase;
 
   cursor: pointer;
   border: none;
 }
-.floating-button:active {
-  background-color: $button--active_background-color;
-}
 .floating-button:focus {
   outline: none;
+  background-color: $button--focus_background-color;
+}
+.floating-button:active {
+  background-color: $button--active_background-color;
 }

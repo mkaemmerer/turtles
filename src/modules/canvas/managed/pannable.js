@@ -8,19 +8,19 @@ const toVector = ({x,y}) => V2(x,y);
 //Panning
 const panSpec = {
   onDragStart(props) {
-    props.onPanDragStart();
+    props.onPanStart();
   },
   onDrag(props, monitor) {
     const offset = monitor.getDragOffset();
-    props.onPanDrag(offset);
+    props.onPan(offset);
   },
   onDragEnd(props) {
-    props.onPanDragEnd();
+    props.onPanEnd();
   }
 };
 const panAdapter = (props, monitor) => ({
-  isPanDragging:  monitor.isDragging(),
-  onPanDragStart: monitor.onDragStart
+  isPanning:  monitor.isDragging(),
+  onPanStart: monitor.onDragStart
 });
 const Pannable = MakeDraggable(panSpec, panAdapter);
 
@@ -35,16 +35,16 @@ const ManageState = (Canvas) => {
       };
     }
 
-    onPanDragStart = () => {
+    onPanStart = () => {
       this.origin = this.state.viewOrigin;
     }
-    onPanDrag = (offset) => {
+    onPan = (offset) => {
       const vector = toVector(offset);
       this.setState({
         viewOrigin: P2.offset(this.origin, vector)
       });
     }
-    onPanDragEnd = () => {
+    onPanEnd = () => {
     }
     onPanRecenter = () => {
       this.setState({
@@ -59,9 +59,9 @@ const ManageState = (Canvas) => {
         <PannableCanvas
           {...this.props}
           viewOrigin = {viewOrigin}
-          onPanDragStart = {this.onPanDragStart}
-          onPanDrag      = {this.onPanDrag}
-          onPanDragEnd   = {this.onPanDragEnd}
+          onPanStart = {this.onPanStart}
+          onPan      = {this.onPan}
+          onPanEnd   = {this.onPanEnd}
           onPanRecenter  = {this.onPanRecenter}
         />
       );
