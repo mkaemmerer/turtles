@@ -31,29 +31,29 @@ const ManageState = (Canvas) => {
     constructor(props) {
       super(props);
       this.state = {
-        panOrigin: P2.origin
+        viewOrigin: P2.origin
       };
     }
 
     onPanDragStart = () => {
-      this.origin = this.state.panOrigin;
+      this.origin = this.state.viewOrigin;
     }
     onPanDrag = (offset) => {
       const vector = toVector(offset);
       this.setState({
-        panOrigin: P2.offset(this.origin, vector)
+        viewOrigin: P2.offset(this.origin, vector)
       });
     }
     onPanDragEnd = () => {
     }
 
     render() {
-      const { panOrigin } = this.state;
+      const { viewOrigin } = this.state;
 
       return (
         <PannableCanvas
           {...this.props}
-          panOrigin = {panOrigin}
+          viewOrigin = {viewOrigin}
           onPanDragStart = {this.onPanDragStart}
           onPanDrag      = {this.onPanDrag}
           onPanDragEnd   = {this.onPanDragEnd}

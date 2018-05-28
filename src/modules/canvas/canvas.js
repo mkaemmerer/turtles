@@ -36,7 +36,7 @@ class Canvas extends React.Component {
     ctrlKey:  PropTypes.bool.isRequired,
     shiftKey: PropTypes.bool.isRequired,
     //View panning
-    panOrigin:      PropTypes.object.isRequired,
+    viewOrigin:     PropTypes.object.isRequired,
     onPanDragStart: PropTypes.func.isRequired,
     isPanDragging:  PropTypes.bool.isRequired,
     //Drawing
@@ -58,7 +58,7 @@ class Canvas extends React.Component {
       onRotateDragStart,
       isMoveDragging,
       isRotateDragging,
-      panOrigin,
+      viewOrigin,
       onPanDragStart,
       isPanDragging,
       ctrlKey,
@@ -70,7 +70,7 @@ class Canvas extends React.Component {
       <div className={className}>
         <svg className={cx('canvas_inner')}>
           <CanvasBackground onMouseDown={onPanDragStart}/>
-          <g transform={`translate(${panOrigin.x}, ${panOrigin.y})`}>
+          <g transform={`translate(${viewOrigin.x}, ${viewOrigin.y})`}>
             <Drawing
               marks={marks}
               onHoverChange={onHoveredMarkChange}
