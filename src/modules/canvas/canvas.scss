@@ -9,9 +9,16 @@
   background-color: $color-white;
   border: $border-style-standard;
 }
+.canvas--is-panning {
+  cursor: move;
+}
 
 .canvas_inner {
   flex: 1;
+}
+.canvas_background {
+  pointer-events: all;
+  fill: none;
 }
 
 .canvas_overlay {
