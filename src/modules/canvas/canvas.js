@@ -58,7 +58,7 @@ class Canvas extends React.Component {
       onRotateDragStart,
       isMoveDragging,
       isRotateDragging,
-      // panOrigin,
+      panOrigin,
       onPanDragStart,
       isPanDragging,
       ctrlKey,
@@ -70,7 +70,7 @@ class Canvas extends React.Component {
       <div className={className}>
         <svg className={cx('canvas_inner')}>
           <CanvasBackground onMouseDown={onPanDragStart}/>
-          <g>
+          <g transform={`translate(${panOrigin.x}, ${panOrigin.y})`}>
             <Drawing
               marks={marks}
               onHoverChange={onHoveredMarkChange}

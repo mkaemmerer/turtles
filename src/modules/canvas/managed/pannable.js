@@ -1,6 +1,9 @@
 import React from 'react';
 import { MakeDraggable } from 'components/generic/draggable';
-import { P2 } from 'utils/vectors';
+import { P2, V2 } from 'utils/vectors';
+
+const toVector = ({x,y}) => V2(x,y);
+
 
 //Panning
 const panSpec = {
@@ -8,9 +11,8 @@ const panSpec = {
     props.onPanDragStart();
   },
   onDrag(props, monitor) {
-    const start = monitor.getDragPosition();
-    const current = monitor.getDragStartPosition();
-    props.onPanDrag(start, current);
+    const offset = monitor.getDragOffset();
+    props.onPanDrag(offset);
   },
   onDragEnd(props) {
     props.onPanDragEnd();
@@ -34,8 +36,13 @@ const ManageState = (Canvas) => {
     }
 
     onPanDragStart = () => {
+      this.origin = this.state.panOrigin;
     }
-    onPanDrag = () => {
+    onPanDrag = (offset) => {
+      const vector = toVector(offset);
+      this.setState({
+        panOrigin: P2.offset(this.origin, vector)
+      });
     }
     onPanDragEnd = () => {
     }
