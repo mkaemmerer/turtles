@@ -4,6 +4,29 @@ import { P2, V2 } from 'utils/vectors';
 
 const toVector = ({x,y}) => V2(x,y);
 
+const ease = (t) =>
+  (t<0.5)
+    ? 2*t*t
+    : -1+(4-2*t)*t;
+const interpolate = (p1, p2) => {
+  const v = V2.fromTo(p1, p2);
+  return (t) => P2.offset(p1, V2.times(v,t));
+};
+const animate = (duration, handler) => {
+  const startTime = performance.now();
+  let animationFrame;
+  const tick = (currentTime) => {
+    const elapsed = (currentTime - startTime)/1000;
+    handler(elapsed / duration);
+
+    if(elapsed < duration) {
+      animationFrame = window.requestAnimationFrame(tick);
+    }
+  };
+  animationFrame = window.requestAnimationFrame(tick);
+
+  return () => { window.cancelAnimationFrame(animationFrame); };
+};
 
 //Panning
 const panSpec = {
@@ -34,6 +57,9 @@ const ManageState = (Canvas) => {
         viewOrigin: P2.origin
       };
     }
+    componentWillUnmount() {
+      this.stopAnimation();
+    }
 
     onPanStart = () => {
       this.origin = this.state.viewOrigin;
@@ -47,8 +73,9 @@ const ManageState = (Canvas) => {
     onPanEnd = () => {
     }
     onPanRecenter = () => {
-      this.setState({
-        viewOrigin: P2.origin
+      const interp = interpolate(this.state.viewOrigin, P2.origin);
+      this.stopAnimation = animate(0.5, (t) => {
+        this.setState({ viewOrigin: interp(ease(t)) });
       });
     }
 
