@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import FloatingButton from 'components/floating-button';
 import { IconCrosshairs } from 'components/icon';
 import Key from 'components/key';
-import Drawing from './drawing';
+import { Drawing, DrawingDefs } from './drawing';
 import Turtle from './turtle';
 import Guides from './guides';
 import Hint from './hint';
@@ -76,6 +76,9 @@ class Canvas extends React.PureComponent {
     return (
       <div className={className} ref={canvasRef}>
         <svg className={cx('canvas_inner')}>
+          <defs>
+            <DrawingDefs/>
+          </defs>
           <CanvasBackground onMouseDown={onPanStart}/>
           <g transform={`translate(${viewOrigin.x}, ${viewOrigin.y})`}>
             <Drawing

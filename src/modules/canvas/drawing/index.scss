@@ -10,22 +10,29 @@ $color--mark-highlighted: $color-blue-4;
 .mark {
   cursor: pointer;
 }
+
+.mark_plain,
+.mark_highlight {
+  stroke-width: 2;
+}
+.mark_plain {
+  stroke: $color-black;
+}
+.mark_highlight {
+  display: none;
+  stroke: $color--mark-highlighted;
+  marker-end: url('#arrowhead');
+}
+.mark_arrowhead {
+  fill: $color--mark-highlighted;
+}
+
 .mark--highlighted {
-  .mark_line {
-    stroke: $color--mark-highlighted;
-  }
-  .mark_arrow {
-    fill: $color--mark-highlighted;
+  .mark_highlight {
+    display: block;
   }
 }
 
-.mark_turn {
-  stroke: none;
-}
-.mark_line {
-  stroke: $color-black;
-  stroke-width: 2;
-}
 .mark_hitbox {
   stroke: transparent;
   stroke-width: 20;
