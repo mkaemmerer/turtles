@@ -21,12 +21,12 @@ const turnPath = (angle) =>
     ? arrowPath(angle, 1)
     : arrowPath(angle, -1);
 
-const movePath = (from, to) => `
+const linePath = (from, to) => `
     M ${from.x} ${from.y}
     L ${to.x} ${to.y}
   `;
 
 export {
-  movePath,
+  linePath,
   turnPath
 };

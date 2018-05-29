@@ -17,6 +17,7 @@ class Drawing extends React.PureComponent {
 
   render() {
     const {marks, onHoverChange, highlightedMarks} = this.props;
+
     const children = marks.map((mark, i) => {
       const lens = indexLens(i);
       const isHighlighted = safeLens(lens, false).get(highlightedMarks);
@@ -33,9 +34,12 @@ class Drawing extends React.PureComponent {
         />
       );
     });
+    const lineChildren = children.filter((c) => c.props.mark.type === 'Mark.Line');
+    const turnChildren = children.filter((c) => c.props.mark.type === 'Mark.Turn');
+
     return (
       <g className={cx('drawing')}>
-        {children}
+        {[...lineChildren, ...turnChildren]}
       </g>
     );
   }
