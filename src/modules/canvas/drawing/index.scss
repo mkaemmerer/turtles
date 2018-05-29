@@ -21,12 +21,21 @@ $color--mark-highlighted: $color-blue-4;
 .mark_highlight {
   display: none;
   stroke: $color--mark-highlighted;
-  marker-end: url('#arrowhead');
 }
 .mark_arrowhead {
   fill: $color--mark-highlighted;
 }
 
+.mark--move {
+  .mark_highlight {
+    marker-end: url('#arrowhead-move');
+  }
+}
+.mark--turn {
+  .mark_highlight {
+    marker-end: url('#arrowhead-turn');
+  }
+}
 .mark--highlighted {
   .mark_highlight {
     display: block;
