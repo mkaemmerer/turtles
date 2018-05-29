@@ -2,7 +2,6 @@ import React from 'react';
 
 export const ShapeTurtle = () => (
   <polygon points="-8,-20, 16,0, -8,20"/>
-
 );
 export const ShapeArrowStraight = () => (
   <path d="

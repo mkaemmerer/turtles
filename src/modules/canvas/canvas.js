@@ -25,6 +25,8 @@ const CanvasBackground = (props) => (
 
 class Canvas extends React.PureComponent {
   static propTypes = {
+    //Canvas size
+    canvasRef: PropTypes.func,
     //Turtle placement
     placement:         PropTypes.object.isRequired,
     previousPlacement: PropTypes.object.isRequired,
@@ -50,6 +52,7 @@ class Canvas extends React.PureComponent {
 
   render() {
     const {
+      canvasRef,
       placement,
       previousPlacement,
       movement,
@@ -71,7 +74,7 @@ class Canvas extends React.PureComponent {
     const className = cx('canvas', { 'canvas--is-panning': isPanning });
 
     return (
-      <div className={className}>
+      <div className={className} ref={canvasRef}>
         <svg className={cx('canvas_inner')}>
           <CanvasBackground onMouseDown={onPanStart}/>
           <g transform={`translate(${viewOrigin.x}, ${viewOrigin.y})`}>

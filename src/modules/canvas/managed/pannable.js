@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { MakeDraggable } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 
@@ -51,10 +52,13 @@ const Pannable = MakeDraggable(panSpec, panAdapter);
 const ManageState = (Canvas) => {
   const PannableCanvas = Pannable(Canvas);
   class ManagedPannableCanvas extends React.Component {
+    static propTypes = {
+      canvasCenter: PropTypes.object.isRequired
+    }
     constructor(props) {
       super(props);
       this.state = {
-        viewOrigin: P2.origin
+        viewOffset: P2.origin
       };
     }
     componentWillUnmount() {
@@ -62,25 +66,27 @@ const ManageState = (Canvas) => {
     }
 
     onPanStart = () => {
-      this.origin = this.state.viewOrigin;
+      this.offset = this.state.viewOffset;
     }
     onPan = (offset) => {
       const vector = toVector(offset);
       this.setState({
-        viewOrigin: P2.offset(this.origin, vector)
+        viewOffset: P2.offset(this.offset, vector)
       });
     }
     onPanEnd = () => {
     }
     onPanRecenter = () => {
-      const interp = interpolate(this.state.viewOrigin, P2.origin);
+      const interp = interpolate(this.state.viewOffset, P2.origin);
       this.stopAnimation = animate(0.5, (t) => {
-        this.setState({ viewOrigin: interp(ease(t)) });
+        this.setState({ viewOffset: interp(ease(t)) });
       });
     }
 
     render() {
-      const { viewOrigin } = this.state;
+      const { canvasCenter } = this.props;
+      const { viewOffset } = this.state;
+      const viewOrigin = P2.offset(viewOffset, canvasCenter);
 
       return (
         <PannableCanvas

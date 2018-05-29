@@ -15,7 +15,7 @@ const cx = classnames.bind(styles);
 
 const RADIANS_TO_DEGREES = 180 / Math.PI;
 const initialPlacement = new Placement(
-  P2(480, 380),
+  P2.origin,
   V2(0, -1)
 );
 

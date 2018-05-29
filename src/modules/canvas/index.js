@@ -1,5 +1,6 @@
 import MakeDraggable from './managed/draggable';
 import MakePannable from './managed/pannable';
+import Measured from './managed/measured';
 import Canvas from './canvas';
 
-export default MakePannable(MakeDraggable(Canvas));
+export default Measured(MakePannable(MakeDraggable(Canvas)));
