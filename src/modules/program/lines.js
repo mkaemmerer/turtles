@@ -62,7 +62,8 @@ const Lines = ({
   const doc = printBlock(programProps, program);
   const lines = layout(doc);
   const lineElements = lines.map((line, i) => {
-    const command = line.find((token) => token.type === Sentry) || { props: {} };
+    const sentries = line.filter((token) => token.type === Sentry);
+    const command = sentries[sentries.length - 1] || { props: {} };
     const lens    = command.props.lens;
     return (
       <Line

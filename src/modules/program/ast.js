@@ -29,7 +29,10 @@ const printBlock = (props, block, lens = idLens) => {
   });
   const cmds  = block.cmds.map((cmd, i) => {
     const cmdLens = composeLens(lens, Lens.Cmd.Block.cmd(i));
-    return printExpr(props, cmd, cmdLens);
+    return seq([
+      str(<Sentry lens={cmdLens}/>),
+      printExpr(props, cmd, cmdLens)
+    ]);
   });
 
   const bindPart = (binds.length > 0)

@@ -108,7 +108,8 @@ class TurtleApp extends React.Component {
   onHoveredMarkChange = (outputLens) => {
     if(outputLens) {
       const { trace }  = this.state;
-      const sourceLens = trace.getSource(outputLens);
+      const location = trace.getSource(outputLens);
+      const sourceLens = location[0];
 
       this.setState({
         highlightedMarks:    outputLens.set([], true),
