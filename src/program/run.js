@@ -1,11 +1,13 @@
 import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
+import { reduce } from 'utils/generators';
 import evaluate from 'lang/evaluate';
 import Mark from './mark';
 import Trace from './trace';
 
 const match = (node, handlers) => handlers[node.type](node);
 const DEGREES_TO_RADIANS = Math.PI / 180;
+
 
 const step = (placement, prim) =>
   match(prim, {
@@ -33,33 +35,39 @@ const step = (placement, prim) =>
     }
   });
 
-const stepTrace = ({placement, marks, trace}, {effect, location}) => {
-  const [ newPlacement, newMarks ] = step(placement, effect);
-  placement = newPlacement;
-
-  for(const mark of newMarks) {
-    const markLens = indexLens(marks.length);
-
-    marks = marks.concat(mark);
-    trace = trace.register(location, markLens);
-  }
-
-  return { placement, marks, trace };
+const interpretProgram = (initialState, step, program) => {
+  return reduce(step, initialState, evaluate(program));
 };
 
 const run = (placement, program) => {
-  const initialState = {
-    placement,
-    marks: [],
-    trace: Trace()
+  const initialState = { placement, marks: [] };
+
+  const runStep = ({effect}, {placement, marks}) => {
+    const [ newPlacement, newMarks ] = step(placement, effect);
+    return { placement: newPlacement, marks: marks.concat(newMarks) };
   };
 
-  let state = initialState;
-  for(const out of evaluate(program)) {
-    state = stepTrace(state, out);
-  }
-
-  return state;
+  return interpretProgram(initialState, runStep, program);
 };
 
-export default run;
+const runTrace = (placement, program) => {
+  const initialState = { placement, marks: [], trace: Trace() };
+
+  const runStep = ({effect, location}, {placement, marks, trace}) => {
+    const [ newPlacement, newMarks ] = step(placement, effect);
+    placement = newPlacement;
+    for(const mark of newMarks) {
+      const markLens = indexLens(marks.length);
+      marks = marks.concat(mark);
+      trace = trace.register(location, markLens);
+    }
+    return { placement, marks, trace };
+  };
+
+  return interpretProgram(initialState, runStep, program);
+};
+
+export {
+  run,
+  runTrace
+};

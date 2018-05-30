@@ -4,7 +4,7 @@ import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
 import { emptyLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
-import run from 'program/run';
+import { runTrace } from 'program/run';
 import * as AST from 'lang/ast';
 import Canvas from '../canvas';
 import Program from '../program';
@@ -48,7 +48,7 @@ class TurtleApp extends React.Component {
     this.initialPlacement = initialPlacement;
     this.currentLens = emptyLens;
 
-    const { placement, marks, trace } = run(this.initialPlacement, this.program);
+    const { placement, marks, trace } = runTrace(this.initialPlacement, this.program);
     this.state = {
       program: this.program,
       placement,
@@ -68,7 +68,7 @@ class TurtleApp extends React.Component {
   }
   runProgram(program) {
     this.program = program;
-    const { placement, marks, trace } = run(this.initialPlacement, program);
+    const { placement, marks, trace } = runTrace(this.initialPlacement, program);
     this.setState({ program, placement, marks, trace });
   }
 
