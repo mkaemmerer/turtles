@@ -4,7 +4,7 @@ import { MakeDraggableContext } from 'components/generic/draggable';
 import { P2, V2 } from 'utils/vectors';
 import Placement from 'utils/placement';
 import { emptyLens, indexLens, propertyLens, composeLens } from 'utils/lenses';
-import { runTrace } from 'program/run';
+import { run, runTrace } from 'program/run';
 import * as AST from 'lang/ast';
 import Canvas from '../canvas';
 import Program from '../program';
@@ -66,14 +66,21 @@ class TurtleApp extends React.Component {
     });
     this.runProgram(newProgram);
   }
+  //Run the program, but without generating a trace
   runProgram(program) {
+    this.program = program;
+    const { placement, marks } = run(this.initialPlacement, program);
+    this.setState({ program, placement, marks });
+  }
+  //Run the program, save a trace
+  traceProgram(program) {
     this.program = program;
     const { placement, marks, trace } = runTrace(this.initialPlacement, program);
     this.setState({ program, placement, marks, trace });
   }
 
   onProgramChange = (program) => {
-    this.runProgram(program);
+    this.traceProgram(program);
   }
   onTurtleMoveStart = () => {
     this.addCommand(MoveConst(0));
@@ -88,6 +95,7 @@ class TurtleApp extends React.Component {
   }
   onTurtleMoveEnd = () => {
     this.currentLens = emptyLens;
+    this.traceProgram(this.program);
   }
   onTurtleRotateStart = () => {
     this.addCommand(TurnConst(0));
@@ -103,6 +111,7 @@ class TurtleApp extends React.Component {
   }
   onTurtleRotateEnd = () => {
     this.currentLens = emptyLens;
+    this.traceProgram(this.program);
   }
 
   onHoveredMarkChange = (outputLens) => {

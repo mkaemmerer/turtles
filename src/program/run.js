@@ -35,10 +35,6 @@ const step = (placement, prim) =>
     }
   });
 
-const interpretProgram = (initialState, step, program) => {
-  return reduce(step, initialState, evaluate(program));
-};
-
 const run = (placement, program) => {
   const initialState = { placement, marks: [] };
 
@@ -47,7 +43,7 @@ const run = (placement, program) => {
     return { placement: newPlacement, marks: marks.concat(newMarks) };
   };
 
-  return interpretProgram(initialState, runStep, program);
+  return reduce(runStep, initialState, evaluate(program));
 };
 
 const runTrace = (placement, program) => {
@@ -64,7 +60,7 @@ const runTrace = (placement, program) => {
     return { placement, marks, trace };
   };
 
-  return interpretProgram(initialState, runStep, program);
+  return reduce(runStep, initialState, evaluate(program));
 };
 
 export {
