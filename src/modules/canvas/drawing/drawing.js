@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { indexLens, safeLens } from 'utils/lenses';
-import Mark from './mark';
+import Highlight from './highlight';
+import Pen from './pen';
 
 import styles from './index.scss';
 import classnames from 'classnames/bind';
@@ -18,14 +19,14 @@ class Drawing extends React.PureComponent {
   render() {
     const {marks, onHoverChange, highlightedMarks} = this.props;
 
-    const children = marks.map((mark, i) => {
+    const highlights = marks.map((mark, i) => {
       const lens = indexLens(i);
       const isHighlighted = safeLens(lens, false).get(highlightedMarks);
       const onMouseEnter  = () => { onHoverChange(lens); };
       const onMouseLeave  = () => { onHoverChange(null); };
 
       return (
-        <Mark
+        <Highlight
           key={i}
           mark={mark}
           isHighlighted={isHighlighted}
@@ -34,12 +35,14 @@ class Drawing extends React.PureComponent {
         />
       );
     });
-    const lineChildren = children.filter((c) => c.props.mark.type === 'Mark.Line');
-    const turnChildren = children.filter((c) => c.props.mark.type === 'Mark.Turn');
+    const lineHighlights = highlights.filter((c) => c.props.mark.type === 'Mark.Line');
+    const turnHighlights = highlights.filter((c) => c.props.mark.type === 'Mark.Turn');
+    const penMarks = marks.map((mark, i) => (<Pen key={i} mark={mark}/>));
 
     return (
       <g className={cx('drawing')}>
-        {[...lineChildren, ...turnChildren]}
+        {penMarks}
+        {[...lineHighlights, ...turnHighlights]}
       </g>
     );
   }

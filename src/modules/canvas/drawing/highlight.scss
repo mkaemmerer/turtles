@@ -1,0 +1,39 @@
+@import '../../../style/index';
+
+$color--highlight: $color-blue-4;
+
+.highlight {
+  cursor: pointer;
+}
+
+.highlight_path {
+  display: none;
+  stroke-width: 2;
+  stroke: $color--highlight;
+  fill: none;
+}
+.highlight_arrowhead {
+  fill: $color--highlight;
+}
+
+.highlight--line {
+  .highlight_path {
+    marker-end: url('#arrowhead-move');
+  }
+}
+.highlight--turn {
+  .highlight_path {
+    marker-end: url('#arrowhead-turn');
+  }
+}
+.highlight--highlighted {
+  .highlight_path {
+    display: block;
+  }
+}
+
+.highlight_hitbox {
+  stroke: transparent;
+  stroke-width: 20;
+  fill: transparent;
+}

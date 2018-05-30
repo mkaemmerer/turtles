@@ -1,0 +1,10 @@
+@import '../../../style/index';
+
+$color--pen: $color-black;
+
+.pen {
+  pointer-events: none;
+  stroke-width: 2;
+  stroke: $color--pen;
+  fill: none;
+}

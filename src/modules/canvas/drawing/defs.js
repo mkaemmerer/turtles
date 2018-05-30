@@ -1,13 +1,13 @@
 import React from 'react';
 
-import styles from './index.scss';
+import styles from './highlight.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
 const Markers = () => (
   <React.Fragment>
     <marker
-      className={cx('mark_arrowhead')}
+      className={cx('highlight_arrowhead')}
       id="arrowhead-move"
       viewBox="0 0 10 10"
       refX="9"
@@ -19,7 +19,7 @@ const Markers = () => (
       <path d="M 0 0 L 10 5 L 0 10 z" />
     </marker>
     <marker
-      className={cx('mark_arrowhead')}
+      className={cx('highlight_arrowhead')}
       id="arrowhead-turn"
       viewBox="0 0 10 10"
       refX="6"
