@@ -85,6 +85,7 @@ class Canvas extends React.PureComponent {
               marks={marks}
               onHoverChange={onHoveredMarkChange}
               highlightedMarks={highlightedMarks}
+              isDragging={isMoveDragging || isRotateDragging}
             />
             <Turtle
               placement={placement}
