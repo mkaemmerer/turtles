@@ -48,15 +48,15 @@ const Movable = MakeDraggable(moveSpec, moveAdapter);
 
 //Rotation
 const rotateSpec = {
-  onDragStart(props) {
-    props.onRotateDragStart();
+  onDragStart(props, monitor) {
+    const start = monitor.getDragStartPosition();
+    props.onRotateDragStart(start);
   },
   onDrag(props, monitor) {
-    const start = monitor.getDragPosition();
-    const current = monitor.getDragStartPosition();
+    const position = monitor.getDragPosition();
     const ctrlKey = monitor.ctrlKey();
     const shiftKey = monitor.shiftKey();
-    props.onRotateDrag(start, current, ctrlKey, shiftKey);
+    props.onRotateDrag(position, ctrlKey, shiftKey);
   },
   onDragEnd(props) {
     props.onRotateDragEnd();
@@ -114,19 +114,24 @@ const ManageState = (Canvas) => {
       this.props.onTurtleMoveEnd(movement);
     }
 
-    onRotateDragStart = () => {
+    onRotateDragStart = (startPosition) => {
+      const { placement, viewOrigin } = this.props;
       this.setState({
         previousPlacement: this.props.placement,
         movement: 0,
         rotation: 0
       });
       this.props.onTurtleRotateStart();
+
+      this.rotateOrigin   = P2.offset(placement.position, V2.fromTo(P2.origin, viewOrigin));
+      this.rotatePosition = startPosition;
+      this.angle = 0;
     }
-    onRotateDrag = (start, current, ctrlKey, shiftKey) => {
-      const { placement, viewOrigin } = this.props;
-      const position      = P2.offset(placement.position, V2.fromTo(P2.origin, viewOrigin));
-      const angle         = P2.angleBetween(current, position, start);
-      const rotation      = roundDegrees(angle, ctrlKey, shiftKey);
+    onRotateDrag = (position, ctrlKey, shiftKey) => {
+      const delta = P2.angleBetween(this.rotatePosition, this.rotateOrigin, position);
+      this.angle  = this.angle + delta;
+      this.rotatePosition = position;
+      const rotation = roundDegrees(this.angle, ctrlKey, shiftKey);
       this.setState({ rotation });
       this.props.onTurtleRotate(rotation);
     }
