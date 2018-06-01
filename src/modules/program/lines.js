@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import match from 'lang/match';
 import { printBlock, Sentry } from './ast';
 
 import styles from './lines.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const match = (node, handlers) => handlers[node.type](node);
 
 const layout = (doc) => match(doc, {
   'Doc.Empty': () => [],

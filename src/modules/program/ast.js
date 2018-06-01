@@ -2,13 +2,13 @@ import React from 'react';
 import { composeLens, idLens } from 'utils/lenses';
 import Number from 'components/number';
 import Lens from 'lang/ast-lenses';
+import match from 'lang/match';
 import { indent, concat, str, seq, intersperse, newline, Doc } from 'lang/doc';
 
 import styles from './ast.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
 
-const match = (node, handlers) => handlers[node.type](node);
 
 // Sentry
 const Sentry = () => null;

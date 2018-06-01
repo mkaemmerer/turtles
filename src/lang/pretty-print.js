@@ -1,5 +1,5 @@
 import { indent, concat, str, seq, intersperse, newline, Doc } from './doc';
-const match = (node, handlers) => handlers[node.type](node);
+import match from './match';
 
 const layout = (doc) => match(doc, {
   'Doc.Empty': () => '',

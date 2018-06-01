@@ -2,10 +2,10 @@ import { V2 } from 'utils/vectors';
 import { indexLens } from 'utils/lenses';
 import { reduce } from 'utils/generators';
 import evaluate from 'lang/evaluate';
+import match from 'lang/match';
 import Mark from './mark';
 import Trace from './trace';
 
-const match = (node, handlers) => handlers[node.type](node);
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
 

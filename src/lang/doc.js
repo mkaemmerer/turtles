@@ -1,4 +1,4 @@
-const match = (node, handlers) => handlers[node.type](node);
+import match from './match';
 
 export const Doc = {};
 Doc.Empty = { type: 'Doc.Empty' };

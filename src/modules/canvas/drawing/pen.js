@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import match from 'lang/match';
 import { linePath } from './draw-path';
 
 import styles from './pen.scss';
 import classnames from 'classnames/bind';
 const cx = classnames.bind(styles);
-
-const match = (node, handlers) => handlers[node.type](node);
 
 const Pen = ({mark, ...props}) =>
   match(mark, {

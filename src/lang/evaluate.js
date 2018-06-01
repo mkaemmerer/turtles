@@ -2,8 +2,7 @@ import { fromIterable, flatMap } from 'utils/generators';
 import { idLens, composeLens } from 'utils/lenses';
 import Lens from './ast-lenses';
 import Effect from './effect';
-
-const match = (node, handlers) => handlers[node.type](node);
+import match from './match';
 
 // Closures
 const Clos = (type, data) => ({type, ...data});

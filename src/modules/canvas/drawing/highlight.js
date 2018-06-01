@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import match from 'lang/match';
 import { linePath, turnPath } from './draw-path';
 
 import styles from './highlight.scss';
@@ -8,8 +9,6 @@ const cx = classnames.bind(styles);
 
 const RADIANS_TO_DEGREES = 180 / Math.PI;
 const DEGREES_TO_RADIANS = Math.PI / 180;
-
-const match = (node, handlers) => handlers[node.type](node);
 
 const Highlight = ({mark, ...props}) =>
   match(mark, {
