@@ -40,18 +40,18 @@ const focusStackTrace = (loc, newLens) => {
 // Run
 const runCommand = (command, env = emptyEnv, loc = emptyStack) =>
   match(command, {
-    'Cmd.Move':  ({expr}) =>
+    'Cmd.Move':  ({expr, dir}) =>
       match(evaluateExpr(expr, loc, env), {
         'Expr.Const': ({value}) => {
-          const effect = Effect.Move({distance: value});
+          const effect = Effect.Move({distance: value, dir});
           const out    = { effect, location: loc };
           return fromIterable([out]);
         }
       }),
-    'Cmd.Turn':  ({expr}) =>
+    'Cmd.Turn':  ({expr, dir}) =>
       match(evaluateExpr(expr, loc, env), {
         'Expr.Const': ({value}) => {
-          const effect = Effect.Turn({degrees: value});
+          const effect = Effect.Turn({degrees: value, dir});
           const out    = { effect, location: loc };
           return fromIterable([out]);
         }

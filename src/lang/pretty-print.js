@@ -10,13 +10,15 @@ const layout = (doc) => match(doc, {
 // Command
 const printCommand = (command) =>
   match(command, {
-    'Cmd.Move':  ({expr}) => seq([
-      str('move('),
+    'Cmd.Move':  ({expr, dir}) => seq([
+      printMoveDirection(dir),
+      str('(')
       printExpr(expr),
       str(')')
     ]),
-    'Cmd.Turn':  ({expr}) => seq([
-      str('turn('),
+    'Cmd.Turn':  ({expr, dir}) => seq([
+      printTurnDirection(dir),
+      str('('),
       printExpr(expr),
       str(')')
     ]),
@@ -32,6 +34,19 @@ const printBlock = ({binds, cmds}) => {
     : Doc.Empty;
   const cmdPart = intersperse(cmds.map(printExpr), newline);
   return seq([bindPart, cmdPart, newline]);
+};
+
+const printMoveDirection = (dir) => {
+  switch(dir) {
+    case 'forward':  return str('move_forward');
+    case 'backward': return str('move_backward');
+  }
+};
+const printTurnDirection = (dir) => {
+  switch(dir) {
+    case 'left':  return str('turn_left');
+    case 'right': return str('turn_right');
+  }
 };
 
 // Expression

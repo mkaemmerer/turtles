@@ -1,2 +1,2 @@
-turn(-90)
-move(100)
+turn_right(-90)
+move_forward(100)

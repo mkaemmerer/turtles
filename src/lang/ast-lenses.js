@@ -3,8 +3,8 @@ import { indexLens, propertyLens, composeLens, safeLens } from 'utils/lenses';
 const safeIndexLens = (i) => safeLens(indexLens(i), {});
 const Lens = {
   Cmd: {
-    Move:  { expr: safeLens(propertyLens('expr'), {}) },
-    Turn:  { expr: safeLens(propertyLens('expr'), {}) },
+    Move:  { expr: safeLens(propertyLens('expr'), {}), dir: propertyLens('dir') },
+    Turn:  { expr: safeLens(propertyLens('expr'), {}), dir: propertyLens('dir') },
     Block: {
       binds: safeLens(propertyLens('binds'), []),
       cmds:  safeLens(propertyLens('cmds'), []),

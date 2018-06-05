@@ -1,6 +1,6 @@
 const Cmd = (type, data) => ({type, ...data});
-Cmd.Move  = ({expr}) => Cmd('Cmd.Move', {expr});
-Cmd.Turn  = ({expr}) => Cmd('Cmd.Turn', {expr});
+Cmd.Move  = ({expr, dir}) => Cmd('Cmd.Move', {expr, dir});
+Cmd.Turn  = ({expr, dir}) => Cmd('Cmd.Turn', {expr, dir});
 Cmd.Block = ({binds, cmds}) => Cmd('Cmd.Block', {binds, cmds});
 
 const Expr = (type, data) => ({type, ...data});

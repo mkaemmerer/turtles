@@ -14,13 +14,15 @@ const indentLine = (indent) => (parser) => indentBy(indent).then(parser);
 
 //Tokens
 const tDo    = P.string('do');
-const tMove  = P.string('move');
-const tTurn  = P.string('turn');
+const tMoveForward   = P.string('move_backward');
+const tMoveBackward  = P.string('move_forward');
+const tTurnLeft      = P.string('turn_left');
+const tTurnRight     = P.string('turn_right');
 const tLet   = P.string('let');
 const tArrow = P.string('->');
 const tEqual = P.string('=');
 const tComma = P.string(',');
-const tVar   = P.regex(/[a-zA-Z_-]+/).desc('a variable');
+const tVar   = P.regex(/[a-zA-Z][a-zA-Z_-]*/).desc('a variable');
 const tNum   = P.regex(/-?[0-9]+/).map(x => Number(x)).desc('a number');
 const tOpenParen  = P.string('(');
 const tCloseParen = P.string(')');
@@ -52,13 +54,25 @@ const language = (indent) => P.createLanguage({
   },
 
   cmd(lang) {
-    const cMove = P.seqObj(
-        tMove,
-        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)]
+    const cMoveForward = P.seqObj(
+        tMoveForward,
+        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)],
+        ['dir', P.of('forward')]
       )
       .map(Cmd.Move);
-    const cTurn = P.seqObj(
-        tTurn,
+    const cMoveBackward = P.seqObj(
+        tMoveBackward,
+        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)],
+        ['dir', P.of('backward')]
+      )
+      .map(Cmd.Move);
+    const cTurnLeft = P.seqObj(
+        tTurnLeft,
+        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)]
+      )
+      .map(Cmd.Turn);
+    const cTurnRight = P.seqObj(
+        tTurnRight,
         ['expr', lang.expr.wrap(tOpenParen, tCloseParen)]
       )
       .map(Cmd.Turn);
@@ -67,7 +81,7 @@ const language = (indent) => P.createLanguage({
       .then(language(indent+2).block)
       .map(Cmd.Block);
 
-    return P.alt(cMove, cTurn, cDo);
+    return P.alt(cMoveForward, cMoveBackward, cTurnLeft, cTurnRight, cDo);
   },
 
   binding(lang) {
