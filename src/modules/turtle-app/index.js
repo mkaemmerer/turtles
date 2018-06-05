@@ -22,13 +22,15 @@ const initialPlacement = new Placement(
 const MoveConst = (value) =>
   AST.Expr.Cmd({
     cmd: AST.Cmd.Move({
-      expr: AST.Expr.Const({ value })
+      expr: AST.Expr.Const({ value }),
+      dir: 'forward'
     })
   });
 const TurnConst = (value) =>
   AST.Expr.Cmd({
     cmd: AST.Cmd.Turn({
-      expr: AST.Expr.Const({ value })
+      expr: AST.Expr.Const({ value }),
+      dir: 'right'
     })
   });
 

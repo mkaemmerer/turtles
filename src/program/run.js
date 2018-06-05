@@ -8,11 +8,23 @@ import Trace from './trace';
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
+const moveSign = (direction) => {
+  switch(direction) {
+    case 'forward':  return 1;
+    case 'backward': return -1;
+  }
+};
+const turnSign = (direction) => {
+  switch(direction) {
+    case 'left':  return -1;
+    case 'right': return 1;
+  }
+};
 
 const step = (placement, prim) =>
   match(prim, {
-    'Effect.Move': ({distance}) => {
-      const newPlacement = placement.move(distance);
+    'Effect.Move': ({distance, direction}) => {
+      const newPlacement = placement.move(distance * moveSign(direction));
       const newMarks = [
         Mark.Line({
           from: placement.position,
@@ -21,8 +33,8 @@ const step = (placement, prim) =>
       ];
       return [ newPlacement, newMarks ];
     },
-    'Effect.Turn': ({degrees}) => {
-      const newPlacement = placement.rotate(degrees * DEGREES_TO_RADIANS);
+    'Effect.Turn': ({degrees, direction}) => {
+      const newPlacement = placement.rotate(degrees * DEGREES_TO_RADIANS * turnSign(direction));
       const newMarks = [
         Mark.Turn({
           position: placement.position,

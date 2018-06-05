@@ -43,7 +43,7 @@ const runCommand = (command, env = emptyEnv, loc = emptyStack) =>
     'Cmd.Move':  ({expr, dir}) =>
       match(evaluateExpr(expr, loc, env), {
         'Expr.Const': ({value}) => {
-          const effect = Effect.Move({distance: value, dir});
+          const effect = Effect.Move({distance: value, direction: dir});
           const out    = { effect, location: loc };
           return fromIterable([out]);
         }
@@ -51,7 +51,7 @@ const runCommand = (command, env = emptyEnv, loc = emptyStack) =>
     'Cmd.Turn':  ({expr, dir}) =>
       match(evaluateExpr(expr, loc, env), {
         'Expr.Const': ({value}) => {
-          const effect = Effect.Turn({degrees: value, dir});
+          const effect = Effect.Turn({degrees: value, direction: dir});
           const out    = { effect, location: loc };
           return fromIterable([out]);
         }
