@@ -19,18 +19,18 @@ const initialPlacement = new Placement(
   V2(0, -1)
 );
 
-const MoveConst = (value) =>
+const MoveConst = (value, dir) =>
   AST.Expr.Cmd({
     cmd: AST.Cmd.Move({
       expr: AST.Expr.Const({ value }),
-      dir: 'forward'
+      dir
     })
   });
-const TurnConst = (value) =>
+const TurnConst = (value, dir) =>
   AST.Expr.Cmd({
     cmd: AST.Cmd.Turn({
       expr: AST.Expr.Const({ value }),
-      dir: 'right'
+      dir
     })
   });
 
@@ -85,14 +85,17 @@ class TurtleApp extends React.Component {
     this.traceProgram(program);
   }
   onTurtleMoveStart = () => {
-    this.addCommand(MoveConst(0));
+    this.addCommand(MoveConst(0, 'forward'));
     this.currentLens = composeLens(
       propertyLens('cmds'),
       indexLens(this.program.cmds.length - 1)
     );
   }
   onTurtleMove = (movement) => {
-    const newProgram = this.currentLens.set(this.program, MoveConst(movement));
+    const cmd = (movement >= 0)
+      ? MoveConst(movement, 'forward')
+      : MoveConst(-movement, 'backward');
+    const newProgram = this.currentLens.set(this.program, cmd);
     this.runProgram(newProgram);
   }
   onTurtleMoveEnd = () => {
@@ -100,7 +103,7 @@ class TurtleApp extends React.Component {
     this.traceProgram(this.program);
   }
   onTurtleRotateStart = () => {
-    this.addCommand(TurnConst(0));
+    this.addCommand(TurnConst(0, 'right'));
     this.currentLens = composeLens(
       propertyLens('cmds'),
       indexLens(this.program.cmds.length - 1)
@@ -108,7 +111,10 @@ class TurtleApp extends React.Component {
   }
   onTurtleRotate = (rotation) => {
     const degrees = +(rotation * RADIANS_TO_DEGREES).toFixed();
-    const newProgram = this.currentLens.set(this.program, TurnConst(degrees));
+    const cmd = (degrees >= 0)
+      ? TurnConst(degrees, 'right')
+      : TurnConst(-degrees, 'left');
+    const newProgram = this.currentLens.set(this.program, cmd);
     this.runProgram(newProgram);
   }
   onTurtleRotateEnd = () => {

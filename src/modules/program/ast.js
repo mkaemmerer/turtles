@@ -53,7 +53,7 @@ const printCmdMove = (props, cmd, lens) => {
   const exprLens = composeLens(lens, Lens.Cmd.Move.expr);
   return seq([
     str(<Sentry lens={lens}/>),
-    str('move'),
+    printMoveDirection(cmd.dir),
     str('('),
     printExpr({kind: 'distance', ...props}, cmd.expr, exprLens),
     str(')')
@@ -63,11 +63,23 @@ const printCmdTurn = (props, cmd, lens) => {
   const exprLens = composeLens(lens, Lens.Cmd.Turn.expr);
   return seq([
     str(<Sentry lens={lens}/>),
-    str('turn'),
+    printTurnDirection(cmd.dir),
     str('('),
     printExpr({kind: 'degrees', ...props}, cmd.expr, exprLens),
     str(')')
   ]);
+};
+const printMoveDirection = (direction) => {
+  switch(direction) {
+    case 'forward':  return str('move_forward');
+    case 'backward': return str('move_backward');
+  }
+};
+const printTurnDirection = (direction) => {
+  switch(direction) {
+    case 'left':  return str('turn_left');
+    case 'right': return str('turn_right');
+  }
 };
 const printCmdBlock = (props, cmd, lens) => {
   return seq([
