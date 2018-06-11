@@ -12,7 +12,7 @@ const printCommand = (command) =>
   match(command, {
     'Cmd.Move':  ({expr, dir}) => seq([
       printMoveDirection(dir),
-      str('(')
+      str('('),
       printExpr(expr),
       str(')')
     ]),

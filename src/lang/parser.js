@@ -14,8 +14,8 @@ const indentLine = (indent) => (parser) => indentBy(indent).then(parser);
 
 //Tokens
 const tDo    = P.string('do');
-const tMoveForward   = P.string('move_backward');
-const tMoveBackward  = P.string('move_forward');
+const tMoveForward   = P.string('move_forward');
+const tMoveBackward  = P.string('move_backward');
 const tTurnLeft      = P.string('turn_left');
 const tTurnRight     = P.string('turn_right');
 const tLet   = P.string('let');
@@ -68,12 +68,14 @@ const language = (indent) => P.createLanguage({
       .map(Cmd.Move);
     const cTurnLeft = P.seqObj(
         tTurnLeft,
-        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)]
+        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)],
+        ['dir', P.of('left')]
       )
       .map(Cmd.Turn);
     const cTurnRight = P.seqObj(
         tTurnRight,
-        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)]
+        ['expr', lang.expr.wrap(tOpenParen, tCloseParen)],
+        ['dir', P.of('right')]
       )
       .map(Cmd.Turn);
     const cDo = tDo

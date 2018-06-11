@@ -1,5 +1,5 @@
 import React from 'react';
-import program from '../programs/empty-program.tt';
+import program from '../programs/square-lambda.tt';
 import TurtleApp from 'modules/turtle-app';
 import './style/document.scss';
 
